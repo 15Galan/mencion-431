@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Pr&aacute;ctica 4: Configuraci&oacute;n del acceso a escritorio remoto</title>
+</head>
+
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Pr&aacute;ctica 4: Configuraci&oacute;n del acceso a escritorio remoto<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </span></b></h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>1. Objetivo</h2>
+Un uso especialmente
+interesante de las m&aacute;quinas virtuales es la llamada
+tecnolog&iacute;a de VDI (<span style="font-style: italic;">Virtual Desktop Infrastructure</span>),
+en la que un puesto de trabajo con aplicaciones de escritorio y
+ofim&aacute;tica es substituido por una m&aacute;quina virtual, que
+corre en un hipervisor, y en la que el usuario tiene a su
+disposici&oacute;n el mismo sistema operativo y aplicaciones con que
+trabajaba en la m&aacute;quina real. Esta substituci&oacute;n permite
+que el ordenador f&iacute;sico del usuario ya s&oacute;lo necesite
+tener instalado y mantenido el sistema m&iacute;nimo para poder acceder
+por red al escritorio virtual en el hipervisor; de esta forma se
+simplifica el mantenimiento de ese puesto f&iacute;sico de trabajo.<br>
+
+
+
+<br>
+
+
+
+Para montar un sistema VDI de virtualizaci&oacute;n de aplicaciones de
+escritorio resulta de especial utilidad la combinaci&oacute;n de dos de
+las t&eacute;cnicas que hemos visto en anteriores pr&aacute;cticas: el
+uso de instant&aacute;neas para afinar una configuraci&oacute;n, y el
+uso de clones enlazados. Usando estas t&eacute;cnicas, el procedimiento
+para montar el sistema VDI suele constar de estas dos fases:<br>
+
+
+
+<br>
+
+
+
+<ol>
+
+
+
+  <li>En una m&aacute;quina virtual, en el hipervisor, se hace una
+instalaci&oacute;n base del sistema de escritorio. Usando
+instant&aacute;neas se va instalando y configurando el conjunto de
+paquetes software que se necesitar&aacute; en el puesto de trabajo;
+gracias al empleo de instant&aacute;neas, si aparece un problema de
+compatibilidad de software no es necesario volver a empezar desde el
+principio, sino s&oacute;lo deshacer los cambios realizados desde la
+&uacute;ltima instant&aacute;nea v&aacute;lida.<br>
+
+
+
+    <br>
+
+
+
+  </li>
+
+
+
+  <li>Una vez que se obtiene una m&aacute;quina base perfecta (o, al
+menos, una instalaci&oacute;n completa, eficiente y que minimice el
+consumo de recursos), se borran todas las instant&aacute;neas hechas
+durante el proceso de instalaci&oacute;n (para que el uso de disco sea
+eficiente) y se congela el estado de la m&aacute;quina base resultante,
+usando una instant&aacute;nea, tras lo cual se emplean clones
+enlazados, basados en esa instant&aacute;nea, para crear el
+n&uacute;mero necesario de m&aacute;quinas virtuales de escritorio.</li>
+
+
+
+</ol>
+
+
+
+Como ya vimos en la Pr&aacute;ctica 3, usando clones enlazados cada
+copia de la m&aacute;quina virtual base ocupa una cantidad muy
+peque&ntilde;a de disco, pero al mismo tiempo cada copia puede tener
+una configuraci&oacute;n distinta a la de las dem&aacute;s, lo que
+permite que cada usuario pueda tener su propia personalizaci&oacute;n
+de escritorio, men&uacute;s y opciones de aplicaci&oacute;n.<br>
+
+
+
+<br>
+
+
+
+Dado que, en general, las aplicaciones de ofim&aacute;tica suelen
+consumir poca CPU, el uso de esta t&eacute;cnica de VDI usando clones
+enlazados permite, si as&iacute; se desea, concentrar m&uacute;ltiples
+puestos de escritorio en un mismo servidor f&iacute;sico, siempre que
+tengamos suficiente memoria RAM (los clones enlazados comparten disco,
+pero no memoria RAM, de forma que si cada puesto de escritorio
+requiere, por ejemplo, 2 GB de RAM para correr eficientemente, la
+configuraci&oacute;n adecuada para un hipervisor que albergue 5 puestos
+de escritorio necesitar&aacute; de al menos 11 GB de RAM).<br>
+
+
+
+<br>
+
+
+
+Una vez que, mediante el uso de clones enlazados, tenemos las
+m&aacute;quinas virtuales con los escritorios remotos corriendo en el
+hipervisor, el siguiente paso es hacer posible que el usuario pueda
+desde su puesto de trabajo f&iacute;sico, a trav&eacute;s de la red,
+acceder a su escritorio virtual. Para ello es necesario el uso de una
+aplicaci&oacute;n cliente-servidor de visualizaci&oacute;n, en la que
+el servidor estar&aacute; corriendo en la m&aacute;quina virtual que
+ofrece el escritorio remoto, y la parte cliente correr&aacute; en la
+m&aacute;quina f&iacute;sica donde trabaja el usuario.<br>
+
+
+
+<br>
+
+
+
+El prop&oacute;sito espec&iacute;fico de la presente pr&aacute;ctica es
+mostrar dos de los protocolos de visualizaci&oacute;n de escritorios
+remotos m&aacute;s usados: el RDP (<span style="font-style: italic;">Remote Desktop Protocol</span>),
+usando principalmente para acceder a m&aacute;quinas Windows, y el VNC,
+empleado con frecuencia para acceder a escritorios remotos basados en
+Linux.<br>
+
+
+
+<br>
+
+
+
+En particular, en los dos ejercicios que componen esta pr&aacute;ctica se mostrar&aacute;n:<br>
+
+
+
+<br>
+
+
+
+<ol>
+
+
+
+  <li>C&oacute;mo configurar y usar el acceso remoto v&iacute;a RDP al escritorio de un Windows XP.<br>
+
+
+
+    <br>
+
+
+
+  </li>
+
+
+
+  <li>C&oacute;mo configurar y usar el acceso remoto v&iacute;a VNC al escritorio de un Debian 7.<br>
+
+
+
+    <br>
+
+
+
+  </li>
+
+
+
+  <li>C&oacute;mo usar una conexi&oacute;n segura SSH, a trav&eacute;s
+de un servidor Linux, para poder tunelizar el tr&aacute;fico de red del
+protocolo RDP, o del protocolo VNC, cuando no sea posible (por la
+configuraci&oacute;n de red, o por la presencia de un cortafuegos)
+hacer una conexi&oacute;n directa entre la aplicaci&oacute;n de
+visualizaci&oacute;n en la m&aacute;quina real y el serfidor de la
+m&aacute;quina virtual.</li>
+
+
+
+</ol>
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a href="Ejercicio1.html">
+Ejercicio 1 - Visualizaci&oacute;n remota usando RDP o VNC.</a><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a href="Ejercicio2.html">
+Ejercicio 2 - Tunelaci&oacute;n por SSH de la visualizaci&oacute;n remota.</a><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+  
+  <title>Ejercicio 4 - Elaboraci&oacute;n de un Test Plan sencillo para Jmeter</title>
+</head>
+
+
+<body>
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+      </td>
+
+
+      <td style="width: 1164.97px;">
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 4 &nbsp;-
+Elaboraci&oacute;n de un Test Plan sencillo para Jmeter<br>
+
+
+      </span></b></h1>
+
+
+      </td>
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<br>
+
+
+En este ejercicio vamos a crear, usando Jmeter, una prueba de esfuerzo
+sencilla para el sistema de comercio electr&oacute;nico Tomatocart
+albergado en un &uacute;nico servidor. Concretamente, con este test
+instentaremos comprobar cual es el uso de recursos (CPU, memoria,
+disco) del servidor cuando m&uacute;ltiples suario consultan
+simult&aacute;neamente su cat&aacute;logo.<br>
+
+
+<br>
+
+
+El generador de test Jmeter es una aplicaci&oacute;n Java que
+usaremos para realizar dos tareas:<br>
+
+
+<br>
+
+
+<ol>
+
+
+  <li>Configur&aacute;ndolo como proxy web, capturar el
+tr&aacute;fico entre el servidor Tomatocart y el navegador web.
+Esta captura nos permitir&aacute; determinar qu&eacute;
+transacciones HTTP usa el sistema Tomatocart cuando se navega el
+cat&aacute;logo. Adicionalmente Jmeter es capaz,&nbsp; a partr
+de los datos capturados, de generar una plantilla de test que
+reproduzca esas transacciones.<br>
+
+
+  </li>
+
+
+  <li>Crear manualmente un Test Plan, definiendo
+expl&iacute;citamente las transacciones a realizar y la
+l&oacute;gica con la que ser&aacute;n secuenciadas.</li>
+
+
+</ol>
+
+
+La aplicaci&oacute;n Jmeter va a ser ejecutada en este Ejercicio
+desde el propio Windows 7, en el que tendremos tambi&eacute;n el
+navegador Firefox con el que vamos a navegar el cat&aacute;logo de
+Tomatocart. Por otra parte, el servidor al que vamos a someter a la
+prueba de carga es la m&aacute;quina virtual Debian que
+s&oacute;lo tiene instalado y corriendo el sistema Tomatocart. Como
+la m&aacute;quina virtual obtenida al final de los Ejercicios 2 y 3
+tiene instalados Tomatocart y osCommerce2, vamos a usar
+instant&aacute;neas para crear ramas de test diferenciadas para
+Tomatocart y para Tomatocart + osCommerce2.<br>
+
+
+<br>
+
+
+Para realizar el Ejercicios, seguimos estos pasos:<br>
+
+
+<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">1)</span> Abrir la
+m&aacute;quina virtual <span style="font-style: italic;">debiantomato</span>
+y, sin arrancarla, usar el gestor de instant&aacute;neas para crear
+una, llamada <span style="font-style: italic;">Separado
+en dos servidores</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">2)</span> A
+continuaci&oacute;n, seleccionar la instant&aacute;nea <span style="font-style: italic;">Tomatocart final</span> y
+pulsar <span style="font-weight: bold;">Go To</span>.
+De esta forma creamos las dos rmas de prototipado para test ilustradas
+en la figura.<br>
+
+
+<br>
+
+
+<img style="width: 317px; height: 153px;" alt="" src="img/ramas_instant.png"><br>
+
+
+<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">3)</span> Arrancar
+el servidor <span style="font-style: italic;">debiantomato</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">4)</span> En el
+Windows 7, ir al directorio <span style="font-style: italic;">D:\practicas\MV\apache-jmeter-3.0\bin</span>
+y hacer doble click sobre <span style="font-weight: bold;">jmeter.bat</span>
+para arrancar la aplicaci&oacute;n Jmeter con los
+par&aacute;metros adecuados.<br>
+
+
+<br>
+
+
+Ahora, configuraremos Jmeter como proxy web para capturar el
+tr&aacute;fico web entre navegador y servidor cuando se consulta el
+cat&aacute;logo.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">5)</span> En el
+men&uacute; <span style="font-weight: bold;">File
+-&gt; Templates</span> de Jmeter, seleccionar el template <span style="font-weight: bold;">Recording</span> y pulsar <span style="font-weight: bold;">Create</span>. Obtendremos
+un resultado como el mostrado en la figura.<br>
+
+
+<br>
+
+
+<img style="width: 256px; height: 206px;" alt="" src="img/rec_template.png"><br>
+
+
+<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">6)</span>
+Seleccionamos <span style="font-weight: bold;">HTTP(S)
+Test Script Recorder</span>, y pulsamos <span style="font-weight: bold;">Start</span>;
+&eacute;sto hace que Jmeter comience a funcionar como un proxy web,
+que (tal como indican los <span style="font-style: italic;">Global
+Settings</span>) escucha en el puerto <span style="font-weight: bold;">localhost:8888</span>.
+Adicionalmente, Jmeter genera un certificado de root CA (autoridad
+certificadora), que deberemos instalar en el navegador para que acepte
+los diversos certificados que Jmeter generar&aacute; asociados al
+tr&aacute;fico HTTPS.<br>
+
+
+<br>
+
+
+<div style="text-align: center;"><img style="width: 943px; height: 357px;" alt="" src="img/aviso_rootca_cert.png"><br>
+
+
+</div>
+
+
+<br>
+
+
+<br>
+
+
+(NOTA: Jmeter gestiona este certificado root CA mediante los ficheros <span style="font-style: italic;">ApacheJMeterTemporaryRootCA.crt</span>,
+<span style="font-style: italic;">ApacheJMeterTemporaryRootCA.usr</span>
+y <span style="font-style: italic;">proxyserver.jks</span>
+del directorio <span style="font-style: italic;">D:\practicas\MV\apache-jmeter-3.0\bin</span>
+.Si se quiere forzar una regeneraci&oacute;n del certificado, basta
+con borrar estos tres ficheros. Adicionalmente, Jmeter genera el
+certificado con una validez de s&oacute;lo 7 d&iacute;as, y lo
+regenera cuando expira; por tanto, cuando se usa Jmeter como proxy hay
+que prestar atenci&oacute;n a si se est&aacute; intentando usar
+en el navegador un root CA ya caducado.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">7)</span> Abrir en
+el Windows 7 el navegador Firefox, y usar la secuencia de
+men&uacute;s y botones <span style="font-weight: bold;">Herramientas
+-&gt; Opciones -&gt; Avanzado -&gt; Certificados -&gt;
+Ver Certificados</span> para cceder a la herramienta de
+administraci&oacute;n de certifiacos. Pulsar <span style="font-weight: bold;">Importar</span>, y
+seleccionar el fichero <span style="font-style: italic;">D:\practicas\MV\apache-jmeter-3.0\bin\ApacheJMeterTemporaryRootCA.crt</span>
+&nbsp; .Elegir <span style="font-weight: bold;">Confiar
+en esta CA para identificar sitios web</span>, y pulsar <span style="font-weight: bold;">Aceptar</span>; obtendremos
+el resultado que se muestra en la figura. Pulsar <span style="font-weight: bold;">Aceptar.</span><br>
+
+
+<br>
+
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 510px; height: 283px;" alt="" src="img/descarga_certificado.png"></td>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 549px; height: 373px;" alt="" src="img/cert_ca.png"></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+Antes de comenzar a capturar con el proxy Jmeter el tr&aacute;fico
+web, necesitamos realizar un paso previo debido a la
+configuraci&oacute;n del laboratorio. El sistema Tomatocart usa
+APIs JavaScript de Google, que deben ser le&iacute;das desde un
+servidor situado en el exterior de la UMA; como este acceso se realiza,
+a su vez, a trav&eacute;s de un proxy web, fallar&aacute; y
+dar&aacute; un timeout si se intenta hacer a trav&eacute;s del
+proxy Jmeter. La soluci&oacute;n ser&aacute; hacer con el
+navegador un acceso a la p&aacute;gina de inicio del sistema
+Tomatocart antes de comenzar la captura con Jmeter; de esta forma las
+librer&iacute;as de Google quedar&aacute;n cacheadas mientras
+no se cierre el navegador, y se evita el problema.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">8)</span> Usar el
+navegador Firefox del Windows 7 para acceder a <span style="font-weight: bold;">http://10.0.0.21/tomatocart</span>
+.Abrir una nueva pesta&ntilde;a en el navegador, y cerrar la
+pesta&ntilde;a con la que acabamos de acceder a Tomatocart.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">9)</span> Ahora,
+cambiamos en Firefox la comfiguraci&oacute;n del proxy para que use
+el de Jmeter. Para ello usamos la secuencia de men&uacute;s y
+botones <span style="font-weight: bold;">Herramientas
+-&gt; Opciones -&gt; Avanzado -&gt; Red -&gt;
+Configuraci&oacute;n</span>, y cambiamos la
+configuraci&oacute;n del proxy a la mostrada en la figura. Pulsar <span style="font-weight: bold;">Aceptar</span>.<br>
+
+
+<br>
+
+
+<img style="width: 416px; height: 506px;" alt="" src="img/config_proxy.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">10)</span> Acceder
+con Firefox de nuevo a <span style="font-weight: bold;">http://10.0.0.21/tomatocart</span>.
+Usar el men&uacute; <span style="font-weight: bold;">Categories</span>
+para visitar la p&aacute;gina <span style="font-weight: bold;">Desktops</span>,
+y luego la p&aacute;gina <span style="font-weight: bold;">Printers
+&amp; Scanners -&gt; HP</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">11)</span> Ir a
+Jmeter, y pulsar <span style="font-weight: bold;">Stop</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">12)</span> En
+Firefox, restaurar la configuraci&oacute;n de proxy a <span style="font-weight: bold;">Autodetectar</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">13)</span> Pulsando
+sobre el objeto <span style="font-weight: bold;">View
+Results Tree</span> bajo <span style="font-weight: bold;">Workbench</span>
+podemos comprobar c&oacute;mo Jmeter ha registrado las
+p&aacute;ginas visitadas y los ficheros accedidos. Dependiendo de
+qu&eacute; ficheros quedaron cacheados en el acceso del punto 8, el
+contenido de este Results Tree ser&aacute; m&aacute;s o menos
+extenso; como ejemplo, la primera figura muestra el resultado cuando
+a&uacute;n no se hab&iacute;an cacheado im&aacute;genes y
+ficheros auxiliares de la p&aacute;gina&nbsp;<span style="font-style: italic;">Desktops</span>, mientras
+la segunda figura muestra el resultado de la captura cuando ya se han
+cacheado previamente estos ficheros.<br>
+
+
+<br>
+
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 900px; height: 518px;" alt="" src="img/salida_record.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 567px; height: 120px;" alt="" src="img/salida_record2.png"></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<br>
+
+
+(NOTA: Este ejemplo muestra que, en los tests reales, es muy necesario
+tener en cuenta los posibles efectos de las cach&eacute;s, que, si
+no se controlan adecuadamente, pueden falsearnos los resultados del
+test).<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">14)</span> Si, en
+el &aacute;rbol de resultados, pulsamos sobre la primera
+p&aacute;gina <span style="font-weight: bold;">index.php</span>
+visitada, podemos ver en la pesta&ntilde;a <span style="font-weight: bold;">Request</span> el comando
+HTTP GET utilizado para accederla, y sus par&aacute;metros. En
+particular, <span style="font-style: italic;">cPath = 2</span>
+es el par&aacute;metro que identifica a la
+p&aacute;gina&nbsp;<span style="font-style: italic;">Dekstops</span>,
+como podemos comprobar en el c&oacute;digo fuente de la
+p&aacute;gina <span style="font-weight: bold;">index.html</span>
+del sistema Tomatocart.<br>
+
+
+<br>
+
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 766px; height: 253px;" alt="" src="img/jmeter_cpath2.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 761px; height: 710px;" alt="" src="img/cpath2.png"></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<br>
+
+
+(NOTA: El sistema Tomatocart usa cookies para gestionar el
+identificador de sesi&oacute;n, como podremos comprobar al ejecutar
+el test directamente desde Jmeter. Sin embargo, la restrictiva
+configuraci&oacute;n de navegaci&oacute;n privada del Firefox
+usado en el laboratorio confunde al mecanismo de seguimiento de
+sesiones de Tomatocart, de forma que en estas capturas con el proxy
+Jmeter veremos no s&oacute;lo que Tomatocart
+no&nbsp;est&aacute;r&aacute; usando cookies, sino
+tambi&eacute;n que existir&aacute;n dos variantes en lo
+relativo a la gesti&oacute;n de sesones:<br>
+
+
+<ul>
+
+
+  <li>Como se ilustra en las siguientes figuras, se genera un
+identificador de sesi&oacute;n <span style="font-style: italic;">sid</span>,
+que se pasa al cliente en las respuestas, pero que no se devuelve al
+servidor como par&aacute;metro del GET.<br>
+
+
+    <br>
+
+
+    
+    <table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+      <tbody>
+
+
+        <tr>
+
+
+          <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 869px; height: 424px;" alt="" src="img/sid_respuesta.png"></td>
+
+
+        </tr>
+
+
+        <tr>
+
+
+          <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 561px; height: 90px;" alt="" src="img/no_sid.png"></td>
+
+
+        </tr>
+
+
+      
+      </tbody>
+    
+    </table>
+
+
+    <br>
+
+
+    <br>
+
+
+  </li>
+
+
+  <li>Sin embargo, en ocasiones nos encontraremos que, como
+resultado de la misma captura, obtenemos enlaces en los que Tomatocart
+ha usado URL Rewriting para a&ntilde;adir el valor del
+identificador&nbsp;<span style="font-style: italic;">sid</span>
+como par&aacute;metro del comando GET, tal como se muestra en la
+figura.<br>
+
+
+    <br>
+
+
+    
+    <div style="text-align: center;"><img style="width: 875px; height: 262px;" alt="" src="img/jmeter_cpath2_sid.png"></div>
+
+
+  </li>
+
+
+</ul>
+
+
+<br>
+
+
+Dado que los tests realizados desde Jmeter usar&aacute;n cookies,
+esta discrepancia de comportamientos no nos va a afectar, pero es
+conveniente ser consciente de que existe).<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">15)</span> Si
+seleccionamos ahora, en el <span style="font-weight: bold;">View
+Results Tree</span>, la segunda p&aacute;gina <span style="font-weight: bold;">index.php</span>, podemos
+ver que la opci&oacute;n de men&uacute; <span style="font-weight: bold;">Printers &amp; Scanners
+-&gt; HP</span> se puede acceder directamente usando <span style="font-style: italic;">4_5</span> como valor del
+par&aacute;metro <span style="font-style: italic;">cPath</span>
+del comando GET.<br>
+
+
+<br>
+
+
+<img style="width: 769px; height: 242px;" alt="" src="img/cpath4_5.png"><br>
+
+
+<br>
+
+
+Al mismo tiempo que ha ido almacenando&nbsp;en el Test Script
+Recorder los datos en bruto de las transacciones, Jmeter ha ido
+preparando, bajo la rama <span style="font-style: italic;">Recording
+Controller</span>, las plantillas que nos permiten reproducir, en
+un test, los accesos realizados durante esta captura.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">16)</span> Bajo <span style="font-weight: bold;">Recording Controller</span>,
+ir seleccionando una a una las tres plantillas (correspondientes a
+elementos llamados <span style="font-style: italic;">Samplers</span>)
+que contienen las descripciones de los accesos HTTP realizados desde el
+cliente. Observar c&oacute;mo en cada una la combinaci&oacute;n
+de IP del servidor, ruta (<span style="font-style: italic;">Path</span>)
+de acceso, m&eacute;todo y par&aacute;metros nos definen
+completamente c&oacute;mo realizar la transacci&oacute;n HTTP.<br>
+
+
+<br>
+
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 903px; height: 264px;" alt="" src="img/recording1.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 1311px; height: 375px;" alt="" src="img/recording2.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 1326px; height: 390px;" alt="" src="img/recording3.png"></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<br>
+
+
+Usualmente salvar&iacute;amos a disco estas plantillas obtenidas de
+la captura y las usar&iacute;amos como base para crear el test. Sin
+embargo en este Ejercicio queremos familiarizarnos con la estructura y
+composici&oacute;n de un&nbsp;test&nbsp;Jmeter, por lo que
+generaremos el test manualmente, partiendo de cero. Concretamente,
+crearemos un test Jmeter que realice el acceso a exactamente las mismas
+p&aacute;ginas que en la captura (es decir, la p&aacute;gina <span style="font-style: italic;">home</span> del sistema
+Tomatocart, y las p&aacute;ginas de men&uacute;
+correspondientes a Desktops y a&nbsp; impresoras HP.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">17)</span> En
+Jmeter, hacer <span style="font-weight: bold;">File
+-&gt; Close</span>. No salvar el test.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">18)</span>
+Seleccionar <span style="font-weight: bold;">Test Plan</span>
+en el GUI, y usando el men&uacute; contextual del bot&oacute;n
+derecho del rat&oacute;n a&ntilde;adir <span style="font-weight: bold;">Add -&gt; Config Element
+-&gt; HTTP Cookie Manager</span>. Este elemento
+ser&aacute; el encargado de gestionar adecuadamente los cookies
+generados por Tomatocart para el control de sesi&oacute;n.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">19)</span>
+A&ntilde;adir, de la misma forma, <span style="font-weight: bold;">Add -&gt; Config Element
+-&gt; HTTP Request Defaults</span>. Se usa este elemento para
+dar valores por defecto que sean usados por todas las transacciones
+HTTP del test, y as&iacute; evitarnos tener que escribirlo
+expl&iacute;citamente en la definici&oacute;n de cada
+transacci&oacute;n. En este caso, lo usaremos para dar valor a la
+direcci&oacute;n IP que estamos usando como nombre del servidor de
+Tomatocart; rellenar este elemento de la forma como se muestra en la
+figura.<br>
+
+
+<br>
+
+
+<img style="width: 248px; height: 146px;" alt="" src="img/request_defaults.png"><br>
+
+
+<br>
+
+
+Ahora, crearemos en el Test Plan un grupo de threads (<span style="font-style: italic;">Thread Group</span>) que
+va a representar a uno (o m&aacute;s) clientes accediendo al
+servidor Tomatocart, usando un thread (interno en Jmeter) por cliente.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">20)</span>
+Seleccionar Test Plan y usar el bot&oacute;n derecho para
+a&ntilde;&aacute;dir <span style="font-weight: bold;">Add
+-&gt; Threads -&gt; Thread Group</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">21)</span>
+Seleccionar <span style="font-weight: bold;">Thread Group</span>,
+y a&ntilde;adir <span style="font-weight: bold;">Add
+-&gt; Logic Controller -&gt; Simple Controller</span>.
+Este objeto no es funcional, y sirve &uacute;nicamente para
+organizar y hacer m&aacute;s clara la descripci&oacute;n
+gr&aacute;fica del test. Rellenarlo con el valor mostrado en la
+figura.<br>
+
+
+<br>
+
+
+<img style="width: 555px; height: 127px;" alt="" src="img/simple_controller.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">22)</span>
+Seleccionar el <span style="font-weight: bold;">Simple
+Controller</span> que acabamos de renombrar y, usando el
+bot&oacute;n derecho, a&ntilde;adirle un <span style="font-weight: bold;">Add -&gt; Sampler -&gt;
+HTTP Request</span>. Esta transacci&oacute;n va a ser la que
+acceda a la p&aacute;gina inicial del sistema Tomatocart;
+rellenarla como muestra la figura.<br>
+
+
+<br>
+
+
+<img style="width: 589px; height: 268px;" alt="" src="img/request_inicio.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">23)</span>
+A&ntilde;adir un segundo <span style="font-weight: bold;">HTTP
+Request</span> para acceder a la p&aacute;gina de Desktops.
+Rellenarlo como muestra la figura.<br>
+
+
+<br>
+
+
+<img style="width: 998px; height: 382px;" alt="" src="img/request_desktops.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">24)</span>
+Finalmente, a&ntilde;adir un tercer <span style="font-weight: bold;">HTTP Request</span> para
+acceder a la p&aacute;gina de impresoras. Rellenarlo como muestra
+la figura.<br>
+
+
+<br>
+
+
+<img style="width: 994px; height: 380px;" alt="" src="img/request_printers.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">25)</span>
+Finalmente, seleccionar de nuevo <span style="font-weight: bold;">Test
+Plan</span> y a&ntilde;adirle <span style="font-weight: bold;">Add -&gt; Listener -&gt;
+View Results Tree</span>, que es el objeto para
+depuraci&oacute;n en el que podremos ver qu&eacute; accesos ha
+generado el test, y qu&eacute; respuestas ha obtenido. Con su
+adici&oacute;n, el test quedar&aacute; como muestra la figura.<br>
+
+
+<br>
+
+
+<img style="width: 244px; height: 204px;" alt="" src="img/test_trivial.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">26)</span> Crear la
+carpeta <span style="font-style: italic;">D:\practicas\MV\apache-jmeter-3.0\bin\tests</span>,
+y salvarlo como <span style="font-style: italic;">test_trivial.jmx</span><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">27)</span> Pulsar
+el bot&oacute;n de ejecutar el test.<br>
+
+
+<br>
+
+
+<img style="width: 536px; height: 122px;" alt="" src="img/boton_ejecutar.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">28)</span>
+Comprobamos que, en el <span style="font-weight: bold;">View
+Results Tree</span>, hayamos obtenido un resultado similar al
+ilustrado en la figura, en el que se observa que, en efecto, se han
+accedido las tres p&aacute;ginas esperadas. Comprobar que, en cada
+p&aacute;gina, el c&oacute;digo de respuesta HTTP obtenido ha
+sido <span style="font-style: italic;">200 OK</span>.
+<br>
+
+
+<br>
+
+
+<img style="width: 843px; height: 510px;" alt="" src="img/salida_test_trivial.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">29)</span> Observar
+c&oacute;mo Tomatocart ha creado cookies al acceder a las
+p&aacute;ginas <span style="font-style: italic;">Inicio</span>
+y <span style="font-style: italic;">Desktop</span>;
+estas cookies han sido aceptadas y gestionadas por el elemento <span style="font-style: italic;">HTTP Cookie Manager</span>.<br>
+
+
+<br>
+
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 859px; height: 358px;" alt="" src="img/cookie1.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 711px; height: 373px;" alt="" src="img/cookie2.png"></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">30)</span> Observar
+c&oacute;mo, al generar el request de la p&aacute;gina de
+impresoras, Jmeter ha usado la cookie almacenada en el HTTP Cookie
+Manager para enviar al servidor Tomatocart, en la cabecera del request,
+el identificador de sesi&oacute;n <span style="font-style: italic;">sid</span> recibido.<br>
+
+
+<br>
+
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 539px; height: 194px;" alt="" src="img/cookie3.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 692px; height: 554px;" alt="" src="img/cookie_request_header.png"></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+Una vez comprobado que el test se genera correctamente, vamos a
+ampliarlo para que visite, de forma aleatoria, todas y cada una de las
+p&aacute;ginas del cat&aacute;logo en las que hay productos,
+sin repetir ninguna.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">31)</span> Cerrar
+el test usando <span style="font-weight: bold;">File
+-&gt; Close</span>, sin salvar, y usar <span style="font-weight: bold;">File -&gt; Open</span>
+para volver a abrir <span style="font-style: italic;">test_trivial.jmx</span>
+<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">32)</span> En la
+p&aacute;gina de inicio del sistema Tomatocart, viendo la URL de
+cada opci&oacute;n del men&uacute; <span style="font-style: italic;">Categories</span>, podemos
+obtener los valores de <span style="font-style: italic;">cPath</span>
+correspondientes a las distintas p&aacute;ginas destino. Usando
+estos valores, a&ntilde;adir los <span style="font-weight: bold;">HTTP Request</span>
+necesarios, ilustrados en la figura, y modificar el nombre del <span style="font-weight: bold;">Simple Controller</span>.<br>
+
+
+<br>
+
+
+<img style="width: 258px; height: 276px;" alt="" src="img/lista_paginas.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">33)</span> Para
+conseguir la visita aleatoria a cada p&aacute;gina, vamos a
+reemplazar el controlador <span style="font-style: italic;">Simple
+Controller</span> por uno de tipo <span style="font-style: italic;">Random Order Controller</span>.
+Para ello, seleccionar en el &aacute;rbol del test plan el
+controlador de nombre <span style="font-weight: bold;">Lista
+de p&aacute;ginas</span> y, usando el bot&oacute;n
+derecho del rat&oacute;n, invocar <span style="font-weight: bold;">Change Controller -&gt; Logic
+Controller -&gt; Random Order Controller</span>. Rellenarlo
+como muestra la figura.<br>
+
+
+<br>
+
+
+<img style="width: 560px; height: 277px;" alt="" src="img/random_controller.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">34)</span> Salvar
+el test, con el mismo nombre.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">35)</span>
+Seleccionar <span style="font-weight: bold;">View Results
+Tree</span>. Ejecutar varias veces el test pulsando el
+bot&oacute;n de <span style="font-weight: bold;">Start</span>
+(o usando Ctrl-R). Comprobar que en cada ejecuci&oacute;n va
+cambiando el orden de acceso a las p&aacute;ginas.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">36)</span> Para
+limpiar el <span style="font-weight: bold;">View Results
+Tree</span> de los resultados obtenidos, seleccionarlo e invocar
+con el bot&oacute;n derecho el men&uacute; <span style="font-weight: bold;">Clear</span>.<br>
+
+
+<br>
+
+
+Ahora, vamos a modificar el test para que haya 2 usuarios
+simult&aacute;neamente consultando el cat&aacute;logo, y para
+que cada uno de estos usuarios haga tres pasadas de consultas al
+cat&aacute;logo completo.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">37)</span>
+Seleccionar, en el &aacute;rbol de test, el <span style="font-weight: bold;">Thread Group</span>.
+Configurar las propiedades de Thread con los valores mostrados en la
+figura para conseguir dos usuarios, que dar&aacute;n tres pasadas,
+y que comenzar&aacute;n a acceder al servidor al mismo tiempo (o,
+para ser m&aacute;s exactos, dentro del mismo segundo).<br>
+
+
+<br>
+
+
+<img style="width: 612px; height: 294px;" alt="" src="img/thread_2_users.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">38)</span> Salvar
+el test y ejecutarlo. Observar, en el <span style="font-weight: bold;">View Results Tree</span>,
+c&oacute;mo es posible identificar el Thread (usuario) que ha
+generado cada acceso, y c&oacute;mo terminan
+entrelaz&aacute;ndose los accesos de los threads (usuarios) 1 y 2.<br>
+
+
+<br>
+
+
+<div style="text-align: center;"><img style="width: 1012px; height: 566px;" alt="" src="img/id_thread.png"><br>
+
+
+</div>
+
+
+<br>
+
+
+Una vez que hemos generado este test, vamos a usarlo para crear al
+servidor <span style="font-style: italic;">debiantomato</span>
+una carga fuerte, y comprobar su respuesta. En particular, estudiaremos
+su comportamiento suponiendo que hay 10 usuarios distintos, cada uno de
+los cuales va a generar, sin soluci&oacute;n de continuidad, un
+total de 50 visitas completas al cat&aacute;logo.<br>
+
+
+<br>
+
+
+(NOTA: Obviamente, una carga como la descrita no corresponde a un
+patr&oacute;n de accesos generados por seres humanos, sino a
+accesos automatizados desde rotobs, por ejemplo como parte de un ataque
+de denegaci&oacute;n de servicios).<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">39)</span>
+Eliminamos los resultados del test anterior simplemente cerrando el
+test (con <span style="font-weight: bold;">File -&gt;
+Close</span>), y volvemos a abrir <span style="font-style: italic;">test_trivial.jmx</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">40)</span> El
+objeto <span style="font-style: italic;">View Results Tree</span>
+va a consumir mucha memoria y CPU en el generador de tests, y no
+necesitamos la informaci&oacute;n que proporciona, as&iacute;
+que lo seleccionamos y, con el bot&oacute;n derecho del
+rat&oacute;n, lo borramos eligiendo la opci&oacute;n <span style="font-weight: bold;">Remove</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">41)</span>
+Configurar el <span style="font-weight: bold;">Thread
+Group</span> con <span style="font-style: italic;"></span>los
+valores mostrados en la figura. Salvar el test en la carpeta <span style="font-style: italic;">D:\practicas\MV\apache-jmeter-3.0\bin\tests</span>, con el nombre <span style="font-style: italic;">test_esfuerzo_tomatocart.jmx</span>.<br>
+
+
+<br>
+
+
+<img style="width: 305px; height: 167px;" alt="" src="img/thread_10u_50p.png"><span style="font-weight: bold;"></span><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">42)</span> Hacer
+login como <span style="font-weight: bold;">root</span>
+en el servidor <span style="font-style: italic;">debiantomato</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">43)</span> Ejecutar
+el comando <span style="font-weight: bold;">top</span>
+para arrancar una aplicaci&oacute;n que, a intervalos de 1 segundo,
+nos permite monitorizar el uso de CPU y memoria.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">44)</span> En
+Jmeter, pulsar el bot&oacute;n de <span style="font-weight: bold;">Start</span> para lanzar el
+test.<br>
+
+
+<br>
+
+
+De forma inmediata veremos c&oacute;mo la salida de <span style="font-style: italic;">top</span> nos muestra
+c&oacute;mo el servidor apache (y, en menor medida, el servidor de
+mysql) est&aacute;n sometiendo a carga al sistema. En particular,
+la informaci&oacute;n m&aacute;s relevante son la carga
+promedio del sistema (es decir, el n&uacute;mero de procesos en
+espera de ejecuci&oacute;n), el uso de CPU y el uso de memoria; en
+la siguiente figura se indica d&oacute;nde podemos encontrar esta
+informaci&oacute;n.<br>
+
+
+<br>
+
+
+<div style="text-align: center;"><img style="width: 727px; height: 536px;" alt="" src="img/salida_top.png"><br>
+
+
+</div>
+
+
+<br>
+
+
+En particular, es interesante destacar, en esta informaci&oacute;n
+de <span style="font-style: italic;">top</span>
+para el servidor <span style="font-style: italic;">debiantomato</span>,
+que mientras el consumo de CPU es muy elevado el consumo de memoria se
+mantiene muy contenido, como demuestra el hecho de que el sistema
+operativo no ha llegado a necesitar hacer uso del espacio de
+intercambio en disco (el uso del espacio de swap es 0 bytes).<br>
+
+
+<br>
+
+
+(NOTA: Si se quiere almacenar en fichero la salida del comando top, se
+puede hacer ejecut&aacute;ndolo con los flags "<span style="font-style: italic;">-b</span>" (batch mode), "<span style="font-style: italic;">-d valor_retardo</span>"
+(tiempo entre muestreos) y "<span style="font-style: italic;">-n
+l&iacute;mite</span>" (n&uacute;mero de muestreos a
+realizar), y redireccionando a fichero la salida del comando.<br>
+
+
+<br>
+
+
+Junto a <span style="font-style: italic;">top</span>,
+otro comando especialmente &uacute;til para monitorizar la carga
+del sistema (y, en especial, la del almacenamiento en disco) es <span style="font-style: italic;">vmstat</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">45)</span> Una vez
+haya terminado de ejecutarse el test, pulsar <span style="font-weight: bold;">q</span> en <span style="font-style: italic;">debiantomato</span> para
+salir de top.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">46)</span> Ejecutar
+el comando <span style="font-weight: bold;">vmstat 1</span>
+(el n&uacute;mero indica el tiempo entre iteraciones; sin
+n&uacute;mero se hace s&oacute;lo un &uacute;nico
+muestreo). Tras cuatro o cinco iteraciones, pulsar Ctrl-C para detener
+el comando. La salida ser&aacute; similar a la ilustrada en la
+figura.<br>
+
+
+<br>
+
+
+<img style="width: 727px; height: 201px;" alt="" src="img/vmstat.png"><br>
+
+
+<br>
+
+
+Como se observa, adem&aacute;s de informaci&oacute;n ya
+proporcionada por <span style="font-style: italic;">top</span>
+(como el n&uacute;mero de procesos en ejecuci&oacute;n o su
+consumo de CPU), <span style="font-style: italic;">vmstat</span>
+ofrece tambi&eacute;n informaci&oacute;n sobre el uso del
+subsistema de E/S, en forma de n&uacute;mero de bloques de 512
+bytes (es decir, del tama&ntilde;o de bloques de disco)
+le&iacute;dos (<span style="font-style: italic;">bi =
+blocks in</span>) o escritor (<span style="font-style: italic;">bo
+= blocks out</span>). Adicionalmente, el n&uacute;mero de
+interrupciones (<span style="font-style: italic;">in</span>)
+y cambios de contexto (<span style="font-style: italic;">cs</span>)
+nos permite tambi&eacute;n monitorizar otra posible fuente de
+problemas de eficiencia del sistema.<br>
+
+
+<br>
+
+
+Ahora, usaremos <span style="font-style: italic;">vmstat</span>
+para monitorizar el uso de E/S del servidor <span style="font-style: italic;">debiantomato</span>
+durante la prueba de carga.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">47)</span> Ejecutar
+de nuevo <span style="font-weight: bold;">vmstat 1</span>,
+y observar cuales son los valores reportados para los distintos
+par&aacute;metros cuando el servidor <span style="font-style: italic;">debiantomato</span>
+est&aacute; en reposo.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">48)</span> Sin
+detener <span style="font-style: italic;">vmstat</span>,
+ejecutar de nuevo el test en Jmeter. Se obtendr&aacute;n resultados
+similares a los mostrados en la figura. Cuando finalice el test,
+detener <span style="font-style: italic;">vmstat</span>
+pulsando <span style="font-weight: bold;">Ctrl-C</span>.<br>
+
+
+<br>
+
+
+<img style="width: 720px; height: 303px;" alt="" src="img/vmstat_test.png"><br>
+
+
+<br>
+
+
+Como se observa,&nbsp; la ejecuci&oacute;n del test, como ya
+sabemos, dispara el n&uacute;mero de procesos y su consumo de CPU
+(lo que, como es l&oacute;gico, vemos que se traduce
+tambi&eacute;n en un incremento en un factor aproximado de 20 del
+n&uacute;mero de interrupciones y cambios de contexto). Sin
+embargo, vemos tambi&eacute;n que la ejecuci&oacute;n del test
+pr&aacute;cticamente no afecta al uso de memoria, y muy poco al
+n&uacute;mero de escrituras a disco. Todo esto nos indica que:<br>
+
+
+<br>
+
+
+<ul>
+
+
+  <li>Tanto el servidor mysql como el servidor apache
+est&aacute;n haciendo uso, casi exclusivamente, de
+informaci&oacute;n que ya est&aacute; cacheada en memoria.<br>
+
+
+    <br>
+
+
+  </li>
+
+
+  <li>y, por tanto, nuestro sistema Tomatocart, en lo relativo a
+la consulta del cat&aacute;logo, es una aplicaci&oacute;n <span style="font-style: italic;">CPU-bound</span> (limitada
+por CPU), y no <span style="font-style: italic;">memory-bound</span>
+o <span style="font-style: italic;">I/O-bound</span>.</li>
+
+
+</ul>
+
+
+<br>
+
+
+Finalmente, vamos a ver c&oacute;mo podemos, en Jmeter, obtener
+informes y gr&aacute;ficas que nos ayuden a analizar los resultados
+obtenidos durante un test.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">49)</span> En
+Jmeter, seleccionar <span style="font-weight: bold;">Test
+Plan</span> y, usando el bot&oacute;n derecho del
+rat&oacute;n, agregarle los siguientes Listeners: <span style="font-weight: bold;">Aggregate Graph, Aggregate
+Report, Graph Results, Response Time Graph </span>y<span style="font-weight: bold;"> Summary Report</span> para
+obtener un test como el mostrado en la figura.<br>
+
+
+<br>
+
+
+<img style="width: 242px; height: 347px;" alt="" src="img/test_muchos_listeners.png"><br>
+
+
+<br>
+
+
+(NOTA: En este Ejercicio estamos usando todos esos Listeners para ver
+su efecto, pero los Listeners impactan en el rendimiento del generador
+de tests, porque consumen memoria y CPU, y por tanto, en un uso real,
+s&oacute;lo se deben emplear los estr&iacute;ctamente
+imprescindibles. En particular, los listeners <span style="font-style: italic;">Graph Results</span> y <span style="font-style: italic;">View Results Tree</span>
+s&oacute;lo se deben usar durante la depuraci&oacute;n de
+sistemas, pero no en tests de producci&oacute;n, por su gran
+consumo de recursos).<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">50)</span>
+Configurar el <span style="font-weight: bold;">Thread
+Group</span> para que genere 10 usuarios, pero s&oacute;lo 20
+pasadas por usuario, en lugar de 50.<br>
+
+
+<br>
+
+
+<img style="width: 267px; height: 156px;" alt="" src="img/thead_group_graficas.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">51)</span> Ejecutar
+el test, y esperar a que termine.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">52)</span> Pulsar
+sobre <span style="font-weight: bold;">Aggregate Report</span>.
+Observar la tabla resultante, que nos informa de los tiempos (en
+milisegundos) y throughputs obtenidos durante la ejecuci&oacute;n
+de los distintos HTTP Requests del test.<br>
+
+
+<br>
+
+
+<img style="width: 758px; height: 152px;" alt="" src="img/aggregate_report.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">53)</span> Pulsar
+sobre <span style="font-weight: bold;">Aggregate Graph</span>.
+Observar que proporciona la misma informaci&oacute;n que el
+anterior, pero adem&aacute;s permite obtener una
+representaci&oacute;n gr&aacute;fica de los tiempos obtenidos.<br>
+
+
+<br>
+
+
+<img style="width: 762px; height: 742px;" alt="" src="img/aggregate_graph.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">54)</span> Pulsar
+ahora sobre <span style="font-weight: bold;">Graph Results</span>,
+que nos muestra gr&aacute;ficamente la evoluci&oacute;n,
+durante el test, de los tiempos de respuesta y del throughput.<br>
+
+
+<br>
+
+
+<img style="width: 766px; height: 755px;" alt="" src="img/graph_results.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">55)</span> Pulsar
+ahora sobre <span style="font-weight: bold;">Response
+Time Graph</span>. Comprobaremos que este Listener nos permite
+visualizar gr&aacute;ficamente la variaci&oacute;n durante el
+tests del tiempo de respuesta para cada uno de los HTTP Requests.<br>
+
+
+<br>
+
+
+<img style="width: 746px; height: 739px;" alt="" src="img/response_time.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">56)</span>
+Finalmente, pulsar sobre <span style="font-weight: bold;">Summary
+Report</span>. Como vemos, ofrece una tabla de resultados
+parecida a la del Aggregate Report, pero menos detallada (y, en
+consecuencia, con menor consumo de memoria).<br>
+
+
+<br>
+
+
+<img style="width: 760px; height: 149px;" alt="" src="img/summary_report.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">57)</span> Con
+&eacute;sto, terminamos el Ejercicio. Cerrar Jmeter, sin salvar
+este &uacute;ltimo test plan.<br>
+
+
+<br>
+
+
+Una vez que nos hemos familiarizado con el empleo b&aacute;sico de
+Jmeter, en el siguiente Ejercicio vamos a usarlo para ver
+c&oacute;mo crear una cuenta de usuario en el sistema Tomatocart, y
+c&oacute;mo automatizar ese procedimiento.<br>
+
+
+<br>
+
+
+<a href="Ejercicio5.html">Ir al Ejercicio 5</a>
+<br>
+
+
+</body>
+</html>

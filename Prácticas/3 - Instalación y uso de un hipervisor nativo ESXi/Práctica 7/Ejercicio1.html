@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+
+  
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+
+  
+  
+  
+  <title>Ejercicio 1 - Instalaci&oacute;n y configuraci&oacute;n de un servidor de virtualizaci&oacute;n ESXi</title>
+</head>
+
+
+<body>
+
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+
+  <tbody>
+
+
+
+
+    <tr>
+
+
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+
+      </td>
+
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 1 &nbsp;-
+Instalaci&oacute;n y configuraci&oacute;n de un servidor de
+virtualizaci&oacute;n ESXi<br>
+
+
+
+
+      </span></b></h1>
+
+
+
+
+      </td>
+
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+
+En este Ejercicio vamos a crear (en el VMware Workstation del Windows
+7) una m&aacute;quina virtual sobre la que vamos a instalar un
+hipervisor VMware ESXi 5.5. Tras hacer su configuraci&oacute;n
+b&aacute;sica, usando su consola, emplearemos una herramienta
+gr&aacute;fica para hacer remotamente, por red, su
+administraci&oacute;n y monitorizaci&oacute;n avanzadas.<br>
+
+
+
+
+<br>
+
+
+
+
+Este cliente gr&aacute;fico corre sobre Windows; por comodidad lo
+instalaremos y ejecutaremos sobre una m&aacute;quina virtual
+Windows XP, que dedicaremos a este fin, y que correr&aacute; sobre
+el VMware Workstation. El XP usar&aacute; una direcci&oacute;n
+IP din&aacute;mica (proporcionada por el servidor DHCP del
+Workstation), mientras el servidor ESXi usar&aacute; un
+direccionamiento est&aacute;tico, en la direcci&oacute;n
+10.0.0.60. La configuraci&oacute;n resultante ser&aacute;,
+pues, la de la figura.<br>
+
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+
+<div style="text-align: center;"><img style="border: 0px solid ; width: 567px; height: 231px;" alt="" src="img/esquema_ejercicio1.png"><br>
+
+
+</div>
+
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+
+Para realizar el ejercicio seguimos estos pasos:<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">1)</span> Crear el
+directorio <span style="font-style: italic;">D:\practicas\MV\ESX</span><br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">2)</span> Usando
+VMware Workstation crear en este directorio una m&aacute;quina
+virtual llamada ESX, usando el procedimiento que hemos empleado ya
+anteriormente con los servidores Linux, pero con los siguientes
+par&aacute;metros:<br>
+
+
+
+
+<ul>
+
+
+
+
+  <li>Compatibilidad con Workstation 8.<br>
+
+
+
+
+    <br>
+
+
+
+
+  </li>
+
+
+
+
+  <li>El sistema operativo guest ser&aacute; ESXi 5<br>
+
+
+
+
+    <br>
+
+
+
+
+  </li>
+
+
+
+
+  <li>La m&aacute;quina se llamar&aacute; ESX, y
+estar&aacute; alojada en el directorio <span style="font-style: italic;">D:\practicas\MV\ESX</span><br>
+
+
+
+
+    <br>
+
+
+
+
+  </li>
+
+
+
+
+  <li>Tendr&aacute; dos (2) procesadores, cada uno de un (1)
+core.<br>
+
+
+
+
+    <br>
+
+
+
+
+  </li>
+
+
+
+
+  <li>Dispondr&aacute; de 4096 MB de RAM.<br>
+
+
+
+
+    <br>
+
+
+
+
+  </li>
+
+
+
+
+  <li>Usa red host-only.<br>
+
+
+
+
+    <br>
+
+
+
+
+  </li>
+
+
+
+
+  <li>Usa una controladora LSI Logic para mover un disco thin
+SCSI de 40 GB, almacenado como un &uacute;nico fichero, de nombre <span style="font-style: italic;">ESX.vmdk</span></li>
+
+
+
+
+</ul>
+
+
+
+
+<br>
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+  <tbody>
+
+
+
+
+    <tr>
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 428px; height: 385px;" alt="" src="img/creacion_guestos.png"></td>
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 429px; height: 383px;" alt="" src="img/creacion_cores.png"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 430px; height: 384px;" alt="" src="img/creacion_memoria.png"></td>
+
+
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">3)</span> Una vez
+creada la m&aacute;quina virtual, si abrimos con Notepad++ el
+fichero <span style="font-style: italic;">ESX.vmx</span>
+(&iexcl;sin modificarlo!), veremos una l&iacute;nea <span style="font-style: italic;">ethernet0.virtualdev</span>, con el valor <span style="font-style: italic;">e1000</span>,
+que no existe en ninguna de las m&aacute;quinas virtuales que hemos
+creado antes. Esta l&iacute;nea ha sido introducida
+autom&aacute;ticamente al seleccionar ESXi 5 como sistema operativo, y
+sirve para ordenar que la tarjeta de red virtualizada debe ser un
+modelo Intel E1000, y no el interfaz de red optimizado que usa
+Workstation sobre Windows. La raz&oacute;n es que el ESXi (que, en
+realidad, no est&aacute; dise&ntilde;ado para correr sobre hardware virtual)
+no es compatible con ese interfaz de red optimizado, y necesita ver una
+tarjeta Gigabit Ethernet compatible con la Intel E1000 para operar sin
+problemas.<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 362px; height: 186px;" alt="" src="img/linea_e1000.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">4)</span> Arrancamos la m&aacute;quina virtual, le conectamos a su lectora virtual el CD de instalaci&oacute;n de ESXi 5.5 (fichero <span style="font-style: italic;">VMware-VMvisor-Installer-5.5.0-1331820.x86_64.iso</span>, en el directorio <span style="font-style: italic;">D:\practicas\MV\instaladores-ESX</span>), y la reiniciamos.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">5)</span> Dejar que el instalador arranque y se inicialice solo. Una vez aparezca la pantalla de bienvenida al instalador, pulsar <span style="font-weight: bold;">Enter</span> para continuar.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">6)</span> Pulsar <span style="font-weight: bold;">F11</span> para aceptar la licencia.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">7)</span> El instalador localizar&aacute; el disco virtual de 40 GB, y lo ofrece como destino de la instalaci&oacute;n. Pulsar <span style="font-weight: bold;">Enter</span> para aceptar y continuar.<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 590px; height: 303px;" alt="" src="img/instalacion_discodestino.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">8)</span> Seleccionar teclado en espa&ntilde;ol, y pulsar <span style="font-weight: bold;">Enter</span><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">9)</span> Como el password de root debe tener al menos 7 caracteres, usaremos para &eacute;l <span style="font-weight: bold;">esxdeii15</span> &nbsp;.Pulsar <span style="font-weight: bold;">Enter</span><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">10)</span> Pulsar <span style="font-weight: bold;">F11</span> para aceptar que se reparticione el disco y se instale sobre &eacute;l el hipervisor ESXi 5.5.0<br>
+
+
+
+<br>
+
+
+
+La instalaci&oacute;n comenzar&aacute;, y se mostrar&aacute; una barra
+de progreso. El proceso se quedar&aacute; estancado durante algunos
+minutos al llegar al 28%; &eacute;sto es normal.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">11)</span> Una vez aparezca el mensaje indicando que la instalaci&oacute;n est&aacute; completa, pulsar <span style="font-weight: bold;">Enter</span> para reiniciar la m&aacute;quina.<br>
+
+
+
+<br>
+
+
+
+Ahora, procederemos a configurar el interfaz de red, y algunos
+par&aacute;metros esenciales, del servidor de virtualizaci&oacute;n
+ESXi que acabamos de instalar.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">12)</span> Pulsar <span style="font-weight: bold;">F2</span>, y autentificarse como <span style="font-weight: bold;">root</span>, para entrar en la herramienta de configuraci&oacute;n.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">13)</span> Seleccionar la opci&oacute;n <span style="font-weight: bold;">Configure Management Network</span>, y pulsar <span style="font-weight: bold;">Enter</span> para entrar en modo de edici&oacute;n de opciones.<br>
+
+
+
+<br>
+
+
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 1018px; height: 305px;" alt="" src="img/selecciona_confignetwork.png"><br>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">14)</span> Seleccionar <span style="font-weight: bold;">IP Configuration</span>, y pulsar <span style="font-weight: bold;">Enter</span> <br>
+
+
+
+<br>
+
+
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 1014px; height: 182px;" alt="" src="img/selecciona_ipconfig.png"><br>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">15)</span> Dar a la red los valores mostrados en la figura, y pulsar Enter<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 622px; height: 272px;" alt="" src="img/ip_settings.png"><br>
+
+
+
+<br>
+
+
+
+(NOTA: no configuramos pasarela por defecto porque vamos a trabajar con
+m&aacute;quinas que s&oacute;lo tendr&aacute;n conectividad a la red
+interna host-only, y no queremos que por accidente se habilite
+ning&uacute;n enrutamiento hacia el exterior a trav&eacute;s del host
+Workstation).<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">16)</span> Cambiar la configuraci&oacute;n DNS como indica la figura. Pulsar <span style="font-weight: bold;">Enter</span><br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 623px; height: 271px;" alt="" src="img/config_DNS.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">17)</span> Configurar <span style="font-weight: bold;">Custom DNS Suffixes</span> con el valor <span style="font-weight: bold;">laboratorios.ac.uma.es</span> .Pulsar <span style="font-weight: bold;">Enter</span> <br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 561px; height: 206px;" alt="" src="img/custom_dns.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">18)</span> Pulsar <span style="font-weight: bold;">ESC</span> para volver al men&uacute; inicial. Confirmar los cambios y el reinicio de la red del ESX, pulsando <span style="font-weight: bold;">Y</span>.<br>
+
+
+
+<br>
+
+
+
+Vamos a habilitar ahora el acceso por SSH al servidor de
+virtualizaci&oacute;n, lo que nos permite realizar remotamente algunas
+tareas administrativas, que ser&aacute;n necesarias. Adem&aacute;s de
+acceso remoto por SSH es posible tambi&eacute;n administrar el
+hipervisor desde una consola local (que debe ser tambi&eacute;n
+habilitada para poderse usar); sin embargo, un servidor de
+virtualizaci&oacute;n estar&aacute; habitualmente en una sala
+fr&iacute;a de un CPD (Centro de Proceso de Datos), por lo que trabajar
+directamente sobre la consola del servidor ser&aacute; normalmente la
+excepci&oacute;n, y no la regla.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">19)</span> En el men&uacute; inicial selecionar <span style="font-weight: bold;">Troubleshooting options</span>. Elegir <span style="font-weight: bold;">Enable SSH</span>, y pulsar <span style="font-weight: bold;">Enter</span>.
+El servidor SSH del ESXi quedar&aacute; as&iacute; activado, y el
+men&uacute; en pantalla cambiar&aacute; para indicarlo, como muestra la
+figura.<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 765px; height: 91px;" alt="" src="img/ssh_enabled.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">20)</span> Pulsar <span style="font-weight: bold;">ESC</span> dos veces, para volver al men&uacute; inicial y salir de la aplicaci&oacute;n de configuraci&oacute;n.<br>
+
+
+
+<br>
+
+
+
+Si accedemos al servidor HTTP ofrecido por el hipervisor ESXi (usando el Firefox del Windows7 para ir a <span style="font-weight: bold;">http://10.0.0.60</span>,
+y aceptando la excepci&oacute;n de seguridad), vemos que para la
+administraci&oacute;n avanzada de m&uacute;ltiples servidores ESXi se
+requiere una herramienta web llamada vSphere, que gestiona un sistema
+llamado vCenter (y que, entre otras cosas, requiere una m&aacute;quina
+con 8 GB de RAM tan s&oacute;lo para poder correr el sistema de
+gesti&oacute;n vCenter). Sin embargo, es perfectamente posible
+administrar un &uacute;nico ESXi 5.5 usando un cliente Windows de
+vSphere (al que, en adelante, llamaremos <span style="font-style: italic;">vClient</span>), que es mucho m&aacute;s econ&oacute;mico en recursos.<br>
+
+
+
+<br>
+
+
+
+Vamos entonces a arrancar una m&aacute;quina virtual Windows XP, llamada <span style="font-style: italic;">XPadmin</span>,
+sobre la que instalaremos el software de vClient, y que utilizaremos
+espec&iacute;ficamente como puesto de administraci&oacute;n del ESXi.
+Para ganar tiempo, esta m&aacute;quina virtual tiene ya instalados
+algunos de los prerequisitos software del instalador de vClient (el
+.NET Framework 3.5 y las librer&iacute;as redistribuibles de Visual C++
+2008).<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">21)</span> En el directorio <span style="font-style: italic;">D:\practicas\MV\XPadmin</span>, arrancar la m&aacute;quina virtual <span style="font-weight: bold;">XPadmin</span>, haciendo doble click sobre el fichero <span style="font-style: italic;">winxppro.vmx</span><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">22)</span> Copiar a la m&aacute;quina virtual el fichero <span style="font-style: italic;">VMware-viclient-all-5.5.0-1281650.exe</span>, que est&aacute; en el directorio <span style="font-style: italic;">D:\practicas\MV\instaladores-ESX</span>
+.Ejecutar este instalador, aceptando las opciones por defecto que
+ofrece. Una vez terminado el proceso, borrar el fichero del instalador.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">23)</span> Arrancar la aplicaci&oacute;n <span style="font-weight: bold;">VMware vSphere Client</span>, y solicitar la conexi&oacute;n como <span style="font-weight: bold;">root</span> al servidor ESXi que hemos instalado, y que sigue encendido.<br>
+
+
+
+<br>
+
+
+
+<div style="text-align: left;"><img style="border: 1px solid ; width: 418px; height: 518px;" alt="" src="img/formulario_conexion.png"><br>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">24)</span> El intento de conexi&oacute;n terminar&aacute; con un error. Pulsar <span style="font-weight: bold;">Aceptar</span>, y luego <span style="font-weight: bold;">Close</span> <br>
+
+
+
+<br>
+
+
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 764px; height: 124px;" alt="" src="img/error_conexion.png"><br>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+La raz&oacute;n de este error es que, para comunicarse por red de forma
+segura con el servidor ESX, la aplicaci&oacute;n vClient est&aacute;
+intentando usar encriptaciones que no est&aacute;n soportadas por el
+Windows XP (por haber cesado Microsoft su soporte). Sin embargo, en
+este entorno seguro en el que hacemos las pruebas el XP resulta
+pr&aacute;ctico como m&aacute;quina de administraci&oacute;n (porque
+puede andar con tan s&oacute;lo 256 MB de RAM). Por ello vamos a
+cambiar en el servidor ESXi la configuraci&oacute;n de
+encriptaci&oacute;n, para que acepte tambi&eacute;n los cifrados
+antiguos usados por el XP.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">25)</span> Usando el cliente <span style="font-weight: bold;">putty</span> del escritorio del XP, conectar al servidor <span style="font-weight: bold;">10.0.0.60</span> como usuario <span style="font-weight: bold;">root</span> <br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">26)</span> Hacer <span style="font-weight: bold;">cd</span>&nbsp;<span style="font-weight: bold;">/etc/vmware/rhttpproxy</span> .Editar con vi (&uacute;nico editor disponible) el fichero <span style="font-style: italic;">config.xml</span>. En la secci&oacute;n <span style="font-weight: bold;">&lt;vmacore&gt;</span>, modificar la secci&oacute;n <span style="font-weight: bold;">&lt;ssl&gt;</span> para que quede como muestra la figura.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 662px; height: 411px;" alt="" src="img/cambia_vmacore.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">27)</span> Salvar el fichero, y reiniciar el servicio <span style="font-weight: bold;">rhttpproxy</span>, ejecutando <span style="font-weight: bold;">/etc/init.d/rhttpproxy restart</span> .Cerrar la conexi&oacute;n ssh al ESXi, ejecutando <span style="font-weight: bold;">exit</span> <br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">28)</span> Reintentar la
+conexi&oacute;n desde el cliente vClient. Ahora aparecer&aacute; un
+aviso acerca del certificado de la m&aacute;quina remota. Pulsar <span style="font-weight: bold;">Ignorar</span>, y seleccionar la opci&oacute;n de que lo ignore en posteriores conexiones.<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 506px; height: 263px;" alt="" src="img/aviso_certificado.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">29)</span> Se abrir&aacute; una ventana correspondiente al servidor <span style="font-weight: bold;">10.0.0.60</span>. Pulsar sobre <span style="font-weight: bold;">Inventory</span> <br>
+
+
+
+<br>
+
+
+
+Con esto ya hemos llegado a la ventana principal de
+administraci&oacute;n del servidor ESXi, desde la cual podremos
+gestionar sus m&aacute;quinas virtuales, as&iacute; como monitorizar y
+controlar el uso y consumo de los recursos del servidor. En el
+siguiente Ejercicio partiremos desde este punto para desplegar nuestros servidores Debian<br>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+
+<a href="Ejercicio2.html">Continuar al Ejercicio 2</a><br>
+
+
+
+
+<br>
+
+
+
+
+</body>
+</html>

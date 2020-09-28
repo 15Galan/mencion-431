@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+
+
+  
+  
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+
+
+  
+  
+  
+  
+  <title>Ejercicio 2 - Clonado de m&aacute;quinas virtuales usando clones enlazados</title>
+</head>
+
+
+<body>
+
+
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 2 &nbsp;-
+Tunelaci&oacute;n por SSH de la visualizaci&oacute;n remota<br>
+
+
+
+
+
+      </span></b></h1>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+La situaci&oacute;n planteada en el Ejercicio 1 ilustra
+c&oacute;mo podemos conectarnos a un escritorio remoto, ofrecido
+por una m&aacute;quina virtual, cuando la configuraci&oacute;n
+de red permite acceder a esa m&aacute;quina virtual directamente
+desde el ordenador donde ejecutamos la aplicaci&oacute;n cliente de
+visualizaci&oacute;n.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+Sin embargo, es frecuente que, debido a la presencia de cortafuegos
+intermedios, no sea posible realizar directamente esta
+conexi&oacute;n. Un ejemplo de &eacute;sto ser&iacute;a el
+siguiente escenario: la m&aacute;quina virtual que ofrece el
+escritorio remoto est&aacute; corriendo en un servidor de
+virtualizaci&oacute;n (p.e, un hipervisor ESXi) dentro de un CPD
+(Centro de Proceso de Datos), mientras el equipo donde trabaja el
+usuario est&aacute; ubicado fuera del CPD, y s&oacute;lo puede
+alcanzarlo conect&aacute;ndose a trav&eacute;s de Internet,
+usando una direcci&oacute;n din&aacute;mica (asignada por
+DHCP), que no podemos conocer a priori. Obviamente el cortafuegos del
+CPD va a proteger la m&aacute;quina que ofrece el escritorio remoto
+rechazando cualquier conexi&oacute;n no autorizada procedente de
+Internet, pero como no podemos conocer a priori la direcci&oacute;n
+IP del ordenador desde el que proceder&aacute;n las conexiones
+autorizadas, no podemos configurarlo para permitir directamente el
+acceso RDP o VNC.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+En el Ejercicio 1, al practicar el acceso VNC al escritorio Linux,
+hemos visto un problema adicional: mientras que la conexi&oacute;n
+RDP estaba nativamente encriptada, la conexi&oacute;n VNC no usa
+por defecto encriptaci&oacute;n, lo que obviamente har&iacute;a
+vulnerable ese tr&aacute;fico de red si tiene que pasar por
+Internet.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+Es sencillo, sin embargo, solucionar ambos problemas utilizando la
+tunelizaci&oacute;n (<span style="font-style: italic;">port
+forwarding</span>) del protocolo RDP, o del protocolo VNC, a
+trav&eacute;s de una conexi&oacute;n encriptada SSH.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 784px; height: 172px;" alt="" src="img/tunnel2-2.gif"><br>
+
+
+
+
+
+</div>
+
+
+
+
+
+<br>
+
+
+
+
+
+La figura muestra el concepto b&aacute;sico de la
+tunelizaci&oacute;n SSH; en ella, tenemos un ordenador cliente
+desde el que queremos acceder a un servicio de red (en ese caso, el
+escritorio remoto) ofrecido por el servidor <span style="font-style: italic;">Appserver</span>, pero no
+es posible establecer conexi&oacute;n directamente entre el
+ordenador cliente y <span style="font-style: italic;">Appserver</span>.
+La soluci&oacute;n es usar una conexi&oacute;n intemediaria
+entre una aplicaci&oacute;n cliente SSH (que corre en el ordenador <span style="font-style: italic;">Client</span>) y un
+servidor SSH (que corre en <span style="font-style: italic;">Sshdserver</span>).
+Esta conexi&oacute;n encriptada SSH podr&aacute; transportar
+entonces, como carga &uacute;til, el tr&aacute;fico que
+intercambiar&aacute;n el cliente de visualizaci&oacute;n y el
+servidor <span style="font-style: italic;">Appserver</span>;
+lo &uacute;nico que necesitaremos ser&aacute; especificar, a la
+hora de establecer la conexi&oacute;n ssh entre <span style="font-style: italic;">Client</span> y <span style="font-style: italic;">Sshdserver</span>, que el
+tr&aacute;fico correspondiente al puerto TCP usado por la
+aplicaci&oacute;n de visualizaci&oacute;n deber&aacute; ser
+redireccionado por <span style="font-style: italic;">Sshdserver</span>
+al servidor <span style="font-style: italic;">Appserver</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 730px; height: 370px;" alt="" src="img/ssh.gif"><br>
+
+
+
+
+
+</div>
+
+
+
+
+
+<br>
+
+
+
+
+
+Una ventaja del uso de un t&uacute;nel SSH es que, como muestra la
+figura, es posible tener simultaneamente activos varios
+t&uacute;neles distintos, con distintas m&aacute;quinas
+destino, y redireccionando varios protocolos distintos.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 580px; height: 192px;" alt="" src="img/schema1.gif"><br>
+
+
+
+
+
+</div>
+
+
+
+
+
+<br>
+
+
+
+
+
+En el caso que nos interesa (el acceso a escritorios remotos en
+m&aacute;quinas virtuales), los protocolos que necesitaremos
+tunelizar son RDP (Remote Desktop) y VNC. Como muestra la figura, los
+puertos empleados por defecto en estos protocolos son el 3389 (RDP) y
+el 5900 (VNC).<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 550px; height: 203px;" alt="" src="img/schema2.gif"><br>
+
+
+
+
+
+</div>
+
+
+
+
+
+<br>
+
+
+
+
+
+Como muestra la figura, en este ejercicio, para tunelizarlos, usaremos
+en el lado del cliente de visualizaci&oacute;n una
+aplicaci&oacute;n cliente SSH llamada <span style="font-style: italic;">Putty</span>, mientras que
+en el lado del servidor utilizaremos el servidor SSH de una
+m&aacute;quina virtual Debian 7.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+Para realizar el ejercicio, seguimos estos pasos:<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">1)</span> Primero,
+vamos a arrancar la m&aacute;quina virtual que ofrecer&aacute;
+el escritorio remoto usando RDP. Para ello, vamos al directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\XP_RDP</span>,
+hacemos doble click sobre <span style="font-style: italic;">XP_RDP.vmx</span>
+para abrirla en Workstation, la arrancamos con <span style="font-weight: bold;">Power On</span>, y hacemos
+login en ella como usuario <span style="font-style: italic;">pablo</span>
+con el password habitual.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">2)</span>
+An&aacute;logamente, vamos a arrancar la m&aacute;quina virtual
+Linux que ofrecer&aacute; su escritorio remoto usando VNC. Para
+ello ir al directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian7-1</span>,
+abrir <span style="font-style: italic;">Debian7-1.vmx</span>,
+arrancar la m&aacute;quina y hacer login como usuario <span style="font-style: italic;">Curso FP</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+Ahora, arrancaremos (y comprobaremos la configuraci&oacute;n de) la
+m&aacute;quina Debian 7 que va a proporcionar el servidor SSH a
+trav&eacute;s del cual haremos la tunelaci&oacute;n.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">3)</span> Ir al
+directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\DebianSSH</span>,
+abrir <span style="font-style: italic;">DebianSSH.vmx</span>
+y arrancar la m&aacute;quina virtual.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">4)</span> Hacer
+login en <span style="font-style: italic;">DebianSSH</span>
+como usuario <span style="font-style: italic;">root</span>.
+Ejecutar <span style="font-weight: bold;">ifconfig</span>
+para comprobar la direcci&oacute;n IP de este servidor (que
+ser&aacute; la 10.0.0.30).<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<img style="width: 645px; height: 171px;" alt="" src="img/IP_debianssh.png"><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">5)</span> Comprobar
+que el servidor <span style="font-style: italic;">DebianSSH</span>
+ve por red a las dos m&aacute;quinas virtuales que ofrecen
+escritorios remotos. Para ello, ejecutar <span style="font-weight: bold;">ping 10.0.0.25</span> (la
+direcci&oacute;n IP est&aacute;tica de <span style="font-style: italic;">XP_RDP</span>),
+&nbsp;y <span style="font-weight: bold;">ping
+10.0.0.26</span> (la IP est&aacute;tica de <span style="font-style: italic;">Debian7-1</span>).<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<img style="width: 582px; height: 289px;" alt="" src="img/comprobacion_conectividad.png"><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">6)</span>
+Comprobamos que el servidor SSH est&eacute; arrancado. Para ello,
+ejecutamos <span style="font-weight: bold;">netstat -an |
+more</span>.
+Como vemos, el servicio ssh (puerto 22) est&aacute; escuchando en
+0.0.0.0 (es decir, acepta conexiones desde cualquier direcci&oacute;n
+IP).<br>
+
+
+
+
+<br>
+
+
+
+
+<img style="width: 723px; height: 259px;" alt="" src="img/netstat.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">7)</span> Ahora abrimos la aplicaci&oacute;n cliente <span style="font-style: italic;">putty.exe</span> (cuyo acceso directo est&aacute; en el escritorio), y establecemos una conexi&oacute;n SSH con el servidor <span style="font-style: italic;">debianssh</span>, tunelizando los puertos 3389 y 5900, de la forma mostrada en <a href="img/tunel_ssh.htm">esta animaci&oacute;n</a>. En el terminal que mostrar&aacute; <span style="font-style: italic;">putty</span>, hacer login como usuario <span style="font-style: italic;">root</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">8)</span> Una vez establecida la conexi&oacute;n SSH, usar&nbsp;<span style="font-weight: bold;">Inicio -&gt; Ejecutar -&gt; mstsc</span> para ejecutar la aplicaci&oacute;n cliente de Microsoft Terminal Services, y dar como direcci&oacute;n destino <span style="font-weight: bold;">localhost:33900</span><br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 407px; height: 243px;" alt="" src="img/mstsc_ssh.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">9)</span> Como nos estamos conectando
+a un Windows XP (que usa una encriptaci&oacute;n m&aacute;s antigua que
+la del Windows 7), aparecer&aacute; un aviso. Confirmar que queremos
+conectarnos.<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 394px; height: 235px;" alt="" src="img/aviso_xp.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">10)</span> Se abrir&aacute; entonces el escritorio remoto. Autentificarse como usuario <span style="font-style: italic;">pablo</span>; a partir de este punto, el uso del escritorio remoto es igual al que hemos hecho en el ejercicio 1.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">11)</span> Cerrar el escritorio remoto Windows.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">12)</span> Ahora abriremos la conexi&oacute;n v&iacute;a VNC al escritorio remoto del Debian 7. Abrir el cliente <span style="font-style: italic;">VNC-Viewer</span> (cuyo acceso directo est&aacute; en el escritorio), y dar como direcci&oacute;n de destino <span style="font-weight: bold;">localhost</span>.<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 405px; height: 194px;" alt="" src="img/vnc.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">13)</span> Al establecer la
+conexi&oacute;n con el servidor Debian, a trav&eacute;s del
+t&uacute;nel SSH, aparecer&aacute; un aviso indicando que la
+conexi&oacute;n no est&aacute; cifrada. Confirmar que queremos
+establecer la conexi&oacute;n.<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 418px; height: 254px;" alt="" src="img/vnc_nocifrada.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">14)</span> En la m&aacute;quina Debian
+el servidor de VNC, con la configuraci&oacute;n actual de
+compartici&oacute;n del escritorio, requiere que demos permiso
+expl&iacute;cito para que se establezca la conexi&oacute;n. Aceptar su
+establecimiento.<br>
+
+
+
+<br>
+
+
+
+<div style="text-align: center;"><img style="width: 938px; height: 295px;" alt="" src="img/vnc_peticion_permiso.png"><br>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">15)</span> En el cliente VNC
+aparecer&aacute; entonces la representaci&oacute;n remota del
+escritorio del Debian 7. A partir de aqu&iacute; la operaci&oacute;n es
+id&eacute;ntica a la que ya hemos visto en el ejercicio 1.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">16)</span> Para finalizar el ejercicio, cerramos el escritorio remoto VNC, y apagamos las m&aacute;quinas <span style="font-style: italic;">XP_RDP</span>, <span style="font-style: italic;">Debian7-1</span>, tras lo que cerramos el cliente putty haciendo <span style="font-weight: bold;">exit</span> en la terminal SSH y despu&eacute;s cerramos <span style="font-style: italic;">DebianSSH</span> con <span style="font-weight: bold;">telinit 0</span>.<br>
+
+
+
+<br>
+
+
+
+Con esto finaliza el ejercicio.<span style="font-style: italic;"><span style="font-style: italic;"></span></span><br>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+  
+  
+  <title>Ejercicio 2 - Clonado de m&aacute;quinas virtuales usando clones enlazados</title>
+</head>
+
+
+<body>
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+      </td>
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 2 &nbsp;- Clonado de
+m&aacute;quinas virtuales usando clones enlazados<br>
+
+
+
+      </span></b></h1>
+
+
+
+      </td>
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+La situaci&oacute;n planteada en el Ejercicio 1 ilustra un caso
+t&iacute;pico cuando se trabaja con m&aacute;quinas virtuales
+que se van a usar como servidores sin interfaz gr&aacute;fico: como
+la m&aacute;quina origen en que nos basamos es ligera (unos 720
+MB), el usar clones completos para cada una de las dos copias no
+resulta excesivamente costoso en espacio de disco, por lo que hemos
+procedido a realizar dos copias f&iacute;sicas completas de dicha
+m&aacute;quina origen.<br>
+
+
+
+<br>
+Sin embargo, ahora lo que se nos pide es que montemos, usando
+m&aacute;quinas virtuales, dos puestos de escritorio Debian que
+empleen Gnome como gestor de ventanas, para lo cual usaremos como base
+la m&aacute;quina Debian 7 que hemos configurado y afinado en el
+Ejercicio 2 de la Pr&aacute;ctica 5. Ahora bien, esa
+m&aacute;quina virtual pesa 4.08 GB, por lo que usar clones
+completos empieza a no ser ya una opci&oacute;n pr&aacute;ctica,
+especialmente si sabemos que no vamos a llevarnos a otro ordenador
+estas m&aacute;quinas virtuales. <br>
+
+
+
+<br>
+
+
+
+La soluci&oacute;n a nuestro problema ser&aacute; emplear
+clones enlazados, que usar&aacute;n como base una
+instant&aacute;nea de la m&aacute;quina Debian 7 de partida,
+sobre la que introduciremos las modificaciones y personalizaciones
+correspondientes a cada uno de los clones.<br>
+
+
+
+<br>
+
+
+
+Comenzaremos el ejercicio creando una instant&aacute;nea de la
+m&aacute;quina Debian 7. Para ello, seguiremos estos pasos:<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">1)</span>
+&nbsp;En la carpeta&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian7</span>,
+hacer doble click sobre el fichero <span style="font-style: italic;">Debian7.vmx</span>
+para abrirlo con VMware Workstation.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">2)</span> Usando el
+men&uacute; <span style="font-weight: bold;">VM
+-&gt; Snapshot -&gt; Take Snapshot</span>, crear una
+instant&aacute;nea de la m&aacute;quina base y darle el nombre <span style="font-style: italic;">Debian 7 base</span>.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 355px; height: 218px;" alt="" src="img/instantanea.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">3)</span> Ahora,
+usando el men&uacute; <span style="font-weight: bold;">VM
+-&gt; Manage -&gt; Clone</span>, lanzar el Wizard de
+clonado de m&aacute;quinas. Seguir el procedimiento descrito en <a href="img/clon1.htm">esta animaci&oacute;n</a> (pero usando <span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian7-1 </span>como directorio destino).<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">4)</span> Usando el
+men&uacute; <span style="font-weight: bold;">File
+-&gt; Close Tab</span>, cerrar la m&aacute;quina original
+<span style="font-style: italic;">Debian7</span>
+(para evitar arrancarla por accidente).<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">5)</span> Ir al
+directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian7-1</span>.
+Podemos ver que el proceso de clonado ha creado, tambi&eacute;n en
+este caso, el fichero <span style="font-style: italic;">.vmx</span>
+de descripci&oacute;n de la m&aacute;quina virtual y el fichero
+<span style="font-style: italic;">vmdk</span> con su
+disco duro; sin embargo, en este caso vemos c&oacute;mo el
+tama&ntilde;o de <span style="font-style: italic;">Debian7-cl1.vmdk</span>
+es de s&oacute;lo 1 MByte, y no de 4 GB, lo que indica claramente
+que la m&aacute;quina es un clon enlazado.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">6)</span> Abrir con
+Notepad++ el fichero <span style="font-style: italic;">Debian7-1.vmx</span>
+que define la m&aacute;quina virtual. En la parte final del fichero
+podremos observar una l&iacute;nea, denominada <span style="font-style: italic;">fileSearchPath</span>, que
+hasta ahora no hab&iacute;amos visto en ninguna m&aacute;quina
+virtual. Esta l&iacute;nea aparece espec&iacute;ficamente por
+ser esta m&aacute;quina un clon enlazado, y define la ruta de
+b&uacute;squeda que usar&aacute; el hipervisor para buscar los
+ficheros correspondientes a la m&aacute;quina virtual en la que se
+basa este clon; como vemos, esta ruta incluye (como era de esperar) el
+directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian7</span>.<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 292px; height: 71px;" alt="" src="img/path_vmx.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">7)</span> Ahora
+abrimos con Notepad++ el fichero <span style="font-style: italic;">Debian7-1.vmsd</span>.
+Como vemos, el contenido de este fichero define claramente a esta
+m&aacute;quina virtual como un clon de Debian7.<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 332px; height: 93px;" alt="" src="img/path_vmsd.png"><br>
+
+
+
+<br>
+
+
+
+<span style="text-decoration: underline;">MUY IMPORTANTE</span>:
+Tal como se observa en la figura, la referencia a la m&aacute;quina
+base del clon lleva cableada la ruta absoluta al fichero vmx. Esto
+significa que si se quisiera guardar las m&aacute;quinas virtuales
+(original y clon) en un disco externo para salvarlas y usarlas en un
+futuro, ser&aacute; necesario, a la hora de recuperarlas,
+asegurarse de que se vuelvan a usar exactamente la misma unidad
+l&oacute;gica y estructura de subdirectorios; de lo contrario, la
+ejecuci&oacute;n del clon enlazado fallar&aacute; porque el
+hipervisor no ser&aacute; capaz de encontrar la m&aacute;quina
+base (NOTA: Si, por alguna raz&oacute;n, no es posible tener la
+m&aacute;quina original en exactamente la misma
+ubicaci&oacute;n que cuando se cre&oacute; el clon enlazado, el
+VMware Workstation permite navegar el sistema de ficheros para&nbsp;establecer la nueva
+ubicaci&oacute;n de dicha m&aacute;quina original).<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">8)</span> Cerramos
+Notepad++ sin cambiar ninguno de los dos ficheros.<br>
+
+
+
+<br>
+
+
+
+Ahora vamos a ejecutar el clon enlazado y modificarlo, activando el
+interfaz gr&aacute;fico de la m&aacute;quina Debian.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">9)</span>
+Ejecutamos <span style="font-style: italic;">Debian7-1</span>.
+Una vez finalizado el arranque, hacer login como usuario <span style="font-style: italic;">root</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">10)</span> Para que
+en adelante la m&aacute;quina arranque con el interfaz
+gr&aacute;fico activo, ejecutamos <span style="font-weight: bold;">update-rc.d gdm3 enable</span>.
+Comprobamos el efecto de este cambio reiniciando la m&aacute;quina
+con <span style="font-weight: bold;">reboot</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">11)</span> Usando
+ahora el interfaz gr&aacute;fico, hacer login como usuario <span style="font-style: italic;">Curso FP</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">12)</span> Vamos
+ahora a personalizar el escritorio para este m&aacute;quina. Usando
+el men&uacute; <span style="font-weight: bold;">Aplicaciones
+-&gt; Herramientas del sistema -&gt; Preferencias -&gt;
+Configuraci&oacute;n avanzada</span>, abrir el
+men&uacute; de <span style="font-weight: bold;">Advanced
+Settings</span> para GNOME.<br>
+
+
+
+<br>
+
+
+
+<div style="text-align: center;"><img style="width: 639px; height: 512px;" alt="" src="img/advanced_settings.png"><br>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">13)</span> Pulsar
+sobre la opci&oacute;n <span style="font-weight: bold;">Escritorio</span>
+y activar el interruptor <span style="font-weight: bold;">Have
+file manager handle the desktop</span>. Con esta
+opci&oacute;n activa, el gestor de ventanas Gnome
+mostrar&aacute; un escritorio m&aacute;s parecido al
+tradicional de Windows, con &iacute;conos representando al equipo,
+al directorio home del usuario y a la papelera.<br>
+
+
+
+<br>
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 634px; height: 90px;" alt="" src="img/interruptor_desktop.png"></td>
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 483px; height: 412px;" alt="" src="img/escritorio_gnome.png"></td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+<br>
+
+
+
+Ahora vamos a crear un segundo clon enlazado, partiendo
+tambi&eacute;n de la m&aacute;quina Debian7, pero con una
+personalizaci&oacute;n distinta del escritorio.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">14)</span> Abrir de
+nuevo la m&aacute;quina <span style="font-weight: bold;">Debian7</span>,
+pulsando dos veces sobre el fichero&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian7.vmx</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">15)</span> Usando
+el men&uacute; <span style="font-weight: bold;">VM
+-&gt; Manage -&gt; Clone</span> y el procedimiento ya
+visto en el punto 3, crear un nuevo clon enlazado; llamarlo <span style="font-style: italic;">Debian7-2</span>, y
+generarlo en el directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian7-2</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">16)</span> Cerrar
+la m&aacute;quina <span style="font-style: italic;">Debian7</span>,
+usando <span style="font-weight: bold;">File -&gt;
+Close Tab</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">17)</span> Ejecutar
+<span style="font-style: italic;">Debian7-2</span>.
+Una vez terminado el arranque, hacer login como usuario <span style="font-style: italic;">root</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">18)</span> Ejecutar
+<span style="font-weight: bold;">update-rc.d gdm3 enable</span>
+para activar el interfaz gr&aacute;fico.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">19)</span> En este
+caso, en lugar de reiniciar la m&aacute;quina arrancaremos
+manualmente el interfaz gr&aacute;fico. Ejecutar <span style="font-weight: bold;">/etc/init.d/gdm3 start</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">20)</span> Hacer
+login como usuario <span style="font-style: italic;">Curso
+FP</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">21)</span> Usando
+el men&uacute; <span style="font-weight: bold;">Curso
+FP -&gt; Configuraci&oacute;n del sistema</span>, abrir
+la aplicaci&oacute;n de configuraci&oacute;n del Fondo del
+escritorio.<br>
+
+
+
+<br>
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 233px; height: 271px;" alt="" src="img/configuracion_sistema.png"></td>
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 607px; height: 241px;" alt="" src="img/fondo.png"></td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">22)</span> Elegir
+cualquiera de los fondos de escritorio que se ofrecen como
+opci&oacute;n.<br>
+
+
+
+<br>
+
+
+
+Al llegar a este punto tenemos ya corriendo dos m&aacute;quinas
+desktop Linux independientes, cada una con su propia
+configuraci&oacute;n diferenciada, y usando el men&uacute; <span style="font-weight: bold;">Tabs</span> del VMware
+Workstation podemos cambiar de una a otra. Esta
+configuraci&oacute;n nos podr&iacute;a permitir tener corriendo
+en paralelo sobre el mismo puesto de trabajo dos entornos de desarrollo
+distintos (por ejemplo, uno basado en Eclipse y otro basado en
+Netbeans) sin riesgo de interacciones indeseadas entre sus
+instalaciones.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">23)</span> Apagamos
+ahora la m&aacute;quina <span style="font-style: italic;">Debian7-1</span>
+usando <span style="font-weight: bold;">Curso FP
+-&gt; Apagar</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">24)</span> Hacemos
+lo mismo en <span style="font-style: italic;">Debian7-2</span>.
+En este caso, sin embargo, el sistema operativo nos pide la
+contrase&ntilde;a de administrador. La raz&oacute;n es que en
+esta m&aacute;quina hab&iacute;amos arrancado manualmente el
+interfaz gr&aacute;fico, por lo que el usuario <span style="font-style: italic;">root</span> tiene
+todav&iacute;a una terminal abierta, y el sistema operativo nos
+requiere privilegios de administrador para cerrarla. Introducimos
+entonces la clave de superusuario en el prompt, y permitimos que se
+apague la m&aacute;quina.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">25)</span> Cerramos
+VMware Workstation (para evitar tener abiertos ficheros de lock).<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">26)</span> Si vamos
+ahora al directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian7-1</span>,
+comprobaremos que el espacio total ocupado por este Debian es de tan
+s&oacute;lo 18 MBytes.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">27)</span>
+Repetimos la acci&oacute;n con&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian7-2</span>,
+y vemos que esta m&aacute;quina (que est&aacute; personalizada
+de forma distinta a <span style="font-style: italic;">Debian7-1</span>)
+ocupa una cantidad ligeramente distinta de espacio (17,3 MB).<br>
+
+
+
+<br>
+
+
+
+Por lo tanto, al llegar a este punto tenemos ya dos m&aacute;quinas
+de escitorio Debian, con interfaz gr&aacute;fico Gnome,
+perfectamente funcionales y diferenciadas, con un gasto total de
+s&oacute;lo 4,14 GB (el espacio requerido por <span style="font-style: italic;">Debian7</span> base m&aacute;s <span style="font-style: italic;">Debian7-1</span> m&aacute;s <span style="font-style: italic;">Debian7-2</span>), en lugar de los (4,11 GB x 3) que hubi&eacute;ramos necesitado con clones completos.<br>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;"></span><br>
+
+
+
+<br>
+
+
+
+</body>
+</html>

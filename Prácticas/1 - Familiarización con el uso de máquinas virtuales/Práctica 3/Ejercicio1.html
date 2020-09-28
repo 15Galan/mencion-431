@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+
+  
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+
+  
+  
+  
+  <title>Ejercicio 1 - Clonado de m&aacute;quinas virtuales usando copias f&iacute;sicas</title>
+</head>
+
+
+<body>
+
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+
+  <tbody>
+
+
+
+
+    <tr>
+
+
+
+
+      
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+
+      </td>
+
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 1 &nbsp;- Clonado de
+m&aacute;quinas virtuales usando copias f&iacute;sicas<br>
+
+
+
+
+      </span></b></h1>
+
+
+
+
+      </td>
+
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+
+El escenario que presenta este ejercicio es el siguiente: tenemos una
+m&aacute;quina virtual con un servidor Debian 5 b&aacute;sico
+que toma su IP por DHCP (la m&aacute;quina <span style="font-style: italic;">Debian5minimo</span>). Partiendo de
+esta m&aacute;quina virtual queremos crear una
+instalaci&oacute;n en la que tengamos corriendo simultaneamente dos
+servidores Debian 5 distintos, configurados con direcciones IP
+est&aacute;ticas; para ello recurriremos a crear dos clones
+f&iacute;sicos completos de la m&aacute;quina <span style="font-style: italic;">Debian5minimo</span>,
+usando dos m&eacute;todos distintos:<br>
+
+
+
+
+<br>
+
+
+
+
+<ol>
+
+
+
+
+  <li>La aplicaci&oacute;n guiada de clonado del VMware
+Workstation.<br>
+
+
+
+
+    <br>
+
+
+
+
+  </li>
+
+
+
+
+  <li>Una copia manual de la m&aacute;quina <span style="font-style: italic;">Debian5minimo</span>.</li>
+
+
+
+
+</ol>
+
+
+
+
+<br>
+
+
+
+
+Para realizar el ejercicio, seguimos estos&nbsp;pasos:<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">1)</span>
+&nbsp;En la carpeta&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian5minimo</span>
+hacer doble click sobre el fichero <span style="font-style: italic;">Debian5minimo.vmx</span>
+para abrirlo con VMware Workstation.<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">2)</span> Usando el
+men&uacute; <span style="font-weight: bold;">VM
+-&gt; Manage -&gt; Clone</span>, lanzar el Wizard de
+clonado de m&aacute;quinas. Seguir el procedimiento descrito en <a href="img/debian5-1.htm">esta animaci&oacute;n</a> (pero usando <span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian5-1 </span>como&nbsp;directorio destino<span style="font-style: italic;"></span>).<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">3)</span> Observar
+que ahora tenemos dos m&aacute;quinas virtuales abiertas en VMware
+Workstation: <span style="font-style: italic;">Debian5-1</span>
+y <span style="font-style: italic;">Debian5minimo</span>.
+Como esta &uacute;ltima es nuestra m&aacute;quina
+"patr&oacute;n" (es decir, la que usamos como base, y que por ello
+no queremos cambiar), la cerramos (usando el men&uacute; <span style="font-weight: bold;">File -&gt; Close Tab</span>)
+para evitar que por accidente la pongamos en marcha y la confundamos
+con una de las copias (que s&iacute; queremos modificar).<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">4)</span> Ir al
+directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian5-1</span>.
+Vemos que la herramienta de clonado no s&oacute;lo ha copiado los
+ficheros f&iacute;sicos, sino que les ha cambiado el nombre para
+que no coincidan con <span style="font-style: italic;">Debian5minimo</span>.<br>
+
+
+
+
+<br>
+
+
+
+
+<img style="width: 588px; height: 121px;" alt="" src="img/dir_debian5-1.png"><br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">5)</span> En el
+VMware Workstation pulsar en <span style="font-weight: bold;">Edit
+virtual machine Settings</span> y abrir la pesta&ntilde;a <span style="font-weight: bold;">Options</span>. Podemos ver
+que la herramienta de clonado tambi&eacute;n ha cambiado el nombre
+de la m&aacute;quina virtual a <span style="font-style: italic;">Debian5-1</span>.
+Pulsar <span style="font-weight: bold;">Cancel</span>
+para cerrar sin cambiar nada.<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">6)</span> En el
+directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian5-1,</span>
+abrir con Notepad++ el fichero <span style="font-style: italic;">Debian5-1.vmx</span>.
+Igualmente, en el directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian5minimo</span>,
+abrir con Notepad++ el fichero <span style="font-style: italic;">Debian5minimo.vmx</span>.
+Al comparar los dos ficheros observaremos que:<br>
+
+
+
+
+<br>
+
+
+
+
+<ul>
+
+
+
+
+  <li>en <span style="font-style: italic;">Debian5-1.vmx</span>
+los identificadores <span style="font-style: italic;">uuid.location</span>
+y <span style="font-style: italic;">uuid.bios</span>
+est&aacute;n vac&iacute;os.<br>
+
+
+
+
+    <br>
+
+
+
+
+  </li>
+
+
+
+
+  <li>sin embargo, ambas m&aacute;quinas siguen teniendo (por
+el momento) el mismo identificador de MAC.</li>
+
+
+
+
+</ul>
+
+
+
+
+<br>
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+  <tbody>
+
+
+
+
+    <tr>
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 417px; height: 107px;" alt="" src="img/identificadores_debian5-1.png"></td>
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 543px; height: 111px;" alt="" src="img/identificadores_debian.png"></td>
+
+
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">7)</span> Cerrar
+Notepad++, teniendo buen cuidado de no modificar ninguno de los dos
+ficheros.<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">8)</span> Arrancar <span style="font-style: italic;">Debian5-1</span>. Una vez
+que termine el arranque, hacer login como usuario <span style="font-style: italic;">root</span> (password <span style="font-style: italic;">deii15</span>).<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">9)</span> Ejecutar <span style="font-weight: bold;">ifconfig</span>. Veremos
+que, en el interfaz eth0, la direcci&oacute;n de MAC ya no se
+corresponde con la que vimos en el fichero anteriormente.<br>
+
+
+
+
+<br>
+
+
+
+
+<img style="width: 644px; height: 156px;" alt="" src="img/mac-eth0.png"><br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">10)</span> Si, en
+el directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian5-1</span>
+abrimos de nuevo con Notepad++ el fichero <span style="font-style: italic;">Debian5-1.vmx</span>,
+veremos que no s&oacute;lo la direcci&oacute;n de MAC ha
+cambiado (y coincide con la mostrada por ifconfig), sino que
+tambi&eacute;n se han generado autom&aacute;ticamente los dos
+identificadores <span style="font-style: italic;">uuid</span>. Cerrar Notepad++ sin cambiar nada.<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 539px; height: 109px;" alt="" src="img/identificadores_debian5-1-nuevos.png"><br>
+
+
+
+<br>
+
+
+
+Vamos a reconfigurar el servidor Debian para que tome la IP est&aacute;tica 10.0.0.20, y como hostname <span style="font-style: italic;">Debian5-1</span>. Para ello hacemos lo siguiente:<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">11)</span> Ejecutamos <span style="font-weight: bold;">cd /etc/network</span> para ir al directorio de configuraci&oacute;n de la red.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">12)</span> Usando <span style="font-weight: bold;">vi</span>, editamos el fichero <span style="font-style: italic;">interfaces</span> para que quede de la siguiente forma:<br>
+
+
+
+<br>
+
+
+
+<img style="width: 308px; height: 166px;" alt="" src="img/interfaces_debian5-1.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">13)</span> Ejecutar <span style="font-weight: bold;">cd /etc</span>, y editar con <span style="font-weight: bold;">vi</span> el fichero <span style="font-style: italic;">hostname</span>. Sustituir el nombre actual (<span style="font-style: italic;">localhost</span>) por el que deseamos (<span style="font-style: italic;">debian5-1</span>). Salvar y cerrar el fichero.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">14)</span> Editar ahora el fichero <span style="font-style: italic;">hosts</span>, y a&ntilde;adir una l&iacute;nea con la resoluci&oacute;n a direcci&oacute;n IP del nombre <span style="font-style: italic;">debian5-1</span>, como muestra la figura.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 554px; height: 213px;" alt="" src="img/hosts-debian5-1.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">15)</span> Finalmente, ejecutar <span style="font-weight: bold;">update-rc.d -f exim4 remove</span>
+(deshabilitamos el servidor de correo para que un timeout que se
+produce en el arranque, por la ausencia de servidor de nombres, no nos
+demore innecesariamente el arranque de la m&aacute;quina).<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">16)</span> Reiniciar la m&aacute;quina virtual usando <span style="font-weight: bold;">reboot</span>. Una vez completo el reinicio, hacer login como <span style="font-style: italic;">root</span> y comprobar, usando <span style="font-weight: bold;">ifconfig</span>, que la m&aacute;quina ahora se llama <span style="font-style: italic;">debian5-1</span>, y que ha tomado la direcci&oacute;n IP 10.0.0.20.<br>
+
+
+
+<br>
+
+
+
+Ahora crearemos el segundo servidor Debian. Para ello haremos manualmente una copia de la m&aacute;quina <span style="font-style: italic;">Debian5minimo</span>, y la modificaremos tambi&eacute;n manualmente.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">17)</span> Crear el directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian5-2</span>, y copiar (NO mover) al mismo los ficheros&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian5minimo\Debian5minimo.vmx</span> y&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian5minimo\Debian5minimo.vmdk.</span><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">18)</span> En&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian5-2</span>, renombrar <span style="font-style: italic;">Debian5minimo.vmx</span> a <span style="font-style: italic;">Debian5-2.vmx</span>, y <span style="font-style: italic;">Debian5minimo.vmsd</span> a <span style="font-style: italic;">Debian5-2.vmsd</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">19)</span> Editar con Notepad++ el fichero <span style="font-style: italic;">Debian5-2.vmx</span> y sustituir <span style="font-style: italic;">Debian5minimo</span> por <span style="font-style: italic;">Debian5-2</span> en las siguientes l&iacute;neas:<br>
+
+
+
+<br>
+
+
+
+<ul>
+
+
+
+  <li><span style="font-weight: bold;">displayName<br>
+
+
+
+    </span></li>
+
+
+
+  <li><span style="font-weight: bold;">scsi0:0.filename<br>
+
+
+
+    <br>
+
+
+
+    </span></li>
+
+
+
+  <li><span style="font-weight: bold;">extendedConfigFile</span></li>
+
+
+
+</ul>
+
+
+
+<span style="font-weight: bold;">20)</span> Salvar y cerrar el fichero,
+y pulsar dos veces sobre &eacute;l para abrirlo con VMware Workstation.
+Arrancar la m&aacute;quina virtual; como la hemos copiado manualmente,
+Workstation nos pregunta si debe cambiar los identificadores <span style="font-style: italic;">uuid</span>
+y direcci&oacute;n de MAC. Dado que queremos evitar cualquier posible
+colisi&oacute;n con la m&aacute;quina original, que a&uacute;n existe,
+pulsamos <span style="font-weight: bold;">I copied it</span> para forzar el cambio.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">21)</span> Repetir los mismos pasos de configuraci&oacute;n que para la m&aacute;quina <span style="font-style: italic;">Debian5-1</span>, pero ahora la direcci&oacute;n IP est&aacute;tica es la 10.0.0.21, y el hostname ser&aacute; <span style="font-style: italic;">debian5-2</span><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">22)</span> Reiniciar la m&aacute;quina con <span style="font-weight: bold;">reboot</span>, hacer login como <span style="font-style: italic;">root</span>, y comprobar con <span style="font-weight: bold;">ifconfig</span> que la IP es 10.0.0.21, y que hostname es <span style="font-style: italic;">debian5-2</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">23)</span> Finalmente, comprobar que ambos servidores se ven, haciendo <span style="font-weight: bold;">ping 10.0.0.21</span> en <span style="font-style: italic;">debian5-1</span>, y <span style="font-weight: bold;">ping 10.0.0.20</span> en <span style="font-style: italic;">debian5-2</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">24)</span> Una vez comprobado que los servidores est&aacute;n correctamente configurados, apagar ambos servidores, usando <span style="font-weight: bold;">telinit 0</span> en cada uno de ellos<br>
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+
+<a href="Ejercicio2.html">
+Continuar al Ejercicio 2</a><br>
+
+
+
+
+<br>
+
+
+
+
+</body>
+</html>

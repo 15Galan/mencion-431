@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <title>Ejercicio 2 - Uso de instant&aacute;neas para la configuraci&oacute;n del Debian 7</title>
+</head>
+
+
+<body>
+
+
+
+
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      
+
+
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      
+      
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 2 - Uso de
+instant&aacute;neas para la configuraci&oacute;n del Debian 7<br>
+
+
+
+
+
+
+
+      </span></b></h1>
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+En este ejercicio vamos a partir de la m&aacute;quina virtual
+Debian 7 que hemos instalado en una pr&aacute;ctica anterior, y
+usaremos un &aacute;rbol de
+instant&aacute;neas para experimentar con el efecto que distintas
+combinaciones de desactivaci&oacute;n de funcionalidades y
+servidores tienen en el consumo de memoria RAM de la m&aacute;quina
+virtual. <br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+Para realizar el ejercicio, seguimos estos&nbsp;pasos:<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">1)</span>
+&nbsp;En el <a href="../Practica1/Ejercicio2.html">Ejercicio
+2 de la Pr&aacute;ctica 1</a> hemos creado la
+m&aacute;quina virtual Debian7, en el directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian7</span>.
+Abrir
+esta m&aacute;quina en el VMware Workstation del Windows 7, pero NO
+arrancarla todav&iacute;a.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+Al igual que hicimos con la m&aacute;quina virtual WinXP del
+Ejercicio 1, vamos a congelar el estado inicial de esta
+m&aacute;quina con una instant&aacute;nea, de forma que podamos
+experimentar las configuraciones con total tranquilidad, ya que
+podremos volver a ese estado inicial si algo sale mal.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">2)</span> Abrir el
+gestor de las instant&aacute;neas de esta m&aacute;quina
+virtual, usando el men&uacute; <span style="font-weight: bold;">VM
+-&gt; Snapshot -&gt; Snapshot Manager</span>.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">3)</span> Crear una
+instant&aacute;nea pulsando el bot&oacute;n <span style="font-weight: bold;">Take Snapshot</span>. Darle
+el nombre <span style="font-weight: bold;">Inicial</span>,
+y pulsar <span style="font-weight: bold;">Take Snapshot</span>
+(o pulsar <span style="font-weight: bold;">Enter</span>).<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">4)</span> Cerrar el
+gestor de instant&aacute;neas y arrancar la m&aacute;quina
+virtual. Una vez arrancada, hacer login como usuario <span style="font-style: italic;">Curso FP</span> (password <span style="font-style: italic;">deii15</span>).<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">5)</span> Usando el
+men&uacute; <span style="font-weight: bold;">Aplicaciones
+-&gt; Accesorios -&gt; Terminal</span>, abrir una
+terminal. Adoptar en ella la identidad del superusuario, ejecutando <span style="font-weight: bold;">su -</span>
+&nbsp;(password <span style="font-style: italic;">deii15</span>).<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">6)</span> Ejecutar <span style="font-weight: bold;">free</span>.
+La salida del
+comando nos informa que la m&aacute;quina est&aacute; usando
+unos 370 MB de memoria, y que, descontando la cantidad empleada para
+cachear ficheros, el uso real de memoria es de unos 128 MB (NOTA: los
+valores en el laboratorio pueden variar con respecto a los del
+gui&oacute;n, ya que se est&aacute; usando una versi&oacute;n distinta
+de VMware Workstation que la que se emple&oacute; para hacer las
+capturas mostradas).<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<img style="border: 1px solid ; width: 691px; height: 118px;" alt="" src="img/uso_memoria.png"><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+Primero, vamos a experimentar con el efecto de cerrar el servidor
+gr&aacute;fico X, y administrar el sistema usando s&oacute;lo
+una consola de texto.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">7)</span> Si
+hacemos <span style="font-weight: bold;">ls -l /etc/rc2.d</span>,
+vemos que el script de arranque del servidor gr&aacute;fico, <span style="font-style: italic;">S05gdm3</span>, es en
+realidad un soft-link al script <span style="font-style: italic;">/etc/init.d/gdm3</span>.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<img style="border: 1px solid ; width: 715px; height: 98px;" alt="" src="img/soft-link.png"><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">8)</span> Vamos
+entonces a cerrar el servidor gr&aacute;fico usando ese script;
+ejecutamos <span style="font-weight: bold;">/etc/init.d/gdm3
+stop</span>&nbsp; .El interfaz gr&aacute;fico se
+cerrar&aacute;, dej&aacute;ndonos en una pantalla totalmente
+negra, en donde no aparece ning&uacute;n prompt. Esto es normal; en
+una m&aacute;quina Debian existen por defecto seis terminales de texto
+y una salida gr&aacute;fica; las terminales de texto se acceden
+pulsando Alt + F<span style="font-style: italic;">x</span>,
+con <span style="font-style: italic;">x</span> = 1
+a 6, mientras la salida gr&aacute;fica aparece pulsando Alt + F7.
+Pulsamos entonces Alt + F1 para ir a la primera terminal, y hacemos
+login directamente como usario root.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<img style="width: 685px; height: 282px;" alt="" src="img/login_texto.png"><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">9)</span> Volvemos
+a ejecutar el comando <span style="font-weight: bold;">free</span>.
+Podemos ver en la salida que el uso de memoria se ha reducido en unos
+70 MB, con lo que, descontando buffers y cach&eacute;, la
+m&aacute;quina est&aacute; requiriendo unos 54 MB.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<img style="width: 687px; height: 113px;" alt="" src="img/uso_memoria_texto.png"><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+Como vemos, el sistema operativo ha cacheado en memoria 215 MB de
+ficheros, y sospechamos que buena parte de esa cach&eacute; se debe
+a haber arrancado en modo gr&aacute;fico. Para confirmarlo, vamos a
+deshabilitar el servidor gr&aacute;fico del Debian, de forma que
+arranque siempre en modo texto, y luego reiniciaremos la
+m&aacute;quina virtual.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">10)</span> Para
+deshabilitar el servidor gr&aacute;fico en el runlevel 2 (el nivel
+por defecto en Debian 7), ejecutamos <span style="font-weight: bold;">update-rc.d gdm3 disable 2</span>
+&nbsp;(Ignorar los warnings; son el comportamiento esperado).<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">11)</span> Si ahora
+ejecutamos <span style="font-weight: bold;">ls -l
+/etc/rc2.d &nbsp;| more</span> &nbsp;,veremos que ahora
+el soft-link al script de <span style="font-style: italic;">gdm3</span>
+empieza por K (de "Kill", indicando al sistema que cierre, o no
+arranque, ese servicio en este runlevel), y ha cambiado su
+numeraci&oacute;n para que sea lo primero que se ejecuta.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<img style="width: 606px; height: 72px;" alt="" src="img/disable_gdm.png"><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">12)</span>
+Ejecutamos <span style="font-weight: bold;">reboot</span>.
+Esperamos a que termine la inicializaci&oacute;n, y aparezca el
+prompt. (NOTA: El arranque se queda unos 50 segundos bloqueado tras el
+mensaje de inicializaci&oacute;n de <span style="font-style: italic;">winbind</span>, esperando
+un timeout; &eacute;sto es normal, y hay que esperar al timeout sin
+tocar el teclado y, en particular, sin mandar un Ctrl + C).<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">13)</span> Hacemos
+login como usuario <span style="font-weight: bold;">root</span>,
+y ejecutamos de nuevo <span style="font-weight: bold;">free</span>.
+Como esper&aacute;bamos, el consumo de memoria en cach&eacute;s
+se ha reducido dr&aacute;sticamente, y vemos que,
+adem&aacute;s, tambi&eacute;n se ha reducido a poco
+m&aacute;s de 40 MB la memoria RAM usada por el sistema.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<img style="width: 699px; height: 105px;" alt="" src="img/uso_memoria_sin_gdm.png"><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">14)</span> Mediante
+(mucho) tanteo y error es posible conseguir identificar al servidor de
+correo <span style="font-style: italic;">exim4</span>
+como el origen del timeout durante el arranque (sin duda, como
+consecuencia de no tener configurados ni dominio ni servidor de DNS).
+Como durante estas pruebas no vamos a usar su funcionalidad, y no
+queremos que nos ralentice los arranques, vamos a deshabilitar <span style="font-style: italic;">exim4</span> (aunque esa
+es una configuraci&oacute;n no recomendada para
+producci&oacute;n). Para ello, ejecutar <span style="font-weight: bold;">/etc/init.d/exim4 stop</span>
+&nbsp;,y luego <span style="font-weight: bold;">&nbsp;
+update-rc.d exim4 disable 2</span> &nbsp;<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">15)</span>
+Reiniciar el sistema ejecutando <span style="font-weight: bold;">reboot</span>
+&nbsp;.Comprobaremos que, ahora, el reinicio se produce
+r&aacute;pido y sin esperas excesivamente largas.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+Ya conocemos, pues, cu&aacute;nto podemos reducir el consumo de
+memoria deshabilitando el servidor gr&aacute;fico. Ahora queremos
+experimentar con la reducci&oacute;n del consumo de memoria si
+s&oacute;lo deshabilitamos el servidor Apache, y el servidor
+PostgreSQL, pero manteniendo activo el servidor gr&aacute;fico.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+Como no queremos perder la configuraci&oacute;n
+s&oacute;lo-texto que hemos conseguido, vamos a usar las
+instant&aacute;neas para crear un ramal alternativo de pruebas.
+Para ello hacemos lo siguiente:<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">16)</span> Apagar
+el sistema, ejecutando el comando <span style="font-weight: bold;">telinit
+0</span><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">17)</span> Usando <span style="font-weight: bold;">VM -&gt; Snapshot -&gt;
+Snapshot Manager</span>, abrir el gestor de
+instant&aacute;neas.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">18)</span> Con el
+&iacute;cono <span style="font-weight: bold;">You Are
+Here</span> seleccionado, pulsar <span style="font-weight: bold;">Take Snapshot</span> y
+darle como nombre <span style="font-weight: bold;">S&oacute;lo
+Texto</span>. Pulsar <span style="font-weight: bold;">Take
+Snapshot</span>. Aparecer&aacute; una segunda
+instant&aacute;nea en la ruta de desarrollo.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 624px; height: 502px;" alt="" src="img/snapshot_solo_texto.png"></td>
+
+
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 265px; height: 90px;" alt="" src="img/dos_instantaneas.png"></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">19)</span> Ahora,
+seleccionamos la instant&aacute;nea <span style="font-weight: bold;">Inicial</span>, y pulsamos
+el bot&oacute;n <span style="font-weight: bold;">Go To</span>.
+Confirmar la acci&oacute;n pulsando <span style="font-weight: bold;">Yes</span>.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<img style="border: 1px solid ; width: 323px; height: 476px;" alt="" src="img/elige_inicial.png"><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">20)</span> Volver a
+abrir el gestor de instant&aacute;neas. Veremos que, ahora, tenemos
+dos ramas alternativas en el &aacute;rbol de
+instant&aacute;neas, y que la rama en que estamos, al partir del
+estado <span style="font-style: italic;">Inicial</span>,
+arrancar&aacute; teniendo activado el interfaz gr&aacute;fico X
+Windows en el Debian.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<img style="border: 0px solid ; width: 201px; height: 171px;" alt="" src="img/dos_ramas.png"><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">21)</span>
+&nbsp;Cerrar el gestor de instant&aacute;neas, y arrancar la
+m&aacute;quina virtual. Una vez termine el arranque, hacer login
+como usuario <span style="font-style: italic;">Curso FP</span>.
+Abrir una terminal y adoptar la identidad de root con <span style="font-weight: bold;">su -</span><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">22)</span>
+Ejecutamos <span style="font-weight: bold;">free</span>
+para comprobar que el consumo de memoria sigue entre 370 y 390 MB (y
+unos 120 - 130 MB reales, una vez descontados buffers y
+cach&eacute;).<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">23)</span> Paramos
+primero el servidor PostgreSQL, ejecutando <span style="font-weight: bold;">/etc/init.d/postgresql stop</span>
+&nbsp; .Comprobamos con <span style="font-weight: bold;">free</span>
+si ha disminu&iacute;do mucho el consumo de memoria (apenas 2 MB de
+memoria en uso, descontados cach&eacute; y buffers). Deshabilitamos
+tambi&eacute;n PostgreSQL en el arranque, ejecutando <span style="font-weight: bold;">update-rc.d postgresql disable 2</span><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">24)</span> Paramos
+ahora el servidor HTTP Apache, ejecutando <span style="font-weight: bold;">/etc/init.d/apache2 stop</span>
+&nbsp;.Comprobamos con <span style="font-weight: bold;">free</span>
+la reducci&oacute;n en el uso de memoria (de nuevo, tan
+s&oacute;lo unos pocos MB). Deshabilitamos el arranque del servidor
+HTTP ejecutando <span style="font-weight: bold;">update-rc.d
+apache2 disable 2</span><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">25)</span>
+Finalmente, vamos a parar los procesos asociados al servidor de
+ficheros Samba. Ejecutamos <span style="font-weight: bold;">/etc/init.d/samba
+stop</span> &nbsp;y &nbsp;<span style="font-weight: bold;">/etc/init.d/winbind stop</span>
+&nbsp;.Comprobamos con <span style="font-weight: bold;">free</span>
+que el consumo de memoria pr&aacute;cticamente no se ha modificado.
+Deshabilitamos el arranque de esos servicios ejecutando <span style="font-weight: bold;">update-rc.d samba disable 2</span>
+&nbsp; y &nbsp;<span style="font-weight: bold;">update-rc.d
+winbind disable 2</span><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">26)</span>
+Finalmente vamos a parar y deshabilitar el servidor de correo, para
+evitar el largo timeout durante el arranque. Ejecutar <span style="font-weight: bold;">/etc/init.d/exim4 stop</span>
+&nbsp; y &nbsp; <span style="font-weight: bold;">update-rc.d
+exim4 disable 2</span><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">27)</span> Ahora
+reiniciamos la m&aacute;quina, ejecutando <span style="font-weight: bold;">reboot</span>. Una vez
+finalice el arranque, hacemos login como usuario <span style="font-style: italic;">Curso FP</span>, y abrimos
+una terminal.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">28)</span>
+Ejecutamos <span style="font-weight: bold;">free</span>.
+Como vemos, la eliminaci&oacute;n de todos esos servicios tiene un
+efecto m&iacute;nimo sobre el uso de memoria (apenas 12 - 13 MB de
+uso real, descontados buffers y cach&eacute;).<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<img style="border: 1px solid ; width: 678px; height: 92px;" alt="" src="img/free_sinservidores.png"><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+Vamos a volver a comprobar, partiendo de esta m&aacute;quina con
+m&iacute;nimos servicios, que el ahorro grande de memoria viene de
+deshabilitar el interfaz gr&aacute;fico. Para ello congelaremos el
+estado actual con otra instant&aacute;nea, y sobre ella probaremos
+qu&eacute; pasa al deshabilitar el servidor X.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">29)</span> Apagar
+la m&aacute;quina, usando <span style="font-weight: bold;">su
+-</span> &nbsp;y &nbsp;<span style="font-weight: bold;">telinit
+0</span>, o bien el men&uacute; <span style="font-weight: bold;">Curso FP -&gt; Apagar</span>.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">30</span>) Abrir el
+gestor de instant&aacute;neas, y pulsar <span style="font-weight: bold;">Take Snapshot</span>. Darle
+el nombre <span style="font-weight: bold;">Gr&aacute;ficos
+sin servidores</span>. Una vez tomada la instant&aacute;nea,
+el &aacute;rbol de instant&aacute;neas quedar&aacute; como
+muestra la figura.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 355px; height: 218px;" alt="" src="img/texto_instantanea.png"></td>
+
+
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 625px; height: 504px;" alt="" src="img/arbol_2ramas.png"></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<span style="font-weight: bold;">31)</span> Arrancar
+la m&aacute;quina virtual, hacer login como <span style="font-style: italic;">Curso FP</span>, abrir una terminal y adoptar la identidad de root con <span style="font-weight: bold;">su -</span><br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<span style="font-weight: bold;">32)</span> Ejecutar <span style="font-weight: bold;">update-rc.d gdm3 disable 2</span>, y reiniciar la m&aacute;quina con <span style="font-weight: bold;">reboot</span>.<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<span style="font-weight: bold;">33)</span> Una vez termine el arranque, hacer login como root y ejecutar <span style="font-weight: bold;">free</span>. Comprobamos que ahora el consumo de memoria se ha reducido a unos 30 MB.<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<img style="width: 678px; height: 103px;" alt="" src="img/free_minimo.png"><br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+Como resultado de esa &uacute;ltima prueba hemos obtenido una
+configuraci&oacute;n de consumo m&iacute;nimo de memoria y que, al
+tener los servidores de base de datos y HTTP deshabilitados por
+defecto, presenta menos riesgos de seguridad que la primera
+versi&oacute;n sin servidor gr&aacute;fico que hab&iacute;amos
+conseguido (en la instant&aacute;nea <span style="font-style: italic;">S&oacute;lo Texto</span>).
+Vamos a consolidar entonces la configuraci&oacute;n de la
+m&aacute;quina virtual usando el estado actual, y borrando el resto de
+las instalaciones.<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+(ATENCION: A partir de este punto las acciones que se van a realizar
+son irreversibles. Es imprescindible ejecutarlas correctamente, ya que
+no hemos hecho una copia de seguridad de la m&aacute;quina virtual. Si,
+en lugar de un ejercicio, estuvi&eacute;ramos haciendo un uso real de
+m&aacute;quinas virtuales en producci&oacute;n para una empresa,
+&eacute;ste ser&iacute;a un muy buen momento para hacer esa copia de
+seguridad...)<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<span style="font-weight: bold;">34)</span> Apagar la m&aacute;quina virtual con <span style="font-weight: bold;">telinit 0</span>, y abrir el gestor de instant&aacute;neas.<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<img style="width: 232px; height: 146px;" alt="" src="img/arbol_inicial.png"><span style="font-weight: bold;"> -k &nbsp;d:\practicas\MV\Debian7\Debian7.vmdk</span><br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<span style="font-weight: bold;">35)</span> Seleccionar la instant&aacute;nea <span style="font-weight: bold;">S&oacute;lo Texto</span> y borrarla con <span style="font-weight: bold;">Delete</span>. El &aacute;rbol quedar&aacute; reducido a una &uacute;nica rama.<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<img style="width: 238px; height: 85px;" alt="" src="img/arbol_1rama.png"><br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<span style="font-weight: bold;">36)</span> Seleccionar la instant&aacute;nea <span style="font-weight: bold;">Gr&aacute;ficos sin servidores</span> y borrarla. El &aacute;rbol quedar&aacute; reducido a una s&oacute;la instant&aacute;nea.<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<img style="width: 181px; height: 79px;" alt="" src="img/arbol_1instantanea.png"><br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<span style="font-weight: bold;">37)</span> Finalmente borrar la instant&aacute;nea <span style="font-weight: bold;">Inicial</span>. El &aacute;rbol se queda s&oacute;lo con el estado actual de la m&aacute;quina.<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<img style="width: 129px; height: 88px;" alt="" src="img/arbol_estado_actual.png"><br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+Para terminar, y siguiendo el patr&oacute;n del <a href="Ejercicio1.html">Ejercicio 1</a>,
+el &uacute;ltimo paso ser&iacute;a intentar reducir el tama&ntilde;o
+ocupado por el disco virtual (actualmente unos 4,4 GB), recuperando del
+disco "thin" el espacio liberado por los ficheros borrados, usando la
+funci&oacute;n <span style="font-style: italic;">Reducir</span> (<span style="font-style: italic;">Shrink</span>) de los VMware Tools.<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+Desafortunadamente, la reducci&oacute;n de discos no est&aacute;
+soportada en los Tools para los sistemas de ficheros con journaling
+empleados por Linux (como el <span style="font-style: italic;">ext4</span>
+que Debian usa por defecto), por lo que, en principio, no podemos
+recuperar ese espacio en una m&aacute;quina Linux normal (es decir, con
+un sistema de ficheros moderno).<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+Vamos a intentar, sin embargo, conseguir reducir el disco usando un
+mecanismo altenativo (ADVERTENCIA: No usar este procedimiento si no se
+est&aacute; bien seguro de qu&eacute; se est&aacute; haciendo,
+especialmente en m&aacute;quinas en producci&oacute;n. No usarlo si se
+est&aacute; corto de espacio de disco en el anfitri&oacute;n, porque
+requiere, antes de reducir el disco, llenarlo a su m&aacute;xima
+capacidad).<br>
+
+<br>
+
+(NOTA: Este procedimiento no es necesario si se usa un VMware
+Workstation 10 o superior y la m&aacute;quina virtual Linux tiene los
+VMware Tools funcionando correctamente; con esa configuraci&oacute;n el
+propio hipervisor y sistema operativo guest se encargan de dejar sobre
+la marcha libre los sectores de disco que no est&eacute;n siendo
+realmente ocupados).<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<span style="font-weight: bold;">38)</span> Arrancar la m&aacute;quina virtual y hacer login como <span style="font-weight: bold;">root</span>.<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<span style="font-weight: bold;">39)</span> Ejecutar &nbsp; <span style="font-weight: bold;">dd if=/dev/zero &nbsp;of=/0bits</span> &nbsp;(esencialmente, llena todo el espacio libre de disco con un fichero lleno de ceros)<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<span style="font-weight: bold;">40)</span> Una vez finalice el comando, ejecutar &nbsp;<span style="font-weight: bold;">rm /0bits</span>, y&nbsp;apagar la m&aacute;quina virtual con <span style="font-weight: bold;">telinit 0</span>. Cerrar el VMware Workstation.<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<span style="font-weight: bold;">41)</span> En el Windows 7 abrir un <span style="font-weight: bold;">cmd</span>, e ir al directorio <span style="font-style: italic;">C:\Archivos de Programas (x86)\VMware\VMware Workstation</span><br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<span style="font-weight: bold;">42)</span> Ejecutar <span style="font-weight: bold;">&nbsp;vmware-vdiskmanager -k &nbsp;d:\practicas\MV\Debian7\Debian7.vmdk</span> &nbsp;.El programa comenzar&aacute; a hacer la reducci&oacute;n (<span style="font-style: italic;">Shrink</span>) del disco duro, informando del porcentaje de progreso.<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<span style="font-weight: bold;">43)</span> Al finalizar el proceso
+comprobamos el tama&ntilde;o ocupado por la m&aacute;quina virtual
+(mirando el tama&ntilde;o de la carpeta&nbsp;<span style="font-style: italic;">D:\practicas\MV</span><span style="font-style: italic;">\Debian7</span>) Veremos que el tama&ntilde;o se ha reducido a poco m&aacute;s de 4 GB (4,08 GB).<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<span style="font-weight: bold;">44)</span> Finalmente, como queremos una m&aacute;quina base c&oacute;moda de usar, borramos todos los ficheros excepto el <span style="font-style: italic;">Debian7.vmx</span> &nbsp;y el &nbsp;<span style="font-style: italic;">Debian7.vmdk</span><br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+Con ello concluye el ejercicio.<br>
+
+
+
+
+
+
+
+</body>
+</html>

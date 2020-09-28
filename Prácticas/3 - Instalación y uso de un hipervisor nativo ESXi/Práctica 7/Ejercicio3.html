@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+  
+  <title>Ejercicio 3  - Uso de conmutadores virtuales en el ESX</title>
+</head>
+
+
+<body>
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+      </td>
+
+
+      <td style="width: 1164.97px;">
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 3 &nbsp;- Uso de
+conmutadores virtuales en el ESX<br>
+
+
+      </span></b></h1>
+
+
+      </td>
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<br>
+
+
+En el escenario del Ejercicio 2 hemos desplegado sobre el hipervisor
+ESX los servidores <span style="font-style: italic;">Debiantomato</span>
+(sin y con separaci&oacute;n de la base de datos) para su puesta en
+explotaci&oacute;n; sin embargo, resulta evidente que <span style="font-style: italic;">Debiantomato</span> estaba
+en la LAN interna, que es la misma a la que est&aacute; conectada
+nuestra m&aacute;quina de desarrollo (el Windows 7), y que
+corresponder&iacute;a, en la realidad, a la red interna (y
+confidencial) de la empresa. Obviamente, &eacute;sta es una
+configuraci&oacute;n no segura, que nos obligar&iacute;a a
+abrir a accesos desde Internet a nuestra red interna.<br>
+
+
+<br>
+
+
+Por ello, en este Ejercicio vamos a ver c&oacute;mo el servidor ESX
+nos permite (usando una segunda tarjeta de red y un conmutador virtual)
+definir dos redes virtuales sin conexi&oacute;n directa ni
+enrutamiento entre ellas, de forma que podamos desplegar el servidor de
+producci&oacute;n Tomatocart en una red expuesta a internet, pero
+adecuadamente aislada de la red interna.<br>
+
+
+<br>
+
+
+<br>
+
+
+<div style="text-align: center;"><img style="width: 900px; height: 706px;" alt="" src="img/esquema_ejercicio3.png"><br>
+
+
+</div>
+
+
+<br>
+
+
+Como muestra el diagrama de la figura, el objetivo del Ejercicio va a
+ser configurar las redes virtuales del servidor ESX para lograr una
+configuraci&oacute;n que ofrezca:<br>
+
+
+<br>
+
+
+<ol>
+
+
+  <li>Una red interna, sin conexi&oacute;n
+al&nbsp;exterior, de direccionamiento IP 10.0.0.0/24, a la que
+tendremos conectados las versiones de prototipado de los servidores <span style="font-style: italic;">Debiantomato</span> (con y
+sin base de datos separada), adem&aacute;s del Windows 7 y del XP
+de administraci&oacute;n del servidor ESX. Esta red interna
+estar&aacute; implementada por el conmutador virtual <span style="font-style: italic;">vSwitch0</span> en el ESX
+y por la red virtual host-only (conmutador virtual) <span style="font-style: italic;">VMnet1</span> del VMware
+Workstation.<br>
+
+
+    <br>
+
+
+  </li>
+
+
+  <li>Una red externa, expuesta a accesos desde el exterior,
+donde tendremos la versi&oacute;n de producci&oacute;n del
+sistema <span style="font-style: italic;">Debiantomato</span>
+usando un &uacute;nico servido. Esta red estar&aacute;
+constitu&iacute;da por el conmutador virtual <span style="font-style: italic;">vSwitch1</span> del ESX
+&nbsp;y por la red virtual host-only (conmutador virtual) <span style="font-style: italic;">VMnet3</span> del VMware
+Workstation. (NOTA: Aunque, por seguridad, usaremos una red host-only,
+esta red externa simula la parte de nuestras redes que, en un sistema
+real, estar&iacute;a expuesto a internet.<br>
+
+
+    <br>
+
+
+  </li>
+
+
+  <li>Como las dos redes virtuales del ESX van a estar aisladas
+entre s&iacute;, vamos a usar un servidor Debian con dos interfaces
+de red (uno en cada red) para hacer de pasarela a trav&eacute;s de
+la cual poder administrar el Tomatocart de producci&oacute;n desde
+la red interna.<br>
+
+
+    <br>
+
+
+  </li>
+
+
+  <li>Finalmente, un XP virtual, conectado a la red "externa" del
+ESX, para poder probar c&oacute;mo se ver&iacute;a el
+Tomatocart de producci&oacute;n desde el exterior.</li>
+
+
+</ol>
+
+
+<br>
+
+
+Para realizar el Ejercicio, seguimos estos pasos:<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">1)</span> Si
+est&aacute; funcionando, apagar el servidor ESXi (por ejemplo,
+usando <span style="font-weight: bold;">F12</span>
+desde su
+consola para hacer login, y luego pulsando <span style="font-weight: bold;">F2</span>).<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">2)</span>
+Necesitamos a&ntilde;adir al ESX una segunda tarjeta de red
+(virtual). Abrir los
+settings de la m&aacute;quina virtual <span style="font-weight: bold;">ESX</span> y, en la
+pesta&ntilde;a <span style="font-weight: bold;">Hardware</span>,
+pulsar <span style="font-weight: bold;">Add</span> <br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">3)</span> Elegir <span style="font-weight: bold;">Network Adapter</span>, y
+pulsar <span style="font-weight: bold;">Next</span>
+<br>
+
+
+<br>
+
+
+<img style="border: 1px solid ; width: 426px; height: 369px;" alt="" src="img/add_network_adapter.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">4)</span> Elegir
+una red <span style="font-weight: bold;">Custom</span>,
+y seleccionar la red virtual <span style="font-weight: bold;">VMnet3</span>.&nbsp;Pulsar
+<span style="font-weight: bold;">Finish</span>, y
+despu&eacute;s <span style="font-weight: bold;">OK</span>
+<br>
+
+
+<br>
+
+
+<img style="border: 1px solid ; width: 428px; height: 369px;" alt="" src="img/add_custom_vmnet3.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">5)</span> Si
+examinamos con Notepad++ (sin modificarlo) el fichero <span style="font-style: italic;">D:\practicas\MV\ESX\ESX.vmx</span>,
+veremos al
+final del fichero que se ha a&ntilde;adido la definici&oacute;n
+de un nuevo interfaz de red virtual Intel E1000, <span style="font-style: italic;">ethernet1</span> <br>
+
+
+<br>
+
+
+<img style="border: 1px solid ; width: 355px; height: 180px;" alt="" src="img/ethernet1.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">6)</span> Cerramos
+Notepad++ y arrancamos la m&aacute;quina virtual ESX.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">7)</span>
+Arrancamos el PC de administraci&oacute;n, <span style="font-weight: bold;">XPadmin</span>, abrimos el
+cliente de administraci&oacute;n vClient, y hacemos login como <span style="font-weight: bold;">root</span> <br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">8)</span> En la
+ventana de administraci&oacute;n abrimos la pesta&ntilde;a <span style="font-weight: bold;">Configuration</span> y
+seleccionamos la opci&oacute;n <span style="font-weight: bold;">Hardware
+-&gt; Networking</span> <br>
+
+
+<br>
+
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 694px; height: 144px;" alt="" src="img/tab_configuration.png"><br>
+
+
+</div>
+
+
+<br>
+
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 647px; height: 318px;" alt="" src="img/hardware_networking.png"><br>
+
+
+</div>
+
+
+<br>
+
+
+En pantalla se nos presenta la configuraci&oacute;n de red actual
+del ESXi, con un &uacute;nico interfaz de red (<span style="font-style: italic;">vmnic0</span>) haciendo el
+trunking entre la red externa (en este caso, VMnet1 en el
+Workstation) y un conmutador virtual interno al ESXi, <span style="font-style: italic;">vSwitch0</span>, que da
+servicio a la red de gesti&oacute;n (observar que la IP del
+servidor ESXi no est&aacute; asignada al adaptador de red, sino al
+n&uacute;cleo del hipervisor). Observar que en la imagen se
+muestran tambi&eacute;n las conexiones de los interfaces de red de
+los servidores Debian que hemos desplegado en el Ejercicio 2<br>
+
+
+<br>
+
+
+<img style="border: 1px solid ; width: 419px; height: 287px;" alt="" src="img/config_red_esx.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">9)</span> Vamos a
+a&ntilde;adir a la configuraci&oacute;n de red del ESXi un
+segundo conmutador virtual, conectado a la tarjeta de red virtual que
+hemos a&ntilde;adido al servidor. Para ello, pulsamos en <span style="font-weight: bold;">Add Networking</span><br>
+
+
+<br>
+
+
+<div style="text-align: left;"><img style="border: 1px solid ; width: 817px; height: 283px;" alt="" src="img/add_networking.png"><br>
+
+
+</div>
+
+
+<br>
+
+
+<span style="font-weight: bold;">10)</span>
+Seleccionamos <span style="font-weight: bold;">Virtual
+Machine</span>, y pulsamos <span style="font-weight: bold;">Next</span>
+<br>
+
+
+<br>
+
+
+<img style="border: 1px solid ; width: 537px; height: 145px;" alt="" src="img/add_virtual_machine.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">11)</span> Crear un
+conmutador est&aacute;ndar vSphere. Por defecto estar&aacute;
+conectado al interfaz de red <span style="font-style: italic;">vmnic1</span>
+(el que hemos a&ntilde;adido al ESXi), que a&uacute;n no ha
+sido asignado. Pulsar <span style="font-weight: bold;">Next</span>
+<br>
+
+
+<br>
+
+
+<img style="border: 1px solid ; width: 755px; height: 332px;" alt="" src="img/add_switch.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">12)</span> Darle a
+la red virtual (<span style="font-weight: bold;">Port Group</span>)
+el nombre <span style="font-weight: bold;">Red exterior</span>.
+Pulsar <span style="font-weight: bold;">Next</span>,
+y luego <span style="font-weight: bold;">Finish</span><br>
+
+
+<br>
+
+
+<img style="border: 1px solid ; width: 623px; height: 232px;" alt="" src="img/network_label.png"><br>
+
+
+<br>
+
+
+Al terminar el procedimiento la herramienta administrativa nos muestra
+gr&aacute;ficamente la configuraci&oacute;n de red resultante,
+con las dos redes, conectadas cada una a su respectivo
+conmutador virtual y tarjeta de red del ESXi.<br>
+
+
+<br>
+
+
+<img style="border: 1px solid ; width: 435px; height: 370px;" alt="" src="img/config_red_final.png"><br>
+
+
+<br>
+
+
+Ahora, vamos a desplegar en la red externa la copia de
+producci&oacute;n del servidor <span style="font-style: italic;">Debiantomato</span>
+que tenemos en la red interna.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">13)</span> Crear,
+en el escritorio del <span style="font-weight: bold;">XPadmin</span>,
+el directorio <span style="font-style: italic;">OVA_debtomato</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">14)</span> En la
+herramienta de administraci&oacute;n del ESX, seleccionar el
+servidor <span style="font-style: italic;">Debiantomato</span>
+e invocar el men&uacute; <span style="font-weight: bold;">File
+-&gt; Export -&gt; Export OVF Template</span>. Salvar el
+template con los par&aacute;metros mostrados en la figura, y pulsar
+OK.<br>
+
+
+<br>
+
+
+<img style="width: 603px; height: 432px;" alt="" src="img/export_OVA_debtomato.png"><br>
+
+
+<br>
+
+
+Como podemos ver al completarse la exportaci&oacute;n, la
+diferencia entre el formato OVF y el OVA es que, en &eacute;ste
+&uacute;ltimo, se usa un &uacute;nico fichero (de
+extensi&oacute;n .ova), que act&uacute;a de contenedor de todos
+los ficheros que, en el formato OVF, van sueltos.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">15)</span> De nuevo
+en la herramienta administrativa del ESX, invocar <span style="font-weight: bold;">File -&gt; Deploy OVF Template</span>.
+Seleccionar <span style="font-style: italic;">OVA_debtomato\Debiantomato.ova</span>.
+Darle nombre <span style="font-style: italic;">Debiantomatoexterno</span>,
+y tener cuidado de configurarlo como disco thin.<br>
+
+
+<br>
+
+
+<img style="width: 509px; height: 253px;" alt="" src="img/debtomatoext_disco_thin.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">16)</span> Conectar
+su interfaz de red al conmutador virtual de la <span style="font-weight: bold;">Red Externa</span>, en
+lugar de a la red por defecto (que es la interna)<br>
+
+
+<br>
+
+
+<img style="width: 691px; height: 209px;" alt="" src="img/conecta_red_externa.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">17)</span> Con los
+par&aacute;metros resultantes, mostrados en la figura, confirmar el
+despliegue pulsando <span style="font-weight: bold;">Finish</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">18)</span>
+Necesitamos cambiar el direccionamiento de la m&aacute;quina
+virtual Arrancarla y, usando una ventana de consola, cambiar sus
+ficheros <span style="font-style: italic;">/etc/network/interfaces</span>
+y <span style="font-style: italic;">/etc/hosts</span>
+a los valores mostrados en las figuras. Reiniciar la m&aacute;quina
+con <span style="font-weight: bold;">reboot</span>,
+y comprobar con <span style="font-weight: bold;">ifconfig</span>
+el resultado.<br>
+
+
+<br>
+
+
+<br>
+
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 655px; height: 209px;" alt="" src="img/interfaces_debtomatoext.png"></td>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 559px; height: 139px;" alt="" src="img/hosts_debtomatoext.png"></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<span style="font-weight: bold;">19)</span> Cambiar
+el fichero <span style="font-style: italic;">/var/www/tomatocart/includes/configure.php</span>
+a los valores mostrados en la figura.<br>
+
+
+<br>
+
+
+<img style="width: 469px; height: 178px;" alt="" src="img/configure_debexterno.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">20)</span> En la
+herramienta de administraci&oacute;n del ESX, arrancar los tres
+servidores Debian de la red interna (<span style="font-style: italic;">Debiansql, Debiantomato,
+Debiantomato-dual</span>).<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">21)</span> Desde el
+Windows 7, haciendo <span style="font-weight: bold;">ping</span>,
+comprobar que vemos los tres servidores de la red interna, pero no el <span style="font-style: italic;">Debiantomatoexterno</span>
+(192.168.60.11).<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">22)</span> En el
+Windows 7 arrancar la m&aacute;quina virtual <span style="font-weight: bold;">XPexterno</span><span style="font-style: italic;"><span style="font-weight: bold;"> </span>(D:\practicas\MV\XPexterno\winxppro.vmx</span>),
+que est&aacute; conectado a la red <span style="font-style: italic;">VMnet3</span> usando la IP
+est&aacute;tica 192.168.60.60, y que representa una
+m&aacute;quina que accede al servidor de producci&oacute;n
+desde el exterior. Comprobar, haciendo <span style="font-weight: bold;">ping</span>, que
+v&eacute; a <span style="font-style: italic;">Debiantomatoexterno</span>
+(192.168.60.41), pero no ve a ninguno de los servidores de la red
+interna. Comprobar tambi&eacute;n, usando su Firefox, que funciona
+el sistema Tomatocart del servidor <span style="font-style: italic;">Debiantomatoexterno</span>,
+accediendo a <span style="font-weight: bold;">http://192.168.60.41/tomatocart</span>.<br>
+
+
+<br>
+
+
+Con esto terminamos&nbsp;el despliegue del servidor <span style="font-style: italic;">Debiantomato</span>
+expuesto a la red exterior. Antes de continuar, vamos a ver
+c&oacute;mo de eficientes son los hipervisores VMware ESX y VMware
+Workstation, viendo c&oacute;mo de cargado tenemos el Windows 7, en
+el que est&aacute;n corriendo simult&aacute;neamente todas
+estas m&aacute;quinas y funcionalidades:<br>
+
+
+<ul>
+
+
+  <li>El propio sistema operativo Windows 7.<br>
+
+
+    <br>
+
+
+  </li>
+
+
+  <li>El hipervisor ESX<br>
+
+
+    <br>
+
+
+  </li>
+
+
+  <li>Dos Windows XP<br>
+
+
+    <br>
+
+
+  </li>
+
+
+  <li>Cuatro servidores debian, que incluyen tres herramientas de
+comercio electr&oacute;nico y dos instancias de bases de datos
+mysql.</li>
+
+
+</ul>
+
+
+Para ello, abrir el administrador de recursos del Windows 7, y mirar el
+consumo de memoria y de CPU; encontraremos que, incluso con la cantidad
+de m&aacute;quinas virtuales que estamos corriendo actualmente en
+el sistema,&nbsp;el consumo de recursos es
+sorprendentemente reducido.<br>
+
+
+<br>
+
+
+Ahora, una vez que hemos completado el despliegue de <span style="font-style: italic;">Debiantomatoexterno</span>,
+se nos presenta el problema de c&oacute;mo administrar el servidor
+(y probar su sistema Tomatocart) desde una m&aacute;quina de la red
+interna, que no tiene conectividad directa a&nbsp;Red Externa. La
+soluci&oacute;n ser&aacute; desplegar sobre el hipervisor ESX
+otra m&aacute;quina virtual Debian, que, usando dos interfaces
+virtuales de red, estar&aacute; conectada
+simult&aacute;neamente a ambas redes virtuales del ESX, y que
+usaremos para tunelizar los accesos desde un Windows de la red interna
+a <span style="font-style: italic;">Debiantomatoexterno</span>.<br>
+
+
+<br>
+
+
+Para desplegar este servidor, hacemos lo siguiente:<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">23)</span> Copiar
+la carpeta <span style="font-style: italic;">D:\practicas\MV\OVA_pasarela</span>
+al escritorio de <span style="font-weight: bold;">XPadmin</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">24)</span> En la
+herramienta de administraci&oacute;n del ESX, usar el
+men&uacute; <span style="font-weight: bold;">File
+-&gt; Deploy OVF Template</span>. Seleccionar el fichero <span style="font-style: italic;">OVA_pasarela/debianpasarela.ova</span>.
+USando el procedimiento ya conocido, desplegar la m&aacute;quina
+virtual de nombre <span style="font-weight: bold;">Debianpasarela</span>,
+con disco <span style="font-weight: bold;">thin</span>
+y conectado a la red por defecto (<span style="font-weight: bold;">VM
+Network</span>).<br>
+
+
+<br>
+
+
+<img style="width: 539px; height: 475px;" alt="" src="img/parametros_debianpasarela.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">25)</span> Una vez
+desplegada, necesitamos conectarla tambi&eacute;n a la red externa.
+Para ello, seleccionar <span style="font-style: italic;">Debianpasarela</span>
+y, en la pesta&ntilde;a <span style="font-weight: bold;">Summary</span>,
+editar sus <span style="font-weight: bold;">Settings</span>.
+En la pesta&ntilde;a <span style="font-weight: bold;">Hardware</span>,
+pulsar <span style="font-weight: bold;">Add</span>
+y seleccionar un adaptador Ethernet. Pulsar <span style="font-weight: bold;">Next</span>.<br>
+
+
+<br>
+
+
+<img style="width: 640px; height: 501px;" alt="" src="img/add_ethernet_adapter.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">26)</span>
+Seleccionar un adaptador tipo E1000 (es decir, una tarjeta de red Intel
+E1000, que es justamente el modelo que ya est&aacute; usando la
+m&aacute;quina Debian en el otro interfaz de red). Seleccionar
+conexi&oacute;n a la <span style="font-weight: bold;">Red
+Externa</span>. Pulsar <span style="font-weight: bold;">Next</span>,
+y luego <span style="font-weight: bold;">Finish</span>.<br>
+
+
+<br>
+
+
+<img style="width: 639px; height: 495px;" alt="" src="img/add_eth_type.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">27)</span> Pulsar <span style="font-weight: bold;">OK</span> para consolidar
+la creaci&oacute;n del segundo interfaz de red.<br>
+
+
+<br>
+
+
+Como indican las notas de la m&aacute;quina virtual, el template <span style="font-style: italic;">Debianpasarela</span>
+est&aacute; configurado con la direcci&oacute;n IP 10.0.0.55.
+Esta direcci&oacute;n corresponde al interfaz <span style="font-style: italic;">eth0</span>, que es el que
+est&aacute; conectado a la red interna (<span style="font-style: italic;">VM Network</span>).
+Necesitamos configurar ahora su interfaz <span style="font-style: italic;">eth1</span> con una
+direcci&oacute;n correcta de la Red Externa (en la que no tenemos
+servidor DHCP y, por tanto, no puede dar autom&aacute;ticamente una
+direcci&oacute;n IP a <span style="font-style: italic;">eth1</span>).<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">28)</span>
+Arrancar <span style="font-style: italic;">Debianpasarela</span>, seleccionarla, y abrir su ventana de Consola. Hacer login como <span style="font-weight: bold;">root</span>, y password <span style="font-weight: bold;">deii15</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">29)</span> Si ejecutamos <span style="font-weight: bold;">ifconfig</span> s&oacute;lo veremos listado el interfaz <span style="font-style: italic;">eth0</span>. Sin embargo, ejecutando <span style="font-weight: bold;">ifconfig -a</span>
+aparecen listados todos los interfaces de red, incluso lo que
+a&uacute;n no est&aacute;n configurados, y podremos confirmar que, en
+efecto, tenemos un nuevo interfaz de red, llamado <span style="font-style: italic;">eth1</span>.<br>
+
+<br>
+
+<img style="width: 609px; height: 382px;" alt="" src="img/ifconfig_eth1.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">30)</span> Editar el fichero <span style="font-style: italic;">/etc/network/interfaces</span> y a&ntilde;adir las l&iacute;neas que se muestran en la figura:<br>
+
+<br>
+
+<img style="width: 645px; height: 283px;" alt="" src="img/interfaces_eth1.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">31)</span> Editar el fichero <span style="font-style: italic;">/etc/hosts</span>, a&ntilde;adiendo la l&iacute;nea &nbsp;mostrada en la figura.<br>
+
+<br>
+
+<img style="width: 581px; height: 173px;" alt="" src="img/hosts_eth1.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">32)</span> Reiniciar la m&aacute;quina <span style="font-style: italic;">Debianpasarela</span>, ejecutando <span style="font-style: italic;"></span><span style="font-weight: bold;">reboot</span>. Una vez reiniciada, volver a hacer login como <span style="font-weight: bold;">root</span> y ejecutar <span style="font-weight: bold;">ifconfig</span> para asegurarnos de que hemos configurado correctamente los dos interfaces de red.<br>
+
+<br>
+
+<img style="width: 723px; height: 397px;" alt="" src="img/ifconfig_eth0_eth1.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">33)</span> Hacer logout en la consola de <span style="font-style: italic;">Debianpasarela</span>. Arrancar (caso de que&nbsp;no estuvieran ya andando) todos los dem&aacute;s servidores Debian (<span style="font-style: italic;">Debiansql, Debiantomato, Debiantomato-dual, Debiantomatoexterno</span>).<br>
+
+<br>
+
+<span style="font-weight: bold;"></span>Ahora, vamos a tunelizar el tr&aacute;ficoweb (HTTP y HTTPS) entre <span style="font-style: italic;">XPadmin</span> y el servidor <span style="font-style: italic;">Debiantomatoexterno</span>.
+(NOTA: vamos a usar el XP de administraci&oacute;n, en lugar del
+Windows 7, porque necesitaremos modificar el fichero de hosts del
+Windows, y el usuario <span style="font-style: italic;">practicas</span> no tiene privilegios suficientes en el Windows 7 para poder hacerlo).<br>
+
+<br>
+
+<span style="font-weight: bold;">34)</span> En <span style="font-style: italic;">XPadmin</span>, ejecutar la aplicaci&oacute;n <span style="font-weight: bold;">putty</span> para conectarnos por ssh a <span style="font-weight: bold;">Debianpasarela </span>&nbsp;(especificando como hostname la direcci&oacute;n IP 10.0.0.55) como usuario <span style="font-weight: bold;">root</span>, con la configuraci&oacute;n de t&uacute;neles mostrada en la figura.<br>
+
+<br>
+
+<img style="width: 452px; height: 431px;" alt="" src="img/tuneles_pasarela.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">35)</span> Abrir en <span style="font-style: italic;">XPadmin</span> el Firefox, y acceder a la URL <span style="font-weight: bold;">http://localhost</span>. La respuesta nos permite comprobar que, en efecto, estamos consiguiendo acceder al servidor Apache de <span style="font-style: italic;">Debiantomatoexterno</span> a trav&eacute;s del t&uacute;nel SSH v&iacute;a <span style="font-style: italic;">Debianpasarela</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">36)</span> Sin embargo, si accedemos a <span style="font-weight: bold;">http://localhost/tomatocart</span>, nos encontraremos que s&oacute;lo obtenemos una respuesta parcial del sistema Tomatocart.<br>
+
+<br>
+
+Si accedemos en el Firefox al c&oacute;digo fuente de la p&aacute;gina,
+veremos que el origen de este problema es que estamos recibiendo una
+URL de referencia base que utiliza la direcci&oacute;n IP 192.168.60.41
+(que, obviamente, no podemos acceder porque pertenece a la Red Externa).<br>
+
+<br>
+
+<img style="width: 679px; height: 190px;" alt="" src="img/codigo_fuente_tomatocart.png"><br>
+
+<br>
+
+Podemos resolver este problema cambiando la configuraci&oacute;n de
+Tomatocar para que use (como deb&iacute;amos haber hecho desde el
+principio) el nombre del servidor, en lugar de la IP, para la URL.<br>
+
+<br>
+
+<span style="font-weight: bold;">37)</span> En <span style="font-style: italic;">XPadmin</span>, abrir una nueva instancia de <span style="font-weight: bold;">putty</span> y conectarse como <span style="font-weight: bold;">root</span> al hostname <span style="font-weight: bold;">localhost</span>; gracias al t&uacute;nel para el puerto TCP/22 que hemos configurado en la conexi&oacute;n ssh que sigue activa contra <span style="font-style: italic;">Debianpasarela</span>, la nueva instancia de <span style="font-style: italic;">putty</span> consigue establecer una conexi&oacute;n ssh al servidor <span style="font-style: italic;">Debiantomatoexterno</span>, lo que podemos comprobar ejecutando <span style="font-weight: bold;">ifconfig</span> para comprobar cual es la IP del servidor.<br>
+
+<br>
+
+<span style="font-weight: bold;">38)</span> Editar el fichero <span style="font-style: italic;">/var/www/tomatocart/includes/configure.php</span> y modificarlo como se muestra en la figura.<br>
+
+<br>
+
+<img style="width: 511px; height: 207px;" alt="" src="img/configure_con_nombres.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">39)</span> Modificar el fichero <span style="font-style: italic;">/etc/hosts</span> como se muestra en la figura.<br>
+
+<br>
+
+<img style="width: 508px; height: 142px;" alt="" src="img/hosts_debiantomatoexterno.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">40)</span> Vamos a aprovechar, y
+cambiaremos tambi&eacute;n el hostname del servidor para que no siga
+siendo el del template con el que lo desplegamos. Editar el fichero <span style="font-style: italic;">/etc/hostname</span>, y cambiar su contenido a <span style="font-weight: bold;">debiantomatoexterno</span><br>
+
+<br>
+
+<span style="font-weight: bold;">41)</span> Ejecutar <span style="font-weight: bold;">reboot</span> para reinicar la m&aacute;quina virtual. Perderemos la conexi&oacute;n ssh; cerrar por tanto esta instancia de <span style="font-style: italic;">putty</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">42)</span> Tras unos segundos, volver a abrir un <span style="font-weight: bold;">putty</span> contra el hostname <span style="font-weight: bold;">localhost</span>. Conectarse como <span style="font-weight: bold;">root</span>, y comprobar que, en efecto, el cambio de hostname en <span style="font-style: italic;">Debiantomatoexterno</span> se ha realizado correctamente.<br>
+
+<br>
+
+Ahora vamos a modificar el fichero de hosts en <span style="font-style: italic;">XPadmin</span> para que el nombre DNS <span style="font-style: italic;">debiantomatoexterno</span> se resuelva localmente a 127.0.0.1, y de esa forma la URL <span style="font-style: italic;">http://debiantomatoexterno</span> utilice autom&aacute;ticamente el t&uacute;nel para los puertos 80 y 443 que est&aacute; proporcionando el cliente <span style="font-style: italic;">putty</span> a trav&eacute;s de la direcci&oacute;n <span style="font-style: italic;">localhost</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">43)</span> En <span style="font-style: italic;">XPadmin</span>, hacer <span style="font-weight: bold;">Inicio -&gt; Ejecutar -&gt; drivers</span>. Ir al directorio <span style="font-style: italic;">etc</span>, y editar el fichero <span style="font-style: italic;">hosts</span> para a&ntilde;adir la l&iacute;nea mostrada en la figura.<br>
+
+<br>
+
+<img style="width: 322px; height: 96px;" alt="" src="img/hosts_xpadmin.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">44)</span> Cerrar la carpeta <span style="font-style: italic;">hosts</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">45)</span> Volver en <span style="font-style: italic;">XPadmin</span> al Firefox, y acceder de nuevo a la URL <span style="font-weight: bold;">http:/localhost/tomatocart</span>. Tras una espera (debida a que desde la red interna no podemos acceder al servidor <span style="font-style: italic;">ajax.googleapis.com</span> invocado por la p&aacute;gina), veremos aparecer la tienda Tomatocart, con el aspecto correcto.<br>
+
+<br>
+
+Con esto terminamos el Ejercicio. Una vez finalizada la
+pr&aacute;ctica, recordar que deben apagarse correctamente todas las
+m&aacute;quinas virtuales Debian encendidas en el ESX (haciendo login
+en cada una y usando <span style="font-weight: bold;">telinit 0</span>), y luego debe apagarse correctamente tambi&eacute;n el propio ESX.<br>
+
+<br>
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+</body>
+</html>

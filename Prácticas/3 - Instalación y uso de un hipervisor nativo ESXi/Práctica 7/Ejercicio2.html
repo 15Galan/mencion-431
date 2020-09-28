@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <title>Ejercicio 2 - Despliegue del servidor debiantomato en el
+hipervisor ESX</title>
+
+
+</head>
+
+
+<body>
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+  <tbody>
+
+    <tr>
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+      </td>
+
+      <td style="width: 1164.97px;">
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 2 &nbsp;-
+Despliegue del servidor <span style="font-style: italic;">debiantomato</span>
+en el hipervisor ESX<br>
+
+      </span></b></h1>
+
+      </td>
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<br>
+
+En el Ejercicio 1 hemos visto el procedimiento b&aacute;sico para
+instalar un hipervisor VMware ESX sobre un cierto hardware para obtener
+un servidor de virtualizaci&oacute;n. Ahora, en este Ejercicio,
+vamos a
+ver c&oacute;mo podemos desplegar sobre el hipervisor ESX una
+m&aacute;quina virtual que previamente hemos preparado en un VMware
+Workstation.<br>
+
+<br>
+
+Concretamente, el escenario que plantea este Ejercicio es el siguiente:
+usando el VMware Workstation hemos prototipado una m&aacute;quina
+(el
+servidor <span style="font-style: italic;">debiantomato</span>)
+en la
+que hemos instalado y configurado un sistema Tomatocart con la base de
+datos contenida en ese mismo servidor; una vez que estamos satisfechos
+con c&oacute;mo ha quedado el servidor, queremos ponerlo en
+producci&oacute;n en el hipervisor ESX. Sin embargo, hay que
+recordar
+que la arquitectura de un hipervisor nativo (<span style="font-style: italic;">bare-metal</span>) como el
+ESX es muy diferente a la de un hipervisor <span style="font-style: italic;">hosted</span> como el
+Workstation. En consecuencia, no podemos llevarnos la
+m&aacute;quina virtual <span style="font-style: italic;">debiantomato</span>
+al ESX simplemente copiando los ficheros que tenemos en el Workstation.
+El procedimiento para realizar correctamente esta copia se llama <span style="font-style: italic;">despliegue</span>, y
+consta de dos pasos:<br>
+
+<br>
+
+<ol>
+
+  <li>Primero se crea en el Workstation una plantilla (<span style="font-style: italic;">template</span>) del
+servidor <span style="font-style: italic;">debiantomato</span>,
+en un formato llamado&nbsp;<span style="font-style: italic;">OVF</span>.<br>
+
+    <br>
+
+  </li>
+
+  <li>A continuaci&oacute;n, se importa al servidor ESX la
+plantilla
+OVF, proceso durante el cual deberemos elegir determinados
+par&aacute;metros de configuraci&oacute;n de la
+m&aacute;quina virtual
+resultante (como, por ejemplo, el tipo y tama&ntilde;o de disco
+duro).</li>
+
+</ol>
+
+Para realizar la pr&aacute;ctica, seguimos entonces estos pasos:<br>
+
+<br>
+
+<span style="font-weight: bold;">1)</span> Cuando
+copiamos de un
+Workstation a otro una carpeta completa con todos los ficheros de una
+m&aacute;quina virtual trasladamos todas las
+instant&aacute;neas que
+tengamos creadas en esa m&aacute;quina virtual. Sin embargo, un
+template OVF s&oacute;lo contiene el estado de la
+m&aacute;quina
+virtual en el momento de crearlo. Por ello, lo primero que haremos,
+antes de crear el template OVF, ser&aacute; llevar a la
+m&aacute;quina <span style="font-style: italic;">debiantomato</span>
+al estado adecuado. Para ello, abrimos la m&aacute;quina virtual <span style="font-style: italic;">debiantomato</span> y, en
+el gestor de instant&aacute;neas, hacemos <span style="font-weight: bold;">Go To</span> a la
+instant&aacute;nea <span style="font-weight: bold;">Tomatocart
+final</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">2)</span> Ahora,
+editamos los settings de <span style="font-style: italic;">debiantomato</span>
+y cambiamos la configuraci&oacute;n de la lectora de CD/DVD,
+eligiendo la opci&oacute;n <span style="font-weight: bold;">Auto
+detect</span>. Este paso es <span style="text-decoration: underline;">muy importante</span>,
+porque, de no hacerlo, el template OVF incluir&aacute;
+tambi&eacute;n
+el DVD de instalaci&oacute;n de Debian, y su tama&ntilde;o se
+ir&aacute; a 4 GB.<br>
+
+<br>
+
+<img style="width: 683px; height: 286px;" alt="" src="img/config_DVD.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">3)</span> Crear la
+carpeta <span style="font-style: italic;">D:\practicas\MV\OVF_debiantomato</span>.
+En el VMware Workstation, elegir el men&uacute; <span style="font-weight: bold;">File -&gt; Export to OVF</span>.
+Usar el nombre <span style="font-style: italic;">Debiantomato.ovf</span>,
+y salvarlo a la carpeta que acabamos de crear.<br>
+
+<br>
+
+<span style="font-weight: bold;">4)</span> El
+resultado de la exportaci&oacute;n ser&aacute;n tres ficheros:
+dos de metadatos (<span style="font-style: italic;">Debiantomato.mf</span>
+y <span style="font-style: italic;">Debiantomato.ovf </span>)
+y el fichero de disco virtual&nbsp;<span style="font-style: italic;">Debiantomato-disk1.vmdk</span>.
+Como el Workstation usa autom&aacute;ticamente
+compresi&oacute;n al
+generar el template, y como hemos evitado que exporte
+tambi&eacute;n el
+DVD de Debian 7, el tama&ntilde;o final de tan s&oacute;lo unos
+360
+MBytes.<br>
+
+<br>
+
+<img style="width: 634px; height: 87px;" alt="" src="img/ficheros_template_OVF.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">5)</span> Cerramos
+el VMware Workstation.<br>
+
+<br>
+
+La importaci&oacute;n del template OVF al servidor ESX se hace a
+trav&eacute;s del cliente vSphere de administraci&oacute;n, que
+est&aacute; en la m&aacute;quina <span style="font-style: italic;">XPadmin</span>;
+necesitamos, por tanto, que esta m&aacute;quina pueda ver los
+ficheros
+de la carpeta del Windows 7 en la que hemos exportado el template OVF.
+Como ambas m&aacute;quinas (<span style="font-style: italic;">XPadmin</span>
+y <span style="font-style: italic;">Windows 7</span>)
+est&aacute;n conectadas a la red host-only, la opci&oacute;n
+m&aacute;s
+econ&oacute;mica ser&iacute;a compartir por red la carpeta <span style="font-style: italic;">D:\practicas\MV\OVF_debiantomato</span>.
+Sin embargo, el usuario <span style="font-style: italic;">practicas</span>
+que empleamos en el Windows 7 no tiene permisos de
+exportaci&oacute;n de carpetas, por lo que deberemos copiar a <span style="font-style: italic;">XPadmin</span> el
+contenido de la carpeta.<br>
+
+<br>
+
+<span style="font-weight: bold;">6)</span> Copiar,
+arrastr&aacute;ndola, la carpeta <span style="font-style: italic;">D:\practicas\MV\OVF_debiantomato</span>
+al escritorio de la m&aacute;quina virtual <span style="font-style: italic;">XPadmin</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">7)</span> En <span style="font-style: italic;">XPadmin</span>, dentro del
+cliente vSphere de administraci&oacute;n del ESX, seleccionar el
+men&uacute; <span style="font-weight: bold;">File
+-&gt; Deploy OVF Template</span>. Elegir el template <span style="font-style: italic;">Debiantomato.ovf</span> de
+la carpeta que acabamos de copiar. Pulsar <span style="font-weight: bold;">Next</span>. Pulsar de
+nuevo <span style="font-weight: bold;">Next</span>
+en la pantalla que muestra los detalles del template.<br>
+
+<br>
+
+<span style="font-weight: bold;">8) </span>Dejar a
+la m&aacute;quina el nombre <span style="font-style: italic;">Debiantomato</span>,
+y pulsar <span style="font-weight: bold;">Next</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">9)</span> <span style="font-weight: bold; text-decoration: underline;">MUY
+IMPORTANTE</span>: Por defecto, ESX crea una m&aacute;quina
+con disco <span style="font-style: italic;">thick</span>
+(que es m&aacute;s eficiente, a cambio de consumir m&aacute;s
+espacio
+de disco). Sin embargo, nosotros queremos minimizar el uso de disco en
+el hipervisor ESX, as&iacute; que seleccionamos disco <span style="font-weight: bold;">thin</span>.<br>
+
+<br>
+
+<img style="width: 513px; height: 296px;" alt="" src="img/disco_thin.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">10)</span>
+Aparecer&aacute; una pantalla con el resumen de los
+par&aacute;metros de configuraci&oacute;n elegidos para el
+despliegue. Pulsar <span style="font-weight: bold;">Finish</span>.<br>
+
+<br>
+
+<img style="width: 719px; height: 676px;" alt="" src="img/deployment_settings.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">11)</span> En el
+inventario del servidor 10.0.0.60 aparecer&aacute; ahora el
+servidor <span style="font-style: italic;">Debiantomato</span>.
+Seleccionarlo y pulsar en la pesta&ntilde;a <span style="font-weight: bold;">Summary</span>. En ella
+podremos ver un resumen de los recursos (CPU, memoria y disco)
+asignados a esta m&aacute;quina virtual.<br>
+
+<br>
+
+<img style="width: 940px; height: 324px;" alt="" src="img/summary.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">12)</span> En el
+recuadro <span style="font-weight: bold;">Resources</span>,
+en el apartado <span style="font-weight: bold;">Storage</span>,
+seleccionar <span style="font-weight: bold;">datastore</span>,
+y con el bot&oacute;n derecho del rat&oacute;n abrir el
+men&uacute; <span style="font-weight: bold;">Browse
+Datastore</span>. Se abrir&aacute; una ventana de explorador
+de ficheros, en la que podremos ver la carpeta, y los cuatro ficheros,
+que contiene a esta m&aacute;quina virtual en el almacenamiento de
+disco interno del hipervisor ESX.<br>
+
+<br>
+
+<br>
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+  <tbody>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 351px; height: 371px;" alt="" src="img/browse_datastore.png"></td>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 876px; height: 196px;" alt="" src="img/contenido_datastore.png"></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<br>
+
+<span style="font-weight: bold;">13)</span> Cerrar
+la ventana del explorador del datastore, y pulsar sobre cualquiera de
+los dos botones de <span style="font-weight: bold;">Power
+On</span> para arrancar el servidor (o, seleccionando <span style="font-style: italic;">Debiantomato</span>,
+pulsar el bot&oacute;n derecho para acceder al men&uacute;
+contextual <span style="font-weight: bold;">Power On</span>).<br>
+
+<br>
+
+<span style="font-weight: bold;">14)</span> Pulsar
+ahora sobre la pesta&ntilde;a <span style="font-weight: bold;">Resource
+Allocation</span>, en la que, con la m&aacute;quina
+arrancada, podemos ver cual es el consumo real de recursos que, en este
+momento, tiene esta m&aacute;quina virtual. En particular, observar
+c&oacute;mo la eficiente gesti&oacute;n de memoria en el
+hipervisor hace que su consumo real de memoria en el host (el ESX) sea
+menor que el consumo reportado en el guest (la m&aacute;quina
+virtual) por el sistema operativo de <span style="font-style: italic;">Debiantomato</span>.<br>
+
+<br>
+
+<img style="width: 793px; height: 415px;" alt="" src="img/resources.png"><br>
+
+<br>
+
+Tenemos ahora que resolver un peque&ntilde;o problema en el
+despliegue: en el Workstation hemos prototipado dos versiones distintas
+del servidor <span style="font-style: italic;">Debiantomato</span>
+(con la base de datos en el mismo servidor y con la base de datos
+separada), pero hemos usado en ambas la misma direcci&oacute;n IP
+porque nunca las &iacute;bamos a tener encendidas al mismo tiempo.
+Sin embargo, ahora en nuestro servidor ESX s&iacute; queremos tener
+ambas versiones en explotaci&oacute;n simult&aacute;neamente.
+Necesitaremos, por tanto, cambiar la direcci&oacute;n IP del
+servidor que acabamos de desplegar (NOTA: lo hacemos en este servidor
+porque es el que menos cambios requerir&aacute; en el sistema
+Tomatocart para que siga funcionando tras cambiar la IP).<br>
+
+<br>
+
+<span style="font-weight: bold;">15)</span> Podemos
+abrir en el cliente vSphere la consola del servidor <span style="font-style: italic;">Debiantomato</span> usando
+la pesta&ntilde;a <span style="font-style: italic;">Console</span>,
+pero vamos a hacerlo, en su lugar, abriendo una ventana de consola
+separada (porque su operaci&oacute;n es algo m&aacute;s
+flu&iacute;da que la de la pesta&ntilde;a). Para ello, pulsar
+en la barra de &iacute;conos el bot&oacute;n que abre esta
+ventana de consola.<br>
+
+<br>
+
+<img style="width: 411px; height: 161px;" alt="" src="img/boton_consola.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">16)</span> Hacer
+login como <span style="font-weight: bold;">root</span>
+en <span style="font-style: italic;">Debiantomato</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">17)</span> Ir al
+directorio <span style="font-style: italic;">/etc/network</span>,
+y editar el fichero <span style="font-style: italic;">interfaces</span>
+para modificar su contenido tal como muestra la figura.<br>
+
+<br>
+
+<img style="width: 656px; height: 312px;" alt="" src="img/interfaces_debtomato_esx.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">18)</span> Ir al
+directorio <span style="font-style: italic;">/etc</span>
+y modificar el fichero <span style="font-style: italic;">hosts</span>,
+tal como se indica en la figura.<br>
+
+<br>
+
+<img style="width: 557px; height: 150px;" alt="" src="img/hosts_debtomato_esx.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">19)</span> Ir ahora
+al directorio <span style="font-style: italic;">/var/www/tomatocart/includes</span>,
+y editar el fichero <span style="font-style: italic;">configure.php</span>
+para cambiar las direcciones del servidor web, tal como se muestra en
+la figura. (NOTA: Si hubi&eacute;semos configurado las
+m&aacute;quinas desde el principio usando nombres y
+resoluci&oacute;n DNS, este paso no ser&iacute;a necesario).<br>
+
+<br>
+
+<img style="width: 454px; height: 189px;" alt="" src="img/cambio_configure.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">20)</span>
+Reiniciar el servidor, ejecutando <span style="font-weight: bold;">reboot</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">21)</span> Una ve
+que haya terminado el reinicio de <span style="font-style: italic;">Debiantomato</span>,
+comprobaremos que el sistema Tomatocart est&aacute; funcionando
+correctamente, usando en el Windows 7 el Firefox para acceder a
+&nbsp;<span style="font-style: italic;">http://10.0.0.41/tomatocart</span><br>
+
+<br>
+
+<span style="font-weight: bold;">22)</span> Cerrar
+el Firefox del Windows 7, y cerrar la ventana de consola de <span style="font-style: italic;">Debiantomato</span>.<br>
+
+<br>
+
+Ahora que ya tenemos esta versi&oacute;n de <span style="font-style: italic;">Debiantomato</span>
+corriendo en el ESX, vamos a desplegar la versi&oacute;n que
+utiliza dos servidores, exportando templates OVF para <span style="font-style: italic;">debiantomato</span> y para
+<span style="font-style: italic;">debiansql</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">23)</span> En el
+Windows 7, crer el directorio <span style="font-style: italic;">D:\practicas\MV\OVF_debiantomatodual</span>,
+y debajo de &eacute;l directorios <span style="font-style: italic;">debiantomato</span> y <span style="font-style: italic;">debiansql</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">24)</span> En el
+VMware Workstation del Windows 7 abrir, sin arrancarla, la
+m&aacute;quina virtual <span style="font-style: italic;">Debiantomato</span>
+y, en el gestor de instant&aacute;neas, hacer <span style="font-weight: bold;">Go To</span> a <span style="font-weight: bold;">Separado en dos servidores</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">25)</span> Editar
+los settings para dejar la lectura de CD/DVD como <span style="font-weight: bold;">Auto detect</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">26)</span> Usar <span style="font-weight: bold;">File -&gt; Export to OVF</span>
+para exportar el template con el nombre <span style="font-style: italic;">Debiantomato-dual.ovf</span>
+al directorio <span style="font-style: italic;">D:\practicas\MV\OVF_debiantomatodual\debiantomato</span>.
+Una vez terminada la exportaci&oacute;n, cerrar la
+m&aacute;quina virtual <span style="font-style: italic;">Debiantomato</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">27)</span> De igual
+forma, abrir la m&aacute;quina virtual <span style="font-style: italic;">debiansql</span> y hacer <span style="font-weight: bold;">Go To</span> a la
+instant&aacute;nea <span style="font-weight: bold;">Separado
+en dos servidores</span>. Editar los settings para dejar la
+unidad de CD/DVD como <span style="font-weight: bold;">Auto
+detect</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">28)</span> Exportar
+el template OVF como <span style="font-style: italic;">debiansql.ovf</span>
+al directorio <span style="font-style: italic;">D:\practicas\MV\OVF_debiantomatodual\debiansql</span>.
+Una vez terminada la exportaci&oacute;n, cerrar la
+m&aacute;quina virtual.<br>
+
+<br>
+
+<span style="font-weight: bold;">29)</span>
+Arrastrar la carpeta <span style="font-style: italic;">D:\practicas\MV\OVF_debiantomatodual</span>
+desde el Windows 7 al escritorio de <span style="font-style: italic;">XPadmin</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">30)</span> Usar el
+cliente vSphere en XPadmin, y el procedimiento visto en los puntos 7 a
+10, para desplegar en el hipervisor ESX los servidores <span style="font-style: italic;">debiantomato</span> y <span style="font-style: italic;">debiansql</span>. (NOTA:
+prestar especial atenci&oacute;n a crear discos <span style="font-weight: bold;"><span style="text-decoration: underline;">thin</span></span>,
+y no thick). Darles como nombre <span style="font-style: italic;">Debiantomato-dual</span>
+y <span style="font-style: italic;">Debiansql</span>.<br>
+
+<br>
+
+<br>
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+  <tbody>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 703px; height: 232px;" alt="" src="img/deploy-debtomatodual.png"></td>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 708px; height: 241px;" alt="" src="img/deploy_debiansql.png"></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<span style="font-weight: bold;"><br>
+
+31)</span> Una vez
+desplegados, arrancar, desde el cliente vSphere, tanto el servidor <span style="font-style: italic;">Debiantomato-dual</span>
+como el servidor <span style="font-style: italic;">Debiansql</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">32)</span>
+Comprobar que ahora tambi&eacute;n funciona el sistema Tomatocart
+en <span style="font-style: italic;">http://10.0.0.21/tomatocart</span>,
+y que en paralelo, sigue funcionando <span style="font-style: italic;">http://10.0.0.41/tomatocart</span>.<br>
+
+<br>
+
+(NOTA: en un despliegue real, adem&aacute;s de cambiar la
+direcci&oacute;n IP, habr&iacute;amos modificado
+tambi&eacute;n el hostname del servidor 10.0.0.41, para evitar
+tener operando a la vez dos servidores con el mismo nombre y distinta
+IP).<br>
+
+<br>
+
+<span style="font-weight: bold;">33)</span> En el
+cliente vSphere, seleccionar ahora en el inventario el propio servidor
+ESX (10.0.0.60), y comprobar c&oacute;mo, a trav&eacute;s de
+las pesta&ntilde;as <span style="font-weight: bold;">Summary</span>
+y <span style="font-weight: bold;">Virtual Machines</span>,obtenemos
+una visi&oacute;n r&aacute;pida de cu&aacute;ntas
+m&aacute;quinas virtuales tenemos corriendo, y de
+cu&aacute;ntos recursos consume cada una de ellas.<br>
+
+<br>
+
+<br>
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+  <tbody>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 1017px; height: 585px;" alt="" src="img/esx_summary.png"></td>
+
+    </tr>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 1057px; height: 183px;" alt="" src="img/esx_vmach.png"></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<br>
+
+<span style="font-weight: bold;">34)</span> Para
+terminar, apagaremoscada uno de los servidores. Como no tienen
+instalados los VMware Tools, no pueden apagarse limpiamente usando el
+bot&oacute;n <span style="font-style: italic;">Power
+off</span>, por lo que deberemos hacer login como root en cada uno de ellos (usando la pesta&ntilde;a <span style="font-weight: bold;">Console</span>) y apagarlo, ejecutando <span style="font-weight: bold;">telinit 0</span>.<br>
+<br>
+<span style="font-weight: bold;">35)</span> Seleccionar en el inventario el servidor ESX y pulsar <span style="font-weight: bold;">Shutdown</span> para apagarlo. Como raz&oacute;n del apagado, introducir <span style="font-weight: bold;">Apagado de rutina</span>. En aproximadamente un minuto la m&aacute;quina virtual ESX se habr&aacute; apagado.<br>
+<br>
+<span style="font-weight: bold;">36)</span> Apagar, finalmente, la m&aacute;quina de administraci&oacute;n <span style="font-style: italic;">XPadmin</span>.<br>
+
+<br>
+
+<br>
+
+<a href="Ejercicio3.html">Continuar al Ejercicio 3</a><br>
+
+<br>
+
+</body>
+</html>

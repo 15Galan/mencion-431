@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+
+  
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+
+  
+  
+  
+  <title>Ejercicio 1 - Instalaci&oacute;n de Windows XP</title>
+</head>
+
+
+<body>
+
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+
+  <tbody>
+
+
+
+
+    <tr>
+
+
+
+
+      
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+
+      </td>
+
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 1 &nbsp;-
+Instalaci&oacute;n de Windows XP<br>
+
+
+
+
+      </span></b></h1>
+
+
+
+
+      </td>
+
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+
+En este ejercicio vamos a instalar un Windows XP SP2 sobre una
+m&aacute;quina virtual que correr&aacute; sobre el hipervisor
+VMware Workstation del Windows 7. Para ello, seguiremos estos pasos:<br>
+
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">1)</span>
+&nbsp;Esta m&aacute;quina virtual va a tener un consumo
+apreciable de memoria, por lo que nos aseguraremos, antes de empezar,
+de que no haya ninguna otra m&aacute;quina virtual en
+ejecuci&oacute;n.<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">2)</span> En el
+directorio <span style="font-style: italic;">D:\practicas\MV</span>
+crear una carpeta de nombre&nbsp;<span style="font-style: italic;">WinXP</span>.<br>
+
+
+
+
+<br>
+
+
+
+
+Para crear la m&aacute;quina virtual usaremos el procedimiento
+"Custom", que nos permite mayor control sobre los par&aacute;metros
+de la m&aacute;quina.<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">3)</span> Ejecutar
+VMware Workstation, y crear una nueva m&aacute;quina virtual
+siguiendo los pasos y valores mostrados <a href="img/preparacion_winxp.htm">en esta animaci&oacute;n</a>.<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">4)</span> Arrancar
+la m&aacute;quina virtual con <span style="font-weight: bold;">Power
+on</span>. Como no hemos insertado todav&iacute;a el DVD con
+el sistema operativo, veremos c&oacute;mo la m&aacute;quina
+virtual busca una instalaci&oacute;n de red PXE, y como no la
+encuentra, se detiene.<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">5)</span> La imagen
+ISO del DVD de instalaci&oacute;n del Windows XP es el fichero <span style="font-style: italic;">winxp.ISO</span>, que
+est&aacute; en el directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span>.
+Insertamos esta imagen en la unidad virtual de DVD y luego reiniciamos
+la m&aacute;quina virtual; el procedimiento para todo ello se
+detalla en <a href="img/insertar_dvd.htm">esta
+animaci&oacute;n</a>.<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">6)</span> Una vez
+arrancado el instalador, pulsar <span style="font-weight: bold;">ENTRAR</span>
+para confirmar que queremos instalar ahora Windows XP, y <span style="font-weight: bold;">F8</span> para aceptar el
+contrato de licencia.<br>
+
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+  <tbody>
+
+
+
+
+    <tr>
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 728px; height: 502px;" alt="" src="img/press_ENTER.png"></td>
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 728px; height: 499px;" alt="" src="img/f8_licencia.png"></td>
+
+
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">7)</span> Vamos a
+usar el disco virtual como una &uacute;nica partici&oacute;n,
+as&iacute; que pulsamos <span style="font-weight: bold;">ENTER</span>
+para instalar el Windows XP usando todo el espacio no particionado.<br>
+
+
+
+
+<br>
+
+
+
+
+<div style="text-align: center;"><img style="width: 726px; height: 501px;" alt="" src="img/enter_espacio_noparticionado.png"><br>
+
+
+
+
+</div>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">8)</span> En el
+siguiente paso el instalador pregunta si queremos hacer un formateo
+NTFS r&aacute;pido, o si queremos un formateo convencional, que
+recorre el disco entero. Es <span style="text-decoration: underline;">MUY IMPORTANTE</span>
+responder aqu&iacute; <span style="font-weight: bold;">que
+use el formato r&aacute;pido</span>, como muestra la figura.<br>
+
+
+
+
+<br>
+
+
+
+
+<div style="text-align: center;"><img style="width: 727px; height: 502px;" alt="" src="img/NTFS_rapido.png"><br>
+
+
+
+
+</div>
+
+
+
+
+<br>
+
+
+
+
+La raz&oacute;n para esta elecci&oacute;n es que estamos usando
+un disco duro virtual "thin", es decir, compuesto por un fichero que
+crece s&oacute;lo uando se pida espacio para nuevos ficheros en el
+disco virtual, y que por tanto ocupar&aacute; mucho menos que los
+40 GB con que se ha definido. El formateo r&aacute;pido NTFS se
+limita a&nbsp;inicializar las estructuras y metadatos de control
+del sistema de ficheros, y por tanto har&aacute; que el fichero con
+el disco duro virtual crezca muy poco. Sin embargo, un formateo
+completo convencional NTFS recorre cada uno de los sectores
+"f&iacute;sicos" del disco virtual, escribiendo en ellos un
+patr&oacute;n de inicializaci&oacute;n, y por tanto
+terminaremos con un fichero de 40 GB (que es, justamente, lo que
+quer&iacute;amos evitar mediante el uso del disco "thin").<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">9)</span> El
+instalador comenzar&aacute; ahora a copiar archivos, tras lo que
+reiniciar&aacute; la m&aacute;quina para luego continuar
+instalando dispositivos. Esperar, simplemente, hasta que aparezca la
+pantalla de opciones regionales e idioma, indicando que se va a
+utilizar configuraci&oacute;n en Espa&ntilde;ol con teclado
+Espa&ntilde;ol; confirmar con <span style="font-weight: bold;">Siguiente</span>.<br>
+
+
+
+
+<span style="font-weight: bold;"></span><br>
+
+
+
+
+<div style="text-align: center;"><img style="width: 601px; height: 441px;" alt="" src="img/config_regional.png"><br>
+
+
+
+
+</div>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">10)</span> Usar <span style="font-style: italic;">nosotros</span> para el
+nombre y la organizaci&oacute;n.<br>
+
+
+
+
+<br>
+
+
+
+
+<div style="text-align: center;"><img style="width: 603px; height: 250px;" alt="" src="img/nosotros.png"><br>
+
+
+
+
+</div>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">11)</span>
+Introducir la clave de producto proporcionada por el profesor.<br>
+
+
+
+
+<br>
+
+
+
+
+En el siguiente paso el instalador nos pedir&aacute; el nombre para
+el equipo. La elecci&oacute;n de este nombre debe hacerse con un
+poco de cuidado, y teniendo en cuenta si esta m&aacute;quina va a
+estar, en alg&uacute;n momento, conectada en modo NAT o Bridge.
+Para nuestro laboratorio de pr&aacute;cticas hay dos posibilidades:<br>
+
+
+
+
+<br>
+
+
+
+
+<ol>
+
+
+
+
+  <li>La m&aacute;quina virtual siempre va a estar conectada
+a una red host-only, de forma que la m&aacute;quina virtual nunca
+va a ser vista desde la LAN com&uacute;n a todos los Windows 7
+reales que hacen de hipervisor, y por tanto no hay posibilidad de
+colisiones de nombres con otras m&aacute;quinas virtuales. En este
+caso podemos elegir el nombre Windows (es decir, nombre NetBIOS) de la
+m&aacute;quina con total libertad, e incluso puede repetirse en
+distintas m&aacute;quinas virtuales.<br>
+
+
+
+
+    <br>
+
+
+
+
+  </li>
+
+
+
+
+  <li>El interfaz de red de la m&aacute;quina
+virtual puede, en un momento dado, ser conectado a la red Bridged
+(VMnet0) o NAT (VMnet8) del hipervisor, y la m&aacute;quina virtual
+ser&aacute; visible por todas las m&aacute;quinas (reales o
+virtuales) que est&eacute;n conectadas a la LAN del laboratorio. En
+este caso debemos asegurarnos de que el nombre Windows de cada
+m&aacute;quina virtual que instalemos sea &uacute;nico (por
+ejemplo, a&ntilde;adiendo al nombre base un sufijo
+num&eacute;rico basado en la direcci&oacute;n IP del hipervisor
+Windows 7); si el nombre no es &uacute;nico, la m&aacute;quina
+detectar&aacute; al arrancar la presencia de otra
+m&aacute;quina virtual con el mismo nombre, y puede deshabilitar el
+interfaz de red.<br>
+
+
+
+
+  </li>
+
+
+
+
+</ol>
+
+
+
+
+Como nuestra m&aacute;quina virtual Windows XP va a correr, de
+momento, exclusivamente en una red host-only, no vamos a tener
+problemas de colisiones de nombres. Por ello, todos los alumnos
+usar&aacute;n el mismo nombre, <span style="font-style: italic;">xpvirtual</span>,
+para sus respectivas m&aacute;quinas virtuales (y de esta forma
+podemos mantener un gui&oacute;n com&uacute;n a todos los
+alumnos, sin tener que estar haciendo constantemente menci&oacute;n
+a sufijos individualizados).<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">12)</span> Asignar,
+por tanto, el nombre de equipo <span style="font-weight: bold;">xpvirtual</span>.
+Asignar tambi&eacute;n la contrase&ntilde;a de administrador,
+que ser&aacute; <span style="font-weight: bold;">deii15</span>.<br>
+
+
+
+
+<br>
+
+
+
+
+<div style="text-align: center;"><img style="width: 601px; height: 444px;" alt="" src="img/nombre_equipo.png"><br>
+
+
+
+
+</div>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">13)</span> En la
+ventana de <span style="font-weight: bold;">Configuraci&oacute;n
+de red</span>, elegir <span style="font-weight: bold;">Configuraci&oacute;n
+t&iacute;pica</span>; como la m&aacute;quina virtual
+tomar&aacute; la direcci&oacute;n IP por DHCP, esta
+configuraci&oacute;n es perfectamente v&aacute;lida.<br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">14)</span> Usar <span style="font-weight: bold;">CURSOFP</span> como grupo
+de trabajo.<br>
+
+
+
+
+<br>
+
+
+
+
+<div style="text-align: center;"><img style="width: 604px; height: 444px;" alt="" src="img/grupo_trabajo.png"><br>
+
+
+
+
+</div>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">15)</span> Una vez
+finalizada la instalaci&oacute;n y reiniciado el sistema, permitir
+a Windows ajustar autom&aacute;ticamente la resoluci&oacute;n
+de pantalla. Pulsar <span style="font-weight: bold;">Aceptar</span>
+en la petici&oacute;n de confirmaci&oacute;n.<br>
+
+
+
+
+<br>
+
+
+
+
+<img style="width: 393px; height: 110px;" alt="" src="img/ajuste_resolucion.png"><br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">16)</span> Comenzar
+la configuraci&oacute;n final pulsando <span style="font-weight: bold;">Siguiente</span>.<br>
+
+
+
+
+<br>
+
+
+
+
+<img style="width: 134px; height: 63px;" alt="" src="img/siguiente.png"><br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">17)</span> No
+activar las Actualizaciones autom&aacute;ticas. Pulsar <span style="font-weight: bold;">Siguiente</span>.<br>
+
+
+
+
+<br>
+
+
+
+
+<img style="width: 710px; height: 217px;" alt="" src="img/actualiz_autom.png"><br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">18)</span> Omitir
+la detecci&oacute;n de conexi&oacute;n a Internet.<br>
+
+
+
+
+<br>
+
+
+
+
+<img style="width: 87px; height: 49px;" alt="" src="img/omitir.png"><br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">19)</span> No
+activar Windows. Pulsar <span style="font-weight: bold;">Siguiente</span>.<br>
+
+
+
+
+<br>
+
+
+
+
+<img style="width: 323px; height: 62px;" alt="" src="img/no_activar.png"><br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">20)</span> Usar <span style="font-weight: bold;">curso</span> como nombre de
+usuario. Pulsar <span style="font-weight: bold;">Siguiente</span>,
+y luego <span style="font-weight: bold;">Finalizar</span>.<br>
+
+
+
+
+<br>
+
+
+
+
+<img style="width: 395px; height: 162px;" alt="" src="img/nombre_usuario.png"><br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">21)</span> Al
+iniciarse Windows, pulsar sobre el escritorio para cerrar el
+men&uacute; Inicio. Despu&eacute;s cerrar (pulsando sobre <span style="font-weight: bold;">X</span>) la ventana con
+informaci&oacute;n sobre el antivirus. Despu&eacute;s pulsar
+dentro del globo de informaci&oacute;n <span style="font-style: italic;">Dar un paseo por Windows XP</span>
+para que aparezca la ventana de <span style="font-weight: bold;">Paseo
+por XP</span> (y deje de aparecer en posteriores arranques).
+Pulsar <span style="font-weight: bold;">Cancelar</span>.<br>
+
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+  <tbody>
+
+
+
+
+    <tr>
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 385px; height: 134px;" alt="" src="img/paseo_XP.png"></td>
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 500px; height: 388px;" alt="" src="img/paseo_XP_2.png"></td>
+
+
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+
+Para finalizar, instalaremos en el Windows XP el conjunto de drivers especiales llamado <span style="font-style: italic;">VMware Tools</span>, que proporcionan funcionalidades avanzadas de video, red y gesti&oacute;n del disco duro virtual.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">23)</span> Lanzar la instalaci&oacute;n de los VMware Tools usando el men&uacute; <span style="font-weight: bold;">VM -&gt; Install VMware Tools...</span><br>
+
+
+
+<br>
+
+
+
+<img style="width: 241px; height: 260px;" alt="" src="img/install_tools.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">24)</span> Usar la instalaci&oacute;n <span style="font-weight: bold;">T&iacute;pica</span> y pulsar <span style="font-weight: bold;">Siguiente</span>, <span style="font-weight: bold;">Instalar</span> y luego <span style="font-weight: bold;">Finalizar</span>. Reiniciar el sistema.<br>
+
+
+
+<br>
+
+
+
+Con &eacute;sto tenemos ya completa la instalaci&oacute;n b&aacute;sica
+de un Windows XP. En un ejercicio posterior configuraremos el sistema
+operativo para reducir el consumo de memoria y CPU, y el tama&ntilde;o
+en disco de esta m&aacute;quina virtual (y, de paso, aprenderemos
+c&oacute;mo usar instantaneas para poder experimentar con opciones de
+configuraci&oacute;n y volver atr&aacute;s si el resultado no es
+adecuado).<br>
+
+
+
+<br>
+
+
+
+<a href="Ejercicio2.html">Continuar al Ejercicio 2</a><br>
+
+
+
+<br>
+
+
+
+
+</body>
+</html>

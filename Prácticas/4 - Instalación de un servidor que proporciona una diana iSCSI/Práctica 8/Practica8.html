@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <title>Pr&aacute;ctica 8: Uso de un servidor SAN/NAS</title>
+
+
+</head>
+
+
+<body>
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+  <tbody>
+
+    <tr>
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+      </td>
+
+      <td style="width: 1164.97px;">
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Pr&aacute;ctica 8: Uso de un
+servidor SAN/NAS<br>
+
+      </span></b></h1>
+
+      </td>
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<h2>1. Objetivo</h2>
+
+En las pr&aacute;cticas que hemos realizado hasta ahora, las
+m&aacute;quinas virtuales han usado unidades de disco virtuales que
+estaban alojadas en el disco duro del propio hipervisor. El problema de
+usar este almacenamiento interno del hipervisor es que el precio de los
+servidores aumenta dr&aacute;sticamente con el n&uacute;mero de
+alojamientos para discos internos que posean.<br>
+
+<br>
+
+Por esta raz&oacute;n resulta interesante explorar el uso de
+configuraciones que permitan proporcionar al hipervisor un
+almacenamiento de disco externo que pueda ser usado desde las propias
+m&aacute;quinas virtuales; as&iacute;, por ejemplo, un sistema
+de producci&oacute;n podr&iacute;a usar un hipervisor
+econ&oacute;mico con mucha memoria y muchos cores pero
+con s&oacute;lo dos discos internos (el disco de sistema, en RAID1), y
+darle todo el espacio de disco necesario para las m&aacute;quinas
+virtuales desde un sistema externo. Hay dos posibilidades para este
+almacenamiento:<br>
+<br>
+
+<ul>
+
+  <li>Usar un arc&oacute;n de discos externos, conectado al
+hipervisor por Fibre Channel o SAS (Serial Attached SCSI). Es la
+opci&oacute;n m&aacute;s eficiente, pero requiere que el
+servidor tenga una HBA FC o SAS, y si el servidor es muy delgado (por
+ejemplo, de 1U) puede ser problem&aacute;tico el disponer de un
+slot de expansi&oacute;n libre donde conectar la tarjeta.<br>
+
+    <br>
+
+  </li>
+
+  <li>Usar un servidor SAN o NAS, que proporcione acceso a su
+disco a trav&eacute;s de la red IP, empleando los protocolos iSCSI
+(SAN) o CIFS/NFS (NAS). Esta configuraci&oacute;n es algo menos
+eficiente que la anterior, pero tiene la ventaja de que puede montarse
+usando tan s&oacute;lo los interfaces de red Ethernet que traiga de
+f&aacute;brica el servidor del hipervisor.<br>
+  </li>
+
+</ul>
+
+En esta pr&aacute;ctica vamos a ver un ejemplo de esta segunda
+opci&oacute;n; concretamente, vamos a configurar un servidor Linux
+para que proporcione, simult&aacute;neamente:
+<ul>
+
+  <li>un servidor iSCSI que, a trav&eacute;s de un Target
+iSCSI, exporte unidades de disco para E/S de bloques (Block I/O) tanto
+a un Windows XP como al hipervisor ESX (e, indirectamente a
+trav&eacute;s de &eacute;l, a uno de los servidores Debian que
+alberga).<br>
+
+    <br>
+
+  </li>
+
+  <li>un servidor NAS que exporte una carpeta compartida a un
+Windows XP (v&iacute;a protocolo CIFS) y a un servidor Debian
+dentro del ESX (v&iacute;a protocolo NFS), permitiendo el acceso
+simult&aacute;neo y coherente desde ambas m&aacute;quinas.<br>
+    <br>
+  </li>
+</ul>
+
+Como servidor SAN/NAS vamos a usar un appliance (m&aacute;quina
+preinstalada lista para usar) Openfiler, compuesto por un servidor
+CentOS sobre el que residir&aacute; el paquete open source
+Openfiler.<br>
+
+<br>
+
+<div style="text-align: center;"><img style="width: 948px; height: 706px;" alt="" src="img/esquema_practica8.png"><br>
+
+</div>
+
+<br>
+
+Como muestra la figura, el servidor Openfiler va a estar implementado
+sobre una m&aacute;quina virtual que corre sobre el VMware
+Workstation, y estar&aacute; conectada al servidor ESX y a
+XPexterno a trav&eacute;s de la red virtual VMnet3.<br>
+
+<br>
+
+<br>
+
+<h2>2 Implementaci&oacute;n</h2>
+
+Para realizar la pr&aacute;ctica seguiremos estos pasos:<br>
+
+<br>
+
+<br>
+
+<span style="font-weight: bold;">1)</span> Arrancar la m&aacute;quina virtual <span style="font-weight: bold;">Openfiler</span> proporcionada. La
+instalaci&oacute;n de este&nbsp;servidor Openfiler se ha hecho siguiendo los
+pasos descritos en su gu&iacute;a de Administraci&oacute;n,
+excepto que el particionado del disco se ha realizado durante la
+instalaci&oacute;n (porque el particionador inclu&iacute;do con
+el propio sistema de administraci&oacute;n de Openfiler no funciona
+con el disco de la m&aacute;quina virtual). Las figuras muestran la
+configuraci&oacute;n usada para esta particionado, as&iacute;
+como la direcci&oacute;n IP asignada a este servidor (<span style="font-style: italic;">192.168.60.70</span>).
+Finalmente, la contrase&ntilde;a del usuario <span style="font-weight: bold;">root</span> es, como de
+costumbre, <span style="font-weight: bold;">deii15</span>.<br>
+
+<br>
+
+<br>
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+  <tbody>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 798px; height: 465px;" alt="" src="img/particionado-1.png"></td>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 770px; height: 184px;" alt="" src="img/particionado-2.png"></td>
+
+    </tr>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 754px; height: 185px;" alt="" src="img/particionado-3.png"></td>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 538px; height: 436px;" alt="" src="img/direccion_ip.png"></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<br>
+
+La
+m&aacute;quina virtual Openfiler est&aacute; conectada a la red
+virtual VMnet3 que se ha usado en el Ejercicio 6. Para administrar el
+servidor Openfiler vamos a usar la m&aacute;quina <span style="font-style: italic;">XPexterno</span>, que
+est&aacute; tambi&eacute;n conectada a esa misma red virtual.
+Como tambi&eacute;n usaremos <span style="font-style: italic;">XPexterno</span>
+para demostrar el uso del iniciador iSCSI, lo reseteamos a su estado
+inicial.<br>
+
+<br>
+
+<span style="font-weight: bold;">2)</span> En el
+Workstation, abrir la m&aacute;quina virtual XPexterno y, sin
+arrancarla, usar el administrador de instant&aacute;neas para
+revertirla a la instant&aacute;nea <span style="font-weight: bold;">Inicial</span>. Arrancar
+XPexterno.<br>
+
+<br>
+
+<span style="font-weight: bold;">3)</span> En
+XPexterno, arrancar Firefox y abrir la URTL <span style="font-weight: bold;">https://192.168.60.70:446</span>
+&nbsp;.Aceptar las advertencias de seguridad, e instalar
+permanentemente el certificado. Hacer login con la
+identificaci&oacute;n por defecto (nombre de usuario <span style="font-weight: bold;">openfiler</span>, password <span style="font-weight: bold;">password</span>).<br>
+
+<br>
+
+<span style="font-weight: bold;">4)</span> El primer
+paso ser&aacute;
+crear los dos vol&uacute;menes de datos que exportaremos como
+discos
+SCSI, es decir, como LUNs de una diana iSCSI, accesibles mediante Block
+I/O. Para ello, pulsar en la pesta&ntilde;a <span style="font-weight: bold;">Volumes</span> y
+seleccionar <span style="font-weight: bold;">Add Volume</span>.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 821px; height: 768px;" alt="" src="img/add_volume.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">5)</span> Crear el
+volumen con los datos mostrados en la figura.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 630px; height: 651px;" alt="" src="img/disco1.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">6)</span> Repetir
+el procedimiento para a&ntilde;adir un segundo volumen, con los
+datos mostrados en la figura.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 637px; height: 521px;" alt="" src="img/disco2.png"><br>
+
+<br>
+
+Tras ejecutar estas dos operaciones obtendremos el resultado mostrado
+en la figura, con los dos espacios de disco listos para exportar como
+LUNs SCSI.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 753px; height: 589px;" alt="" src="img/volumes.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">7)</span> Ahora,
+crearemos la Diana (Target) iSCSI a trav&eacute;s de la cual
+ofreceremos estas LUNs. Continuamos en la pesta&ntilde;a <span style="font-weight: bold;">Volumes</span>, y pulsamos
+sobre <span style="font-weight: bold;">iSCSI Targets</span>.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 995px; height: 562px;" alt="" src="img/iscsi_targets.png"><br>
+
+<br>
+
+Como veremos al aparecer la nueva pantalla, la gesti&oacute;n del
+Target iSCSI est&aacute; deshabilitada; la raz&oacute;n es que,
+por defecto, el servidor Openfiler tiene deshabilitado el servicio que
+proporciona la funcionalidad de iSCSI.<br>
+
+<br>
+
+<span style="font-weight: bold;">8)</span> Para
+activarlo, pulsamos sobre la pesta&ntilde;a <span style="font-weight: bold;">Services</span>, y
+modificamos el estado del servicio <span style="font-weight: bold;">iSCSI
+Target</span>, seleccionando <span style="font-weight: bold;">Enabled</span>
+y <span style="font-weight: bold;">Start</span>.<br>
+
+<br>
+
+<img style="width: 676px; height: 442px;" alt="" src="img/servicios_iscsi.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">9)</span> Volvemos
+a la pesta&ntilde;a <span style="font-weight: bold;">Volumes</span>
+y seleccionamos <span style="font-weight: bold;">iSCSI
+Targets</span>. Como vemos, el sistema nos ha creado un
+identificador &uacute;nico (<span style="font-style: italic;">Target
+IQN</span>) para la diana. Aunque se puede cambiar manualmente,
+este identificador garantiza su unicidad, as&iacute; que vamos a
+usarlo sin modificaciones. Pulsamos <span style="font-weight: bold;">Add</span>.<br>
+
+<br>
+
+<img style="width: 375px; height: 138px;" alt="" src="img/target_iqn.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">10)</span> Pulsamos
+sobre la pesta&ntilde;a <span style="font-weight: bold;">LUN
+Mapping</span> para acceder a la ventana en la que podremos
+asociar los vol&uacute;menes de disco con LUNs ofrecidas desde esta
+diana. Configurar los dos vol&uacute;menes de disco con los
+par&aacute;metros mostrados en la primera figura, y pulsar para
+cada uno <span style="font-weight: bold;">Map</span>,
+lo que
+dar&aacute; como resultado la asignaci&oacute;n de LUN IDs
+mostrada en la segunda figura (<span style="font-style: italic;">NOTA: En esta segunda figura hay una errata, ya que el modo de R/W ser&aacute; write-back</span>).<br>
+
+<br>
+
+<br>
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+  <tbody>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 748px; height: 214px;" alt="" src="img/config_luns.png"></td>
+
+    </tr>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 755px; height: 216px;" alt="" src="img/luns_mapped.png"></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<br>
+
+Para que las LUNs sean visibles desde la red deberemos
+tambi&eacute;n configurar las ACLs (<span style="font-style: italic;">Access Control List = Listas de
+Control de Acceso</span>), es decir, el cortafuegos del servidor
+Openfiler. El sistema Openfiler utiliza identificadores de subredes
+para gestionar las ACLs, por lo que necesitamos crear estos
+identificadores antes de poder usarlos en las ACLs del servidor iSCSI.<br>
+
+<br>
+
+<span style="font-weight: bold;">11)</span> En la
+pesta&ntilde;a <span style="font-weight: bold;">System</span>,
+a&ntilde;adir un identificador de subred usando la
+configuraci&oacute;n mostrada en la fgura, y pulsar <span style="font-weight: bold;">Update</span>.<br>
+
+<br>
+
+<img style="width: 535px; height: 161px;" alt="" src="img/add_network.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">12)</span> Volver a
+<span style="font-weight: bold;">Volumes -&gt; iSCSI
+Targets</span>, y pulsar en la pesta&ntilde;a <span style="font-weight: bold;">Network ACL</span>. Cambiar
+a <span style="font-weight: bold;">Allow</span> el
+permiso de acceso para la red <span style="font-weight: bold;">red-externa</span>,
+y pulsar <span style="font-weight: bold;">Update</span>.<br>
+
+<br>
+
+<img style="width: 631px; height: 240px;" alt="" src="img/acl_iscsi.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">13)</span> Pulsando
+en la pesta&ntilde;a <span style="font-weight: bold;">CHAP
+Authentication</span>, vamos a crear un usuario y password para
+hacer m&aacute;s seguro el acceso. El est&aacute;ndar iSCSI
+exige que el password CHAP tenga al menos 12 caracteres, as&iacute;
+que a&ntilde;adiremos el usuario <span style="font-weight: bold;">practicas</span> con
+password <span style="font-weight: bold;">deii15deii15</span>
+y perfil <span style="font-weight: bold;">Incoming User</span>,
+como muestra la figura.<br>
+
+<br>
+
+<img style="width: 736px; height: 354px;" alt="" src="img/chap_iscsi.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">14)</span> Una vez
+finalizada la configuraci&oacute;n del target iSCSI, hacemos <span style="font-weight: bold;">Log Out</span> del interfaz
+administrativo de Openfiler, y cerramos Firefox.<br>
+
+<br>
+
+Ahora, instalamos en XPexterno el software que proporciona un iniciador
+iSCSI, con el cual podremos montar desde el XP los discos iSCSI
+ofrecidos por Openfiler a trav&eacute;s de la red (<span style="font-style: italic;">NOTA: En Windows 7 y posteriores
+el iniciador iSCSI ya viene con el sistema operativo, aunque
+s&oacute;lo en las versiones profesionales de Windows</span>).
+<br>
+
+<br>
+
+<span style="font-weight: bold;">15)</span>
+Arrastrar al XP el fichero <span style="font-style: italic;">D:\practicas\MV\Windows_iSCSI_initiator\Initiator-2.08-build3825-x86fre.exe</span>
+.Ejecutarlo, aceptando las opciones por defecto.<br>
+
+<br>
+
+<span style="font-weight: bold;">16)</span> Abrir el
+iniciador iSCSI usando el acceso directo que aparecer&aacute; en el
+escritorio de XPexterno.<br>
+
+<br>
+
+<span style="font-weight: bold;">17)</span> En la
+pesta&ntilde;a <span style="font-weight: bold;">Discovery</span>,
+pulsar <span style="font-weight: bold;">Add</span>
+e instroducir la direcci&oacute;n <span style="font-weight: bold;">192.168.60.70</span>.<br>
+
+<br>
+
+<img style="width: 401px; height: 459px;" alt="" src="img/discovery.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">18)</span> Pulsando
+sobre la pesta&ntilde;a <span style="font-weight: bold;">Targets</span>
+podemos ver que el iniciador iSCSI ha escaneado
+autom&aacute;ticamente al servidor iSCSI en la direcci&oacute;n
+IP y puerto proporcionados, y ha descubierto la presencia del Target
+iSCSI que hemos definido en Openfiler.<br>
+
+<br>
+
+<img style="width: 402px; height: 464px;" alt="" src="img/targets.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">19)</span>
+Necesitamos conectarnos al servidor para poder usar el Target iSCSI
+descubierto. Para hacerlo, pulsamos el bot&oacute;n <span style="font-weight: bold;">Log On</span>, y <span style="font-weight: bold;">OK</span> en la ventana que
+aparecer&aacute;. Como hemos configurado en Openfiler una
+autenticaci&oacute;n CHAP asociada al Target iSCSI, obtendremos un
+fallo de autentificaci&oacute;n.<br>
+
+<br>
+
+<img style="width: 599px; height: 465px;" alt="" src="img/fallo_autenticacion.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">20)</span> Para
+introducir los valores de la autenticaci&oacute;n CHAP, pulsamos el
+bot&oacute;n <span style="font-weight: bold;">Advanced</span>,
+y rellenamos los campos de logon CHAP con el nombre de usuario <span style="font-weight: bold;">practicas</span> y el
+password <span style="font-weight: bold;">deii15deii15</span>.
+Pulsar <span style="font-weight: bold;">Aceptar</span>,
+y lueg <span style="font-weight: bold;">OK</span>.
+El estado del Target pasar&aacute; a&nbsp;<span style="font-style: italic;">Connected</span><br>
+
+<br>
+
+<img style="width: 401px; height: 511px;" alt="" src="img/chap_logon.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">21)</span> Pulsando
+en <span style="font-weight: bold;">Details</span>
+se abrir&aacute; una ventana en la que podremos acceder a
+informaci&oacute;n detallada acerca de las LUNs ofrecidas por este
+Target iSCSI. En particular, pulsando en la pesta&ntilde;a <span style="font-weight: bold;">Devices</span> podemos
+comprobar que el Target iSCSI nos est&aacute; ofreciendo dos discos
+iSCSI. Si seleccionamos cualquiera de ellos, y pulsamos <span style="font-weight: bold;">Advanced</span>,
+obtendremos informaci&oacute;n de bajo nivel acerca de ese disco,
+de la que la m&aacute;s interesante es el n&uacute;mero de LUN
+que declara ese disco, que ser&aacute; el mismo n&uacute;mero
+de LUN que le hemos asignado al hacer el LUN-Mapping en Openfiler.<br>
+
+<br>
+
+<br>
+
+<br>
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+  <tbody>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 402px; height: 461px;" alt="" src="img/devices.png"></td>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 391px; height: 288px;" alt="" src="img/device-details.png"></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<br>
+
+<br>
+
+<span style="font-weight: bold;">22)</span> Una vez
+que nos hemos conectado al Target iSCSI, cerramos la ventana del
+iniciador iSCSI pulsando <span style="font-weight: bold;">Aceptar</span>.<br>
+
+<br>
+
+Ya tenemos visibles los dos discos iSCSI pero, si pulsamos sobre <span style="font-weight: bold;">Mi PC</span>, comprobaremos
+que estos dos discos no nos aparecen todav&iacute;a como unidades
+de disco accesibles al usuario. Para poder usarlos necesitamos primero
+inicializarlos usando el administrador de discos del XP.<br>
+
+<br>
+
+<span style="font-weight: bold;">23)</span> Pulsar
+sobre<span style="font-weight: bold;">Mi PC</span> y
+usar el bot&oacute;n derecho para invocar el men&uacute; <span style="font-weight: bold;">Administrar</span>. Pulsar
+sobre <span style="font-weight: bold;">Administracion de
+discos</span>. Como hay discos sin inicializar (los discos
+iSCSI), se abrir&aacute; la ventana del Asistente para inicializar
+discos. Como queremos gestionar de forma totalmente manual los discos,
+pulsaremos <span style="font-weight: bold;">Cancelar</span>.
+Se abrir&aacute; entonces la ventana del Administrador de discos,
+donde podemos ver que hay dos discos sin inicializar, cada uno de ellos
+de 1020 MB.<br>
+
+<br>
+
+<img style="width: 735px; height: 594px;" alt="" src="img/admin_discos.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">24)</span> Si
+pulsamos sobre la etiqueta del <span style="font-weight: bold;">Disco
+1</span> y, con el bot&oacute;n derecho, invocamos el
+men&uacute; <span style="font-weight: bold;">Propiedades</span>,
+podemos comprobar que se trata de la LUN 0 del Target iSCSI ofrecido
+por el servidor Openfiler. Pulsar <span style="font-weight: bold;">Cancelar</span>
+para volver.<br>
+
+<br>
+
+<img style="width: 443px; height: 441px;" alt="" src="img/propiedades_disco1.png"><br>
+
+<br>
+
+Ahora vamos a inicializar s&oacute;lo el Disco 1 para usarlo desde
+el XP. <span style="font-weight: bold;"><span style="text-decoration: underline;">NO</span></span>
+debemos inicializar el Disco 2, porque tiene como prop&oacute;sito
+ser usado en otra m&aacute;quina distinta, y como no estamos usando
+software de clustering <span style="text-decoration: underline;">no</span>
+podemos usar un mismo disco SCSI, accedido en modo Block I/O, desde dos
+m&aacute;quinas distintas; si lo hici&eacute;ramos,
+sufrir&iacute;amos inevitablemente una corrupci&oacute;n de
+datos.<br>
+
+<br>
+
+<span style="font-weight: bold;">25)</span>
+Seleccionando la etiqueta del <span style="font-weight: bold;">Disco
+1</span>, invocamos con el bot&oacute;n derecho el
+men&uacute; <span style="font-weight: bold;">Inicializar
+disco</span>. Se abrir&aacute; una ventana en la que se nos
+ofrece elegir los discos a inicializar; seleccionar s&oacute;lo <span style="font-weight: bold;">Disco 1</span>, y pulsar <span style="font-weight: bold;">Aceptar</span>.<br>
+
+<br>
+
+<img style="width: 402px; height: 245px;" alt="" src="img/seleccion_disco.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">26)</span> Una vez
+inicializado, seleccionar el espacio no asignado de <span style="font-weight: bold;">Disco 1</span> y, con el
+bot&oacute;n derecho, crear una nueva partici&oacute;n. Aceptar
+los par&aacute;metros por defecto del particionador, excepto en la
+ventana de par&aacute;metros de formateo, donde seleccionaremos la
+opci&oacute;n <span style="font-weight: bold;">dar
+formato r&aacute;pido</span>. Pulsar <span style="font-weight: bold;">Finalizar.<br>
+
+<br>
+
+<img style="width: 511px; height: 381px;" alt="" src="img/formato_rapido.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">27)</span></span>
+Cerramos el administrador de discos, y comprobamos que ahora tenemos
+accesible un nuevo disco duro, de 1 GB de tama&ntilde;o, en la
+unidad l&oacute;gica F.<br>
+
+<br>
+
+<img style="width: 503px; height: 183px;" alt="" src="img/discos_disponibles.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">28)</span>
+Reiniciar XPexterno<br>
+
+<br>
+
+Tras terminar el arranque del sistema operativo, comprobaremos que el
+disco SCSI no se ha conectado y montado autom&aacute;ticamente. En
+este ejercicio ese es, precisamente, el &nbsp;comportamiento que
+deseamos (montaje bajo demanda). Sin embargo, si quisi&eacute;ramos
+configurar el sistema para que el disco iSCSI s&iacute; sea montado
+en el arranque lo podemos hacer en la ventana de Log-on del iniciador
+iSCSI, marcando el flag de montaje autom&aacute;tico tras el
+arranque, lo que tambi&eacute;n dejar&iacute;a almacenada la
+informaci&oacute;n de autentificaci&oacute;n CHAP.<br>
+
+<br>
+
+<img style="width: 380px; height: 207px;" alt="" src="img/montaje_auto.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">29)</span> Volver a
+conectar el Target iSCSI usando el iniciador iSCSI. No olvidar
+introducir la informaci&oacute;n de autentificaci&oacute;n
+CHAP. Comprobar que el disco F vuelve a ser visible.<br>
+
+<br>
+
+Ahora vamos a configurar el servidor Openfiler para que
+(adem&aacute;s de como servidor iSCSI ofreciendo una LUN para E/S
+de bloque) opere tambi&eacute;n como servidor NAS, que
+ofrecer&aacute; un vol&uacute;men de disco compartido por red
+v&iacute;a protocolo CIFS (es decir, una carpeta compartida de
+Windows).<br>
+
+<br>
+
+<span style="font-weight: bold;">30)</span> Abrir el
+Firefox y hacer login de nuevo en la herramienta de
+administraci&oacute;n de Openfiler.<br>
+
+<br>
+
+<span style="font-weight: bold;">31)</span> Pulsando
+sobre la pesta&ntilde;a <span style="font-weight: bold;">Volumes</span>,
+creamos en el servidor Openfiler el volumen de disco que compartiremos
+por red. Pulsar <span style="font-weight: bold;">Add
+Volume</span>, y crear un nuevo volumen con los
+par&aacute;metros mostrados en la figura.<br>
+
+<br>
+
+<img style="width: 610px; height: 295px;" alt="" src="img/volumen_cifs.png"><br>
+
+<br>
+
+Tras crear este nuevo volumen, el espacio de almacenamiento en el grupo
+de vol&uacute;menes LVM del servidor Openfiler ha quedado como se
+muestra en la figura.<br>
+
+<br>
+
+<img style="width: 970px; height: 565px;" alt="" src="img/volumenes_lvm.png"><br>
+
+<br>
+
+Observar que, a diferencia de los vol&uacute;menes <span style="font-style: italic;">disco1</span> y <span style="font-style: italic;">disco2</span>(que son
+exportados como dispositivos de bloques para ser usados como discos
+SCSI), el volumen <span style="font-style: italic;">discocifs</span>
+s&iacute; es gestionado usando un sistema de ficheros (Ext4) en el
+propio servidor Openfiler. Es la presencia de este sistema de ficheros,
+junto con el software de exportaci&oacute;n CIFS/NFS, lo que
+permitir&aacute; a este volumen ser accedido de forma
+simult&aacute;nea y coherente desde diversos ordenadores.<br>
+
+<br>
+
+<span style="font-weight: bold;">32)</span> Ahora
+vamos a activar los servicios de compartici&oacute;n por red.
+Pulsando sobre la pesta&ntilde;a <span style="font-weight: bold;">Services</span>, activar y
+arrancar los servicios <span style="font-weight: bold;">CIFS
+Server</span> y <span style="font-weight: bold;">NFS
+Server</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">33)</span> Pulsar
+ahora sobre la pesta&ntilde;a <span style="font-weight: bold;">Shares</span>.
+Podemos observar que el volumen <span style="font-weight: bold;">discocifs</span>
+ya est&aacute; listo para configurar (ignorar el aviso solicitando
+crear un nuevo volumen de sistema de ficheros).<br>
+
+<br>
+
+<img style="width: 732px; height: 191px;" alt="" src="img/ignorar_aviso.png"><br>
+
+<span style="font-weight: bold;">34)</span> Vamos a
+crear un subdirectorio en el volumen, para luego exportarlo como Share.
+Pulsar sobre <span style="font-weight: bold;">Disco para
+CIFS</span>. Introducir <span style="font-weight: bold;">CarpetaCompartida</span>
+como nombre de folder, y pulsar <span style="font-weight: bold;">Enter</span>
+o <span style="font-weight: bold;">Create Sub-folder</span>.
+Comprobar que se ha creado el subdirectorio especificado, tal como
+muestra la figura.<br>
+
+<br>
+
+<img style="width: 708px; height: 147px;" alt="" src="img/carpetacompartida.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">35)</span> Pulsar
+sobre <span style="font-weight: bold;">CarpetaCompartida</span>.
+Se abrir&aacute; una ventana; pulsar <span style="font-weight: bold;">Make Share</span>.<br>
+
+<br>
+
+<img style="width: 379px; height: 268px;" alt="" src="img/makeshare.png"><br>
+
+<br>
+
+Supongamos que nuestro objetivo es que el directorio <span style="font-style: italic;">CarpetaCompartida</span>
+sea un espacio com&uacute;n, no seguro, para el intercambio, dentro
+de una oficina, de ficheros no confidenciales. Vamos a configurar el
+share con los par&aacute;metros que proporcionen esta funcionalidad.<br>
+
+<br>
+
+<span style="font-weight: bold;">36)</span> Una vez
+abierta la ventana de configuraci&oacute;n del share, seleccionamos
+como modo de control <span style="font-weight: bold;">Public
+guest access</span>, y pulsamos <span style="font-weight: bold;">Update</span>.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 309px; height: 192px;" alt="" src="img/public_access.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">37)</span> Ahora
+vamos a exportar este directorio en modo RW (para que pueda ser
+le&iacute;do y escrito), y, adem&aacute;s, lo exportaremos
+simult&aacute;neamente a trav&eacute;s del protocolo CIFS (para
+su uso desde Windows) y a trav&eacute;s del protocolo NFS (para su
+uso desde Unix). En la secci&oacute;n <span style="font-weight: bold;">Host access configuration</span>
+marcar la opci&oacute;n <span style="font-weight: bold;">RW</span>,
+tanto para CIFS como para NFS, y pulsar <span style="font-weight: bold;">Update</span>.<br>
+
+<br>
+
+<img style="width: 975px; height: 284px;" alt="" src="img/host_access.png"><br>
+
+<br>
+
+Vamos a comprobar el resultado de exportar por NAS esta carpeta;
+comenzaremos en XPexterno, en el que ser&aacute; accedida usando el
+protocolo CIFS.<br>
+
+<br>
+
+<span style="font-weight: bold;">38)</span> En el
+men&uacute; <span style="font-weight: bold;">Inicio </span>de
+XPexterno, ejecutar <span style="font-weight: bold;">\\192.168.60.70</span>
+.Aparecer&aacute; r&aacute;pidamente una ventana con los
+recursos compartidos por el servidor Openfiler, en la que veremos el
+share CIFS <span style="font-weight: bold;">CarpetaCompartida</span>.
+Entrar en la carpeta, y copiar a ella la carpeta <span style="font-style: italic;">C:\jfilesync</span>
+completa.<br>
+
+<br>
+
+<img style="width: 450px; height: 99px;" alt="" src="img/share_en_xpexterno.png"><br>
+
+<br>
+
+Ahora, comprobaremos el resultado de la exportaci&oacute;n NAS por
+NFS. Para ello necesitamos una m&aacute;quina Linux conectada a la
+misma subred que Openfiler; vamos a usar por ello&nbsp;el servidor Debianpasarela, que
+hemos desplegado en el hipervisor ESX en la Pr&aacute;ctica 7, por
+lo que necesitamos arrancar tanto el ESX como el XP de
+administraci&oacute;n.<br>
+
+<br>
+
+<span style="font-weight: bold;">39)</span> Arrancar
+la m&aacute;quina virtual ESX.<br>
+
+<br>
+
+<span style="font-weight: bold;">40)</span> Una vez
+termine su inicializaci&oacute;n, arrancar XPadmin y abrir la
+herramienta de administraci&oacute;n del ESX.<br>
+
+<br>
+
+<span style="font-weight: bold;">41)</span> Desde la
+herramenta de administraci&oacute;n, arrancar el servidor <span style="font-weight: bold;">Debianpasarela</span>, y
+abrir su ventana de consola.<br>
+
+<br>
+
+<span style="font-weight: bold;">42)</span> Hacer
+login como <span style="font-weight: bold;">root</span>
+en Debianpasarela.<span style="font-weight: bold;"><span style="font-weight: bold;"><br>
+
+<br>
+
+<span style="font-weight: bold;">43)</span></span></span>
+Crear el punto de montaje para la carpeta compartida, ejecutando <span style="font-weight: bold;">mkdir /compartida</span><br>
+
+<br>
+
+<span style="font-weight: bold;">44)</span> Como
+queremos que la carpeta sea p&uacute;blica, hacemos <span style="font-weight: bold;">chmod 777 /compartida</span>
+para darle permisos RW a todos (<span style="font-style: italic;">NOTA:
+en una red no 100% segura, dejar un directorio con estos permisos es
+una MUY mala idea</span>).<br>
+
+<br>
+
+Vamos a suponer que queremos usar este directorio exportado por NFS
+mont&aacute;ndolo bajo demanda, s&oacute;lo cuando vayamos a
+usarlo; &eacute;sto se hace empleando el comando UNIX <span style="font-style: italic;">mount</span>, con los
+par&aacute;metros adecuadso (<span style="font-style: italic;">NOTA:
+Si quisi&eacute;ramos que el montaje del directorio NFS se haga
+autom&aacute;ticamente ya desde el arranque de Debianpasarela, lo
+har&iacute;amos modificando el fichero /etc/fstab,
+a&ntilde;adiendo la l&iacute;nea con los par&aacute;metros
+de montaje del share NFS</span>).<br>
+
+<br>
+
+<span style="font-weight: bold;">45)</span> Para el
+comando <span style="font-style: italic;">mount</span>
+necesitamos saber la ruta con la que Openfiler exporta la carpeta <span style="font-style: italic;">CarpetaCompartida</span>.
+Podemos ver esta ruta en la pesta&ntilde;a <span style="font-weight: bold;">Shares</span>, en el
+t&iacute;tulo <span style="font-style: italic;">Edit
+share...</span><br>
+
+<br>
+
+<img style="width: 675px; height: 296px;" alt="" src="img/edit_share.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">46)</span> Podemos
+ver esta ruta tambi&eacute;n en el fichero de
+configuraci&oacute;n de la exportaci&oacute;n NFS del Openfiler
+(y, de paso, ver qu&eacute; es lo que cambiamos desde la
+aplicaci&oacute;n gr&aacute;fica). Hacer login como <span style="font-weight: bold;">root</span> en el servidor
+Openfiler y ejecutar <span style="font-weight: bold;">more
+/etc/exports</span> .La salida nos muestra la ruta con que se
+est&aacute; exportando la carpeta, la ACL que limita su visibilidad
+a la subred 192.168.60.0, y las opciones de exportaci&oacute;n NFS,
+cuyo significado puede encontrarse en la p&aacute;gina man de <span style="font-style: italic;">nfs(5)</span>.<br>
+
+<br>
+
+<img style="width: 754px; height: 240px;" alt="" src="img/exports.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">47)</span> Volver
+ahora a la consola de Debianpasarela, y ejecutar <span style="font-weight: bold;">mount -t nfs
+192.168.60.70:/mnt/VolGroup00/discocifs/CarpetaCompartida
+&nbsp;/compartida</span> .Ejecutar <span style="font-weight: bold;">df -h</span> para comprobar
+que el sistema de ficheros NFS ha sido montado.<br>
+
+<br>
+
+<span style="font-weight: bold;">48)</span> Ejecutar
+<span style="font-weight: bold;">cd&nbsp; /compartida</span>,
+y luego <span style="font-weight: bold;">ls -l</span>
+.Comprobaremos que desde este Linux podemos ver, v&iacute;a NFS, el
+subdirectorio <span style="font-style: italic;">jfilesync</span>
+que hemos copiado desde el Windows v&iacute;a CIFS.<br>
+
+<br>
+
+<span style="font-weight: bold;">49)</span> Ejecutar
+<span style="font-weight: bold;">cp&nbsp; /etc/hosts</span>.
+El fichero <span style="font-style: italic;">hosts</span>
+del servidor Debianpasarela se copiar&aacute; a la carpeta
+compartida NFS. Comprobarlo ejecutando <span style="font-weight: bold;">ls -l</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">50)</span> Volver
+ahora a XPexterno y comprobar que, en la carpeta compartida CIFS, ahora
+es visible el fichero <span style="font-style: italic;">hosts</span>.
+Abrirlo con Textpad para comprobar su contenido. Cerrar el editor sin
+modificar el fichero.<br>
+
+<br>
+
+<span style="font-weight: bold;">51)</span> Ahora,
+ir a la consola de Openfiler y ejecutar <span style="font-weight: bold;">ls -l </span><span style="font-weight: bold;">/mnt/VolGroup00/discocifs/CarpetaCompartida</span>
+.Este es, realmente, el volumen de disco y sistema de ficheros (Ext4)
+donde residen f&iacute;sicamente los ficheros contenidos en la
+carpeta exportada por NAS.<br>
+
+<br>
+
+Finalmente, vamos a ver c&oacute;mo podemos acceder a los discos
+iSCSI exportados por el servidor Openfiler desde las
+m&aacute;quinas virtuales desplegadas en el interior del servidor
+ESX. Existen dos posibles formas de acceder a estos discos:<br>
+
+<ul>
+
+  <li>Si una m&aacute;quina virtual tien enrutamiento por red
+hasta Openfiler, y tiene instalado un iniciador iSCSI, puede montar
+directamente las LUNs ofrecidas por el Target iSCSI. Sin embargo, en
+nuestro sistema no tenemos ninguna m&aacute;quina virtual Debian
+que tenga instalado el iniciador iSCSI, luego esta forma no nos vale.<br>
+
+    <br>
+
+  </li>
+
+  <li>La segunda alternativa es usar el iniciador iSCSI del
+propio ESX para montar las LUNs del Target iSCSI de Openfiler, y
+ofrecer entonces desde el hipervisor este espacio de disco a las
+m&aacute;quinas virtuales como un datastore del ESX. Esta
+opci&oacute;n es menos eficiente que la anterior (al tener otro
+nivel m&aacute;s de indirecci&oacute;n), pero en este caso es
+la &uacute;nica posible.</li>
+
+</ul>
+
+Vamos a comenzar creando en Openfiler un nuevo volumen de disco que
+mapear a una LUN (<span style="font-style: italic;">necesitamos
+hacerlo porque un datastore ESX necesita al menos tener 1,3 GB de
+tama&ntilde;o en disco, y las LUNs que hemos exportado al XP
+ten&iacute;an s&oacute;lo 1 GB</span>).<br>
+
+<br>
+
+<span style="font-weight: bold;">52)</span> En la
+herramienta de administraci&oacute;n de Openfiler, pulsar sobre la
+pesta&ntilde;a <span style="font-weight: bold;">Volumes</span>,
+seleccionar <span style="font-weight: bold;">Add Volume</span>,
+y crear un nuevo volumen con los siguientes datos:<br>
+
+<br>
+
+<img style="width: 631px; height: 308px;" alt="" src="img/volumen_datastore.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">53)</span> Pulsar <span style="font-weight: bold;">iSCSI Targets</span>, ir a
+la pesta&ntilde;a <span style="font-weight: bold;">LUN
+Mapping</span>, y pulsar <span style="font-weight: bold;">Map</span>
+en el <span style="font-weight: bold;">Disco para
+datastore</span> que acabamos de crear, de forma que quede
+exportado como LUN 2.<br>
+
+<br>
+
+<span style="font-weight: bold;">54)</span> Ir
+a XPadmin, apagar Debianpasarela con <span style="font-weight: bold;">telinit 0</span> y cerrar
+su consola. En la columna de inventario, seleccionar el servidor <span style="font-weight: bold;">10.0.0.60</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">55)</span> Pulsar
+la pesta&ntilde;a <span style="font-weight: bold;">Configuration</span>,
+y seleccionar <span style="font-weight: bold;">Networking</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">56)</span> Para
+poder usar el iniciador iSCSI contra Openfiler tenemos que agregar al
+conmutador virtual <span style="font-style: italic;">vSwitch1</span>
+un <span style="font-style: italic;">VMkernel</span>
+(es decir, una pila de protocolo TCP/IP). Pulsar en <span style="font-weight: bold;">Properties</span> de <span style="font-weight: bold;">vSwitch1</span>.<br>
+
+<br>
+
+<img style="width: 405px; height: 120px;" alt="" src="img/properties_vswitch1.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">57)</span> En la
+pesta&ntilde;a <span style="font-weight: bold;">Ports</span>,
+pulsar <span style="font-weight: bold;">Add</span>.
+A&ntilde;adir un <span style="font-weight: bold;">VMkernel</span>.
+Pulsar <span style="font-weight: bold;">Next</span>.<br>
+
+<br>
+
+<img style="width: 747px; height: 149px;" alt="" src="img/add_vmkernel.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">58)</span>
+Configurarlo con el nombre <span style="font-weight: bold;">RediSCSI</span>,
+como muestra la figura. Pulsar <span style="font-weight: bold;">Next</span>.<br>
+
+<br>
+
+<img style="width: 693px; height: 335px;" alt="" src="img/label_vmkernel.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">59)</span>
+Configurarlo con la direcci&oacute;n <span style="font-weight: bold;">192.168.60.90/255.255.255.0 </span>.Pulsar
+<span style="font-weight: bold;">Next</span>, y
+luego <span style="font-weight: bold;">Finish</span>.
+Confirmar que no queremos configurar la pasarela por defecto.<br>
+
+<br>
+
+<img style="width: 707px; height: 287px;" alt="" src="img/ip_vmkernel.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">60)</span> Cerrar
+la ventana de propiedades del vSwitch1, pulsando <span style="font-weight: bold;">Close</span>, y pulsar <span style="font-weight: bold;">Storage Adapters</span>.<br>
+
+<br>
+
+<img style="width: 215px; height: 203px;" alt="" src="img/storage_adapters.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">61)</span> Si no
+existiera, a&ntilde;adir un <span style="font-weight: bold;">iSCSI
+Software Adapter</span>, y pulsar en <span style="font-weight: bold;">Properties</span>.<br>
+
+<br>
+
+<img style="width: 804px; height: 515px;" alt="" src="img/soft_adapter.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">62)</span> Pulsar <span style="font-weight: bold;">Configure</span>. Habilitar
+el iniciador iSCSI, y darle como alias <span style="font-weight: bold;">openfiler</span>. Pulsar <span style="font-weight: bold;">OK</span>. (<span style="font-style: italic;">NOTA: Si al habilitar el
+iniciador sale un mensaje pidiendo reiniciar el ESX, hacerlo</span>).<br>
+
+<br>
+
+<img style="width: 366px; height: 205px;" alt="" src="img/enable_iscsi.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">63)</span> En la
+pesta&ntilde;a <span style="font-weight: bold;">Network
+Configuration</span>, a&ntilde;adir un <span style="font-weight: bold;">VMkernel Port Binding</span>
+asociado al VMkernel <span style="font-weight: bold;">RediSCSI</span><br>
+
+<br>
+
+<img style="width: 528px; height: 584px;" alt="" src="img/port_binding.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">64)</span> En la
+pesta&ntilde;a <span style="font-weight: bold;">Dinamic
+Discovery</span>, a&ntilde;adir el servidor iSCSI <span style="font-weight: bold;">192.168.60.70</span>, y
+configurar la autentificaci&oacute;n CHAP con el username <span style="font-weight: bold;">practicas</span> y el
+password <span style="font-weight: bold;">deii15deii15</span>.
+Pulsar <span style="font-weight: bold;">OK</span>.<br>
+
+<br>
+
+<br>
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+  <tbody>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 402px; height: 249px;" alt="" src="img/add_din_disc.png"></td>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 365px; height: 418px;" alt="" src="img/add_chap.png"></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<br>
+
+<span style="font-weight: bold;">65)</span> Cerrar
+la ventana de propiedades del iniciador iSCSI. Aceptar el hacer un
+Rescan del HBA (es decir, buscar los Targets iSCSI visibles a
+trav&eacute;s de la tarjeta de red <span style="font-style: italic;">vmnic1</span>).<br>
+<br>
+<span style="font-weight: bold;">66)</span> Si la b&uacute;squeda del
+Target iSCSI, y la conexi&oacute;n al mismo, tienen &eacute;xito, deben
+aparecernos expl&iacute;citamente, en los detalles del adaptador iSCSI,
+las tres LUNs exportadas por el Target iSCSI de Openfiler.<br>
+<br>
+<img style="width: 804px; height: 250px;" alt="" src="img/details_iscsi.png"><br>
+<br>
+<span style="font-weight: bold;">67)</span> Ahora, pulsamos en la opci&oacute;n <span style="font-weight: bold;">Storage</span> para irnos a la ventana donde configuraremos el nuevo datastore del ESX.<br>
+<br>
+<img style="border: 1px solid ; width: 1049px; height: 243px;" alt="" src="img/storage.png"><br>
+<br>
+<span style="font-weight: bold;">68)</span> Pulsamos <span style="font-weight: bold;">Add Storage</span> para abrir el asistente que nos ayudar&aacute; a a&ntilde;adir el datastore.<br>
+<br>
+<img style="width: 809px; height: 144px;" alt="" src="img/add_storage.png"><br>
+<br>
+<span style="font-weight: bold;">69)</span> A&ntilde;adimos un <span style="font-weight: bold;">Disk/LUN</span>, y pulsamos <span style="font-weight: bold;">Next</span>.<br>
+<br>
+<span style="font-weight: bold;">70)</span> Seleccionamos la LUN 2 (<span style="font-style: italic;">IMPORTANTE: <span style="text-decoration: underline;">NO</span>
+debemos seleccionar la LUN 0, porque es el disco que ya est&aacute; en
+uso como unidad F: en XPexterno; si la usamos, corromperemos
+inevitablemente sus datos</span>). Pulsamos <span style="font-weight: bold;">Next</span>.<br>
+<br>
+<img style="width: 730px; height: 123px;" alt="" src="img/selecciona_lun2.png"><br>
+<br>
+<span style="font-weight: bold;">71)</span> Elegir VMFS-5 como sistema de ficheros para el datastore, y pulsar <span style="font-weight: bold;">Next</span> dos veces.<br>
+<br>
+<img style="width: 599px; height: 127px;" alt="" src="img/vmfs-5.png"><br>
+<br>
+<span style="font-weight: bold;">72)</span> Dar al datastore el nombre <span style="font-weight: bold;">Disco2Lun1</span>, y pulsar <span style="font-weight: bold;">Next</span>.<br>
+<br>
+<img style="width: 392px; height: 118px;" alt="" src="img/nombre_datastore.png"><br>
+<br>
+<span style="font-weight: bold;">73)</span> Elegir para el datastore la capacidad del disco al completo, y pulsar <span style="font-weight: bold;">Next</span>, y luego <span style="font-weight: bold;">Finish</span>.<br>
+<br>
+<img style="width: 453px; height: 117px;" alt="" src="img/capacidad_datastore.png"><br>
+<br>
+Como resultado, deberemos obtener un listado de datastores accesibles en el ESX similar al mostrado en la figura.<br>
+<br>
+<img style="width: 808px; height: 143px;" alt="" src="img/listado_datastores.png"><br>
+<br>
+Ahora, vamos a cambiar los settings de uno de los servidores Debian
+desplegados en el ESX para a&ntilde;adirle un nuevo disco duro, alojado
+en el datastore iSCSI.<br>
+<br>
+<span style="font-weight: bold;">74)</span> En la columna de inventario del ESX, seleccionar el servidor <span style="font-weight: bold;">Debiantomato</span> y abrir la ventana de edici&oacute;n de sus <span style="font-weight: bold;">Settings</span> (en la pesta&ntilde;a <span style="font-weight: bold;">Summary</span>, o usando el bot&oacute;n derecho).<br>
+<br>
+<span style="font-weight: bold;">75)</span> Pulsar <span style="font-weight: bold;">Add</span>, y a&ntilde;adir un disco duro. Pulsar <span style="font-weight: bold;">Next</span>.<br>
+<br>
+<span style="font-weight: bold;">76)</span> Crear un nuevo disco virtual, y pulsar <span style="font-weight: bold;">Next</span>.<br>
+<br>
+<span style="font-weight: bold;">77)</span> Dar al disco <span style="font-weight: bold;">0,5 GB</span> de tama&ntilde;o, y crearlo como disco <span style="font-weight: bold;">thin</span>. Seleccionar que se almacene en el datastore <span style="font-weight: bold;">Disco2Lun1</span>. Pulsar <span style="font-weight: bold;">Next</span>.<br>
+<br>
+<img style="width: 639px; height: 499px;" alt="" src="img/disco_debiantomato.png"><br>
+<br>
+<span style="font-weight: bold;">78)</span> Elegir <span style="font-weight: bold;">SCSI </span>como tipo de disco, y pulsar <span style="font-weight: bold;">Next</span>, seguido de <span style="font-weight: bold;">Finish</span> y <span style="font-weight: bold;">OK</span>.<br>
+<br>
+<img style="width: 632px; height: 349px;" alt="" src="img/elige_scsi.png"><br>
+<br>
+<span style="font-weight: bold;">79)</span> Arrancar <span style="font-weight: bold;">Debiantomato</span> y abrir su ventana de consola. Hacer login como <span style="font-weight: bold;">root</span>.<br>
+<br>
+<span style="font-weight: bold;">80)</span> Ejecutar <span style="font-weight: bold;">less /var/log/dmesg</span> para ver el contenido del fichero donde se guardan los mensajes generados por el kernel durante el arranque.<br>
+<br>
+<span style="font-weight: bold;">81)</span> En <span style="font-style: italic;">less</span>, escribir <span style="font-weight: bold;">/scsi</span> para buscar las cadenas de texto que contengan <span style="font-style: italic;">scsi</span>;
+como resultado, avanzaremos hasta el punto donde se produce el escaneo
+del bus SCSI por la tarjeta virtual SCSI, y la detecci&oacute;n de los
+dos discos virtuales SCSI.<br>
+<br>
+<img style="width: 723px; height: 496px;" alt="" src="img/deteccion_scsi.png"><br>
+<br>
+<span style="font-weight: bold;">82)</span> Pulsando una vez la barra
+espaciadora llegamos a los mensajes donde vemos c&oacute;mo a estos
+discos SCSI se les asignan los devices <span style="font-style: italic;">sda</span> y <span style="font-style: italic;">sdb</span> Tambi&eacute;n podremos ver c&oacute;mo el disco <span style="font-style: italic;">sda</span> (el de sistema) s&iacute; est&aacute; particionado (en <span style="font-style: italic;">sda1</span>, <span style="font-style: italic;">sda2</span> y <span style="font-style: italic;">sda5</span>), mientras el disco <span style="font-style: italic;">sdb</span> todav&iacute;a no lo est&aacute;.<br>
+<br>
+<img style="width: 725px; height: 497px;" alt="" src="img/devices_scsi.png"><br>
+<br>
+<span style="font-weight: bold;">83)</span> Si ejecutamos <span style="font-weight: bold;">fdisk /dev/sdb</span>,
+vemos que la herramienta de particionado nos deja trabajar sobre el
+disco virtual proporcionado v&iacute;a iSCSI como si fuera realmente un
+disco local interno. Pulsar <span style="font-weight: bold;">q</span> para salir sin modificar la tabla de particiones.<br>
+<br>
+A partir de este punto el proceso de preparaci&oacute;n de del disco
+(particionarlo, crearle un sistema de ficheros e incluirlo en <span style="font-style: italic;">fstab</span>
+con su punto de montaje) es ya el mismo que en un Linux convencional
+con un disco interno (proceso que ya debe ser conocido de otras
+asignaturas), luego no vamos a realizarlo.<br>
+<br>
+<span style="font-weight: bold;">84)</span> Finalizar la
+pr&aacute;ctica apagando ordenadamente las m&aacute;quinas
+(Debiantomato, el ESX, los dos XP y, finalmente, Openfiler).<br>
+<br>
+Con &eacute;sto, termina el Ejercicio.<br>
+
+<br>
+
+</body>
+</html>

@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+  
+  <title>Ejercicio 5 - Creaci&oacute;n de cuentas Tomatocart usando Jmeter</title>
+</head>
+
+
+<body>
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+      </td>
+
+
+      <td style="width: 1164.97px;">
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 5 &nbsp;-
+Creaci&oacute;n de cuentas Tomatocart usando Jmeter<br>
+
+
+      </span></b></h1>
+
+
+      </td>
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<br>
+
+
+En este ejercicio vamos a ver c&oacute;mo podemos emplear las
+variables
+de usuario de Jmeter, y los controladores l&oacute;gicos de un Test
+Plan, para automatizar el proceso de creaci&oacute;n de cuentas de
+usuario en un servior Tomatocart durante un test Jmeter. Para ello,
+proceder siguiendo estos pasos:<br>
+
+
+<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">1)</span> Para
+empezar, queremos tener
+un sistema Tomatocart totalmente limpio, por lo que lo devolveremos al
+estado que ten&iacute;a inmediatamente tras terminar el Ejercicio
+1.
+Para ello, apagar usando <span style="font-weight: bold;">telinit
+0</span> el servidor <span style="font-style: italic;">debiantomato</span>,&nbsp;revertir
+a la instant&aacute;nea <span style="font-weight: bold;">Tomatocart
+final</span>, y volver a arrancar el servidor.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">2)</span> En el
+Windows 7 arrancar el navegador Firefox y acceder a <span style="font-weight: bold;">http://10.0.0.21/tomatocart</span>.
+Pulsar sobre el enlace <span style="font-weight: bold;">Create
+Account</span>.<br>
+
+
+<br>
+
+
+<img style="width: 485px; height: 77px;" alt="" src="img/link_create_account.png"><br>
+
+
+<br>
+
+
+Como vemos, la creaci&oacute;n de cuentas tiene un "captcha",
+justamente para impedir su abuso por robots. Para poder realizar el
+test necesitaremos deshabilitarlo.<br>
+
+
+<br>
+
+
+<img style="width: 540px; height: 450px;" alt="" src="img/captcha.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">3)</span> Abrir <span style="font-style: italic;"></span>una nueva
+pesta&ntilde;a en el Firefox y acceder a <span style="font-weight: bold;">http://10.0.0.21/tomatocart/admin</span>.
+Hacer login como <span style="font-weight: bold;">tomatoadmin</span>,
+con password <span style="font-weight: bold;">deii15</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">4)</span> Cerrar el
+Dashboard, y abrir el men&uacute; <span style="font-weight: bold;">Start -&gt; Configuration
+-&gt; Content Management System</span>.<br>
+
+
+<br>
+
+
+<img style="width: 546px; height: 394px;" alt="" src="img/cms.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">5)</span> Cambiar a
+<span style="font-weight: bold;">False</span> el
+valor de <span style="font-weight: bold;">Activate Captcha</span>.<br>
+
+
+<br>
+
+
+<img style="width: 533px; height: 136px;" alt="" src="img/activ_captcha.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">6)</span> Cambiar a
+la otra pesta&ntilde;a en Firefox y refrescar con <span style="font-weight: bold;">F5</span> para comprobar
+que el mecanismo de captcha se ha deshabilitado.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">7)</span> Volver a
+la pesta&ntilde;a del administrador de Tomatocart y pulsar sobre el
+&iacute;cono <span style="font-weight: bold;">Customers</span>.
+Comprobaremos que todav&iacute;a no hay ning&uacute;n usuario
+creado en Tomatocart.<br>
+
+
+<br>
+
+
+Ahora vamos a usar Jmeter para capturar la transacci&oacute;n de
+creaci&oacute;n de un usuario. Como no queremos que, por accidente,
+pueda mezclarse tr&aacute;fico procedente del administrador de
+Tomatocart (por ejemplo, muestreos peri&oacute;dcos de status del
+servidor), vamos a cerrarlo.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">8)</span> Hacer
+logout en la herramienta de Administraci&oacute;n de Tomatocart, y
+cerrar la pesta&ntilde;a.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">9)</span> Arrancar
+Jmeter. Usando el procedimiento ya conocido, crear un template <span style="font-weight: bold;">Recording</span>, e iniciar
+el proxy pulsando <span style="font-weight: bold;">Start</span>
+en el <span style="font-weight: bold;">Test Script
+Recorder</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">10)</span>
+Configurar el proxy en Firefox a <span style="font-weight: bold;">localhost:8888</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">11)</span> Rellenar
+el formulario de creaci&oacute;n de cuenta de Tomatocart con los
+valores mostrados en la figura, usando como password <span style="font-weight: bold;">deii15prueba1.<br>
+
+
+<br>
+
+
+<img style="width: 540px; height: 302px;" alt="" src="img/crea_prueba1.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">12)</span></span>
+Pulsar <span style="font-weight: bold;"><span style="font-weight: bold;">Continue</span></span>.
+La operaci&oacute;n se demorar&aacute; m&aacute;s de 10
+segundos, tras lo cual aparecer&aacute; un mensaje de
+confirmaci&oacute;n de la creaci&oacute;n de cuenta.<br>
+
+
+<br>
+
+
+<img style="width: 540px; height: 250px;" alt="" src="img/confirma_creacion.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">13)</span> Detener
+el proxy de Jmeter, y volver a configurar el proxy de Firefox a <span style="font-weight: bold;">Autodetecci&oacute;n</span>.<br>
+
+
+<br>
+
+
+En el <span style="font-style: italic;">View Results Tree</span>
+tendremos el tr&aacute;fico HTTP generado por la
+transacci&oacute;n de creaci&oacute;n de cuenta que, como
+observamos, involucra s&oacute;lo al script <span style="font-style: italic;">account.php</span>.<br>
+
+
+<br>
+
+
+<img style="width: 283px; height: 131px;" alt="" src="img/trafico_creacion_cuenta.png"><br>
+
+
+<br>
+
+
+En particular, podemos ver que el formulario de creaci&oacute;n de
+cuenta env&iacute;a al servidor una transacci&oacute;n HTTP
+POST, cuyos datos son los valores introducidos por el usuario en el
+formulario.<br>
+
+
+<br>
+
+
+<img style="width: 859px; height: 168px;" alt="" src="img/post.png"><br>
+
+
+<br>
+
+
+Podemos tambi&eacute;n observar que el c&oacute;digo de
+respuesta del servidor web al POST ha sido un 302, en el
+t&iacute;pico esquema <span style="font-style: italic;">Post-Redirect-Get</span>
+para confirmar el resultado de la operaci&oacute;n, y
+c&oacute;mo, efectivamente, la aplicaci&oacute;n web busca la
+confirmaci&oacute;n de la operaci&oacute;n haciendo un GET a <span style="font-style: italic;">account.php</span> con el
+par&aacute;metro <span style="font-style: italic;">create=success</span>,
+esperando obtener un <span style="font-style: italic;">200
+OK</span> como resultado.<br>
+
+
+<br>
+
+
+<br>
+
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 653px; height: 534px;" alt="" src="img/postredirect.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 724px; height: 263px;" alt="" src="img/post302.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 829px; height: 301px;" alt="" src="img/post_get.png"></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">14)</span>
+Consultamos ahora, en el <span style="font-weight: bold;">Recording
+Controller</span>, los dos &nbsp;HTTP Requests que ha
+generado autom&aacute;ticamente Jmeter. De sus
+par&aacute;metros podemos ver que corresponden, en efecto, a las
+transacciones POST y GET que acabamos de comentar.<br>
+
+
+<br>
+
+
+<br>
+
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 1146px; height: 543px;" alt="" src="img/request_post.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 1146px; height: 378px;" alt="" src="img/request_get.png"></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">15)</span> Salvar
+el test al directorio <span style="font-style: italic;">D:\practicas\MV\apache-jmeter-3.0\bin\tests</span>,
+con el nombre <span style="font-style: italic;">record_crear_cuenta.jmx</span><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">16)</span> En
+Firefox, abrir en una segunda pesta&ntilde;a la herramienta de
+administraci&oacute;n de Tomatocart y comprobar, con la
+aplicaci&oacute;n <span style="font-weight: bold;">Customers</span>
+que, en efecto, se ha creado la cuenta <span style="font-style: italic;">Prueba1</span>.<br>
+
+
+<br>
+
+
+<img style="width: 530px; height: 129px;" alt="" src="img/customers_prueba1.png"><br>
+
+
+<br>
+
+
+Ahora, vamos a intentar crear una nueva cuenta, para el usuario <span style="font-style: italic;">Prueba2</span>, usando un
+test Jmeter.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">17)</span> Cerrar
+el test en Jmeter, y abrir con <span style="font-weight: bold;">File
+-&gt; Open</span> el test <span style="font-style: italic;">record_crear_cuenta.jmx</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">18)</span>
+Modificar los par&aacute;metros del <span style="font-weight: bold;">HTTP Request POST</span>
+con los valores mostrados en la figura.<br>
+
+
+<br>
+
+
+<img style="width: 864px; height: 549px;" alt="" src="img/request_post_prueba2.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">19)</span> Ejecutar
+el test, y comprobar el resultado en el <span style="font-style: italic;">View Results Tree</span>.
+Obtendremos el patr&oacute;n de accesos mostrado en la figura.<br>
+
+
+<br>
+
+
+<img style="width: 368px; height: 137px;" alt="" src="img/resuts_post_2gets.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">20)</span>
+Refrescando la herramienta de administraci&oacute;n <span style="font-weight: bold;">Customers</span>
+comprobamos que, en efecto, se ha creado la cuenta.<br>
+
+
+<br>
+
+
+Sin embargo, el patr&oacute;n de accesos del HTTP Request parece
+indicar que la generaci&oacute;n en el test del GET es redundante,
+y que el GET es enviado autom&aacute;ticamente como respuesta al
+POST. Para comprobarlo repetiremos el test, pero ahora evitando que se
+genere el Request del GET.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">21)</span> En la
+herramienta de administraci&oacute;n de <span style="font-weight: bold;">Customers</span>, borrar la
+cuenta <span style="font-weight: bold;">Prueba2</span>.<br>
+
+
+<br>
+
+
+<img style="width: 535px; height: 160px;" alt="" src="img/borrar_prueba2.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">22)</span> Con el
+bot&oacute;n derecho, deshabilitar en el test Jmeter el <span style="font-weight: bold;">HTTP Request </span>del <span style="font-weight: bold;">GET</span><br>
+
+
+<br>
+
+
+<img style="width: 285px; height: 226px;" alt="" src="img/disable_get.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">23)</span> Con el
+bot&oacute;n derecho, hacer <span style="font-weight: bold;">Clear</span>
+sobre el <span style="font-weight: bold;">View Results
+Tree</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">24)</span> Volver a
+ejecutar el test. Comprobar el resultado en el <span style="font-style: italic;">View Results Tree</span> y
+en la herramienta de gesti&oacute;n de <span style="font-weight: bold;">Customers</span> de
+Tomatocart.<br>
+
+
+<br>
+
+
+<img style="width: 740px; height: 215px;" alt="" src="img/creacion_prueba2_ok.png"><br>
+
+
+<br>
+
+
+Como se observa, la cuenta <span style="font-style: italic;">Prueba2</span>
+ha vuelto a crearse correctamente, pero ahora el patr&oacute;n de
+accesos HTTP s&iacute; se corresponde con lo esperado, confirmando
+que era innecesario generar expl&iacute;citamente el HTTP Request
+con el GET.<br>
+
+
+<br>
+
+
+Una vez que tenemos confirmada la forma correcta de generar una cuenta,
+vamos a modificar el test para automatizar el proceso y crear las
+cuentas <span style="font-style: italic;">Prueba3</span>
+a <span style="font-style: italic;">Prueba5</span>,
+usando un bucle que d&eacute; valores a una variable de usuario de
+Jmeter.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">25)</span> Primero,
+borramos del test el <span style="font-weight: bold;">HTTP
+Request</span> del <span style="font-weight: bold;">GET</span>,
+que ya sabemos es innecesario.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">26)</span> Ahora,
+seleccionarmos el <span style="font-weight: bold;">Transaction
+Controller</span> que contiene el acceso a <span style="font-weight: bold;">account.php</span> y, con
+el bot&oacute;n derecho, le a&ntilde;adimos un <span style="font-weight: bold;">Logic Controller -&gt; Loop
+Controller</span>. Darle los valores mostrados en la figura.
+Arrastrarlo con el rat&oacute;n en el GUI hasta situarlo por encima
+del HTTP Request.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">27)</span> Con el <span style="font-weight: bold;">Loop Controller bucle</span>
+seleccionado, a&ntilde;adirle un <span style="font-weight: bold;">Config Element -&gt; Counter</span>.
+Darle los valores mostrados en la figura.<br>
+
+
+<br>
+
+
+<img style="width: 616px; height: 273px;" alt="" src="img/counter.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">28)</span>
+Arrastrar el HTTP Request para que, en el &aacute;rbol del test,
+pase a ser jer&aacute;rquicamente dependiente del Loop Controller,
+y modificar los valores de los par&aacute;metros del <span style="font-weight: bold;">POST</span> de acuerdo a lo
+mostrado en la figura.<br>
+
+
+<br>
+
+
+<img style="width: 1135px; height: 566px;" alt="" src="img/mod_request_post.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">29)</span>
+Seleccionar el <span style="font-weight: bold;">View
+Results Tree</span>, y hacerle <span style="font-weight: bold;">Clear</span>.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">30)</span> Ejecutar
+el test. Comprobar el resultado en el <span style="font-style: italic;">View Results Tree</span> y
+en el administrador de <span style="font-weight: bold;">Customers</span>.
+Tal como dese&aacute;bamos, vemos que las cuentas de los usuarios
+3, 4 y 5 han sido creadas con &eacute;xito.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">31)</span> Salvar
+el test con el nombre <span style="font-style: italic;">bucle_creacion_cuentas.jmx</span><br>
+
+<br>
+
+Finalmente, vamos a ver c&oacute;mo usar uno de los diversos
+controladore que Jmeter ofrece para manejar variables de usuario.
+Concretamente, vamos a emplear un pre-procesador <span style="font-style: italic;">User Parameters</span> para, combinado con la ejecuci&oacute;n de m&uacute;ltiples threads (usuarios), generar tres juegos de tres cuentas distintos.<br>
+
+<br>
+
+<span style="font-weight: bold;">32)</span> Hacer <span style="font-weight: bold;">Clear</span> del <span style="font-weight: bold;">View Results Tree</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">33)</span> Seleccionar el <span style="font-weight: bold;">Loop Controller bucle</span> y a&ntilde;adirle un <span style="font-weight: bold;">Pre-Processor -&gt; User Parameters</span>. Darle los valores mostrados en la figura.<br>
+
+<br>
+
+<img style="width: 958px; height: 253px;" alt="" src="img/user_parameters.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">34)</span> En la herramienta de administraci&oacute;n de <span style="font-weight: bold;">Customers</span>, borrar las cuentas <span style="font-weight: bold;">Prueba3</span>, <span style="font-weight: bold;">Prueba4</span> y <span style="font-weight: bold;">Prueba5</span> que hemos generado anteriormente.<br>
+
+<br>
+
+<span style="font-weight: bold;">35)</span> Modificar el <span style="font-weight: bold;">HTTP Request</span> tal como se indica en la figura.<br>
+
+<br>
+
+<img style="width: 1139px; height: 560px;" alt="" src="img/mod_users_request_post.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">36)</span> Modificar el <span style="font-weight: bold;">Thread Group</span> para crear tres threads (usuarios), como se muestra en la figura.<br>
+
+<br>
+
+<img style="width: 235px; height: 157px;" alt="" src="img/threads_tres_users.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">37)</span> Modificar el <span style="font-weight: bold;">Counter</span> que gestiona la variable de bucle <span style="font-weight: bold;">contador</span> como muestra la figura, para que cada usuario tenga su propio contador, variando entre 3 y 5.<br>
+
+<br>
+
+<img style="width: 693px; height: 304px;" alt="" src="img/mod_contador.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">38)</span> Ejecutar el test, y comprobar el resultado en el <span style="font-style: italic;">View Results Tree</span> y en el administrador de <span style="font-weight: bold;">Customers</span>; tal como se esperaba, tenemos nueve usuarios distintos, cuyos nombres combinan los nombres de cuenta introducidos como <span style="font-style: italic;">User Parameter</span> con los valores de la variable de bucle, y cuyos dominios de correo cambian tambi&eacute;n seg&uacute;n el nombre de usuario.<br>
+
+<br>
+
+<img style="width: 525px; height: 450px;" alt="" src="img/customers_9.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">39)</span> Hacer <span style="font-weight: bold;">Clear</span> al <span style="font-weight: bold;">View Results Tree</span>, y guardar el test resultante como <span style="font-style: italic;">cuentas_doble_bucle.jmx</span><br>
+
+<br>
+
+<span style="font-weight: bold;">40)</span> Para terminar el Ejercicio, apagar (con <span style="font-weight: bold;">telinit 0</span>) el servidor <span style="font-style: italic;">debiantomato</span> y hacer <span style="font-weight: bold;">Go To</span> a la instant&aacute;nea <span style="font-weight: bold;">Tomatocart final</span>, dej&aacute;ndolo as&iacute; preparado para los ejercicios sin gui&oacute;n que se especifiquen en el Campus Virtual.<br>
+
+<br>
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+</body>
+</html>

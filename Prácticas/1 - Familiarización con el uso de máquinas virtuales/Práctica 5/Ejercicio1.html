@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+  
+  
+  <title>Ejercicio 1 - Visualizaci&oacute;n remota usando RDP o VNC</title>
+</head>
+
+
+<body>
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+      </td>
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 1 &nbsp;-
+Comparaci&oacute;n de red host-only, NAT y bridged<br>
+
+
+
+      </span></b></h1>
+
+
+
+      </td>
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+En este ejercicio vamos a crear una m&aacute;quina virtual XP a la
+que iremos, por turno, configurando su NIC virtual en modo host-only,
+NAT y bridged; en cada caso, comprobaremos la conectividad de red y
+comportamiento de la m&aacute;quina virtual usando tres
+herramientas:<br>
+
+
+
+<br>
+
+
+
+<ol>
+
+
+
+  <li>ipconfig<br>
+
+
+
+    <br>
+
+
+
+  </li>
+
+
+
+  <li>ping<br>
+
+
+
+    <br>
+
+
+
+  </li>
+
+
+
+  <li>Una conexi&oacute;n a dos mini-servidores web,
+alojados en las direcciones&nbsp; http://172.168.56.15 y
+http://150.214.109.89, que nos devuelven como respuesta&nbsp; la
+direcci&oacute;n IP desde la que se ha accedido a dicho servidor.</li>
+
+
+
+</ol>
+
+
+
+Para realizar el ejercicio seguimos estos pasos:
+<br>
+
+<br>
+
+
+
+<span style="font-weight: bold;">1)</span>
+Comenzaremos creando un clon enlazado de la m&aacute;quina <span style="font-style: italic;">XP Curso FP</span>, usando
+como base su instant&aacute;nea <span style="font-style: italic;">Inicial</span>. Para ello,
+usar el men&uacute; <span style="font-weight: bold;">VM
+-&gt; Manage -&gt; Clone</span>, y seguir el
+procedimiento de creaci&oacute;n de un clon enlazado que ya vimos
+en el Ejercicio 2 de la Pr&aacute;ctica 6; usar como nombre de
+m&aacute;quina <span style="font-style: italic;">XP_red</span>,
+y crearla en el directorio <span style="font-style: italic;">D:\practicas\MV\XP_red</span>.<br>
+
+
+
+<br>
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 438px; height: 377px;" alt="" src="img/clon1.png"><br>
+
+
+
+      </td>
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 438px; height: 376px;" alt="" src="img/clon2.png"><br>
+
+
+
+      </td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">2)</span> En VMware
+Workstation, cerrar el Tab de la m&aacute;quina virtual <span style="font-style: italic;">XP Curso FP</span>. En el
+Tab de la m&aacute;quina <span style="font-style: italic;">XP_red</span>,
+observar que la configuraci&oacute;n de la tarjeta de red es <span style="font-style: italic;">host_only</span>.<br>
+
+
+
+<br>
+
+
+
+<div style="text-align: center;"><img style="width: 727px; height: 537px;" alt="" src="img/host_only.png"><br>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">3)</span> Arrancar
+la m&aacute;quina virtual. Usando el men&uacute; <span style="font-weight: bold;">Inicio -&gt; Panel de Control
+-&gt; Firewall de Windows</span> activar el cortafuegos (no
+es necesario para la m&aacute;quina host-only, pero as&iacute;
+ya tendremos la m&aacute;quina protegida cuando la configuremos en
+modo NAT y bridged).<br>
+
+
+
+<br>
+
+
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 459px; height: 517px;" alt="" src="img/firewall.png"><br>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">4)</span> Abrir un <span style="font-weight: bold;">cmd</span>, y usar <span style="font-weight: bold;">ipconfig /all</span>
+para
+obtener la informaci&oacute;n de red detallada. Veremos que la
+m&aacute;quina est&aacute; usando una direcci&oacute;n
+10.0.0.x, proporcionada por el servidor de DHCP 10.0.0.254 (la figura
+muestra un ejemplo de c&oacute;mo es la salida de este comando, pero
+obviamente la direcci&oacute;n IP obtenida ser&aacute; distinta a la
+que aparece en la figura).<br>
+
+
+
+<br>
+
+
+
+<img style="width: 663px; height: 410px;" alt="" src="img/ipconfig_hostonly.png"><br>
+<br>
+<span style="font-weight: bold;">5)</span> Hacemos ping a la
+direcci&oacute;n 10.0.0.1 (que es la asignada por el hipervisor al
+propio host); obtendremos una respuesta positiva, lo que indica que la
+red host-only funciona correctamente.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">5)</span> Ahora
+hacemos <span style="font-weight: bold;">ping</span>
+a la direcci&oacute;n 172.16.52.15 (la direcci&oacute;n IP que el
+equipo del profesor tiene asignada en&nbsp;la red f&iacute;sica
+real). Como la NIC virtual est&aacute; configurada en modo
+host-only, no tiene acceso a la red real, y obtendremos un error de
+"host inaccesible".<br>
+
+
+
+<br>
+
+
+
+<img style="width: 461px; height: 160px;" alt="" src="img/ping_hostonly.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">6)</span> Apagamos
+la m&aacute;quina virtual.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">7)</span> Una vez
+apagada, editamos sus settings y cambiamos la configuraci&oacute;n
+de su adaptador de red para ponerlo en modo NAT, tras lo cual volvemos
+a arrancar la m&aacute;quina.<br>
+
+
+
+<br>
+
+
+
+<div style="text-align: center;"><img style="width: 663px; height: 569px;" alt="" src="img/config_NAT.png"><br>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">8)</span> Una vez
+finalizado el arranque, volvemos a usar <span style="font-weight: bold;">ipconfig /all</span>
+para
+ver la configuraci&oacute;n de red de la m&aacute;quina.
+Observaremos que ahora la direcci&oacute;n IP (asignada por el servidor
+DHCP del hipervisor para la red VMnet8) ser&aacute; una 10.0.1.x;
+&eacute;sto es debido a que la red VMnet8,
+correspondiente al interfaz de NAT, est&aacute; configurada como
+10.0.1.0/255.255.255.0.<br>
+
+
+
+<br>
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 664px; height: 480px;" alt="" src="img/ipconfig_NAT.png"><br>
+
+
+
+      </td>
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 592px; height: 518px;" alt="" src="img/editor_red_nat.png"><br>
+
+
+
+      </td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">9)</span>
+Ejecutamos ahora <span style="font-weight: bold;">ping 172.16.52.15</span>. Como la red NAT s&iacute; tiene acceso a la
+red externa, recibiremos contestaci&oacute;n positiva desde la
+m&aacute;quina destino.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 468px; height: 256px;" alt="" src="img/ping_NAT.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">10)</span> Ahora,
+abrimos el navegador Firefox del XP, y accedemos a la URL <span style="font-weight: bold;">http://172.16.52.15</span>.
+Obtendremos un resultado similar al de la figura (el &uacute;ltimo
+d&iacute;gito de la direcci&oacute;n IP ser&aacute;
+distinto).<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 543px; height: 147px;" alt="" src="img/navegador_nat.png"><br>
+
+
+
+<br>
+
+
+
+La direcci&oacute;n IP mostrada en la p&aacute;gina es la
+direcci&oacute;n que el servidor HTTP ha visto como
+or&iacute;gen de la conexi&oacute;n. Este resultado nos indica,
+entonces, que la direcci&oacute;n IP de los paquetes que
+transportan el tr&aacute;fico HTTP entre la m&aacute;quina
+virtual (10.0.1.x) y el servidor HTTP (172.16.52.15) ha sido modificada
+por el mecanismo de NAT, sustituyendo la direcci&oacute;n 10.0.1.x
+por la direcci&oacute;n 172.16.52.y que corresponde a nuestro host.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">11)</span> Ahora,
+apagamos la m&aacute;quina virtual, y cambiamos sus settings para
+que el interfaz de red virtual est&eacute; en modo bridged.<br>
+
+
+
+<br>
+
+
+
+<div style="text-align: center;"><img style="width: 660px; height: 571px;" alt="" src="img/config_bridged.png"><br>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">12)</span>
+Arrancamos la m&aacute;quina virtual, y comprobamos con <span style="font-weight: bold;">ipconfig /all</span> su
+configuraci&oacute;n de red. Observamos que ahora la
+m&aacute;quina ha recibido por DHCP una direcci&oacute;n 172.16.52.x desde el servidor 172.16.52.254<br>
+
+
+
+<br>
+
+
+
+<img style="width: 666px; height: 360px;" alt="" src="img/ipconfig_bridged.png"><br>
+
+
+
+<br>
+
+
+
+El direccionamiento 172.16.52.x es el de la subred real a la que
+est&aacute;n conectados los ordenadores de pr&aacute;cticas, y
+el servidor 172.16.52.254 es un servidor DHCP real, que da servicio a esa
+subred. Todo &eacute;sto nos indica que nuestra m&aacute;quina
+virtual ha sido vista por el servidor DHCP como una m&aacute;quina
+"real", con entidad propia, y que por tanto, a nivel de red, se
+est&aacute; comportando como el resto de los ordenadores
+f&iacute;sicos que implementan los puestos de trabajo del
+laboratorio.<br>
+
+
+
+<br>
+
+
+
+Vamos a ver con qu&eacute; direcci&oacute;n IP llegan ahora
+nuestras conexiones al servidor HTTP. Para ello, hacemos lo siguiente:<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">13)</span> Mirar de
+nuevo la salida que hemos obtenido de <span style="font-weight: bold;">ipconfig</span> para
+recordar la IP asignada a nuestra m&aacute;quina virtual.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">14)</span> Abrir el
+Firefox, y acceder a <span style="font-weight: bold;">http://172.16.52.15</span>.
+Comprobaremos que la direcci&oacute;n reportada en la
+p&aacute;gina coincide exactamente con la asignada a la
+m&aacute;quina, lo que indica que no ha habido ninguna
+modificaci&oacute;n en las cabeceras IP generadas en la
+m&aacute;quina virtual al pasar a trav&eacute;s del interfaz de
+red de la m&aacute;quina real.<br>
+<br>
+<img style="border: 1px solid ; width: 543px; height: 132px;" alt="" src="img/navegador_bridged.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">15)</span> Finalizamos el ejercicio, cerrando la m&aacute;quina virtual <span style="font-style: italic;">XP_red</span><br>
+<br>
+
+
+
+<br>
+
+
+
+</body>
+</html>

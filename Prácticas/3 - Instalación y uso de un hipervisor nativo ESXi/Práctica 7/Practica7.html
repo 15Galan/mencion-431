@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Pr&aacute;ctica 7: Instalaci&oacute;n y uso de un hipervisor nativo ESXi</title>
+</head>
+
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Pr&aacute;ctica 7: Instalaci&oacute;n y uso de un hipervisor nativo ESXi<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </span></b></h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>1. Objetivo</h2>
+
+
+
+En las pr&aacute;cticas anteriores hemos instalado y usado
+m&aacute;quinas virtuales empleando un hipervisor "hosted" VMware
+Workstation (es decir, un hipervisor de Tipo 2, alojado sobre el
+sistema operativo preexistente). Esta configuraci&oacute;n nos ha sido
+&uacute;til para montar sistemas de desarrollo, en los que el
+rendimiento es una consideraci&oacute;n secundaria.<br>
+
+
+
+<br>
+
+
+
+Sin embargo, el uso del hipervisor Workstation ya no resulta adecuado
+cuando llega el momento de pasar a producci&oacute;n las
+m&aacute;quinas virtuales desarrolladas, porque entonces el obtener el
+m&aacute;ximo rendimiento y aprovechamiento del hardware disponible se
+convierte en un objetivo prioritario. En este caso lo m&aacute;s
+conveniente es usar un hipervisor nativo ("bare metal", o Tipo 1), que
+corre directamente sobre el hardware del servidor de
+virtualizaci&oacute;n, sin ning&uacute;n sistema operativo subyacente
+que lo aloje.<br>
+
+
+
+<br>
+
+
+
+En esta pr&aacute;ctica vamos a trabajar con el hipervisor nativo de
+VMware, ESXi (versi&oacute;n 5.5), sobre el que montaremos las
+m&aacute;quinas virtuales que nos proporcionen el sistema de comercio
+electr&oacute;nico que hemos instalado y configurado en la
+Pr&aacute;ctica 6.<br>
+
+
+
+<br>
+
+
+
+Un punto importante a resaltar de esta pr&aacute;ctica es el siguiente:
+en un sistema de explotaci&oacute;n real, el hipervisor ESXi
+estar&iacute;a corriendo sobre un servidor f&iacute;sico, y
+tomar&iacute;a el control completo de ese hardware. Sin embargo, el
+prop&oacute;sito de esta pr&aacute;ctica es que cada alumno, trabajando
+individualmente, pueda aprender y practicar los procedimientos
+necesarios para instalar, configurar y utilizar este tipo de
+hipervisor. Dado que en el laboratorio no disponemos de ordenadores de
+"experimentaci&oacute;n" (que puedan dedicarse en exclusiva a la
+instalaci&oacute;n de este tipo de hipervisor), lo que vamos a hacer es
+virtualizar los servidores en que instalaremos ESXi; obviamente, el
+rendimiento ser&aacute; menor que corriendo directamente sobre hardware
+real, pero los procedimientos de instalaci&oacute;n y
+configuraci&oacute;n a usar ser&aacute;n exactamente los mismos, por lo
+que la virtualizaci&oacute;n de los servidores no quitar&aacute; valor
+did&aacute;ctico a la pr&aacute;ctica.<br>
+
+
+
+<br>
+
+
+
+Empleando, entonces,&nbsp;VMware Workstation se va a crear, en cada
+puesto de pr&aacute;cticas, una m&aacute;quina virtual sobre la que se
+instalar&aacute; el hipervisor nativo ESXi, que luego se
+configurar&aacute; adecuadamente para poder alojar a los diversos
+servidores Debian que necesitaremos para la pr&aacute;ctica. <br>
+
+
+
+<br>
+
+
+
+
+La Pr&aacute;ctica 7 consta de los siguientes ejercicios:<br>
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a href="Ejercicio1.html">
+Ejercicio 1 - Instalaci&oacute;n y configuraci&oacute;n de un servidor de virtualizaci&oacute;n ESXi</a><br>
+
+
+<br>
+
+
+<a href="Ejercicio2.html">Ejercicio 2 - Despliegue del servidor debiantomato en el hipervisor ESX</a><br>
+
+<br>
+
+<a href="Ejercicio3.html">Ejercicio 3&nbsp; - Uso de conmutadores virtuales en el ESX</a><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

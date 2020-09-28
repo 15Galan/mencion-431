@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <title>Ejercicio 1 - Instalaci&oacute;n de TomatoCart sobre
+un &uacute;nico servidor</title>
+
+
+</head>
+
+
+<body>
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+  <tbody>
+
+    <tr>
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+      </td>
+
+      <td style="width: 1164.97px;">
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 1 &nbsp;-
+Instalaci&oacute;n de TomatoCart sobre un &uacute;nico servidor<br>
+
+      </span></b></h1>
+
+      </td>
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<br>
+
+En este Ejercicio instalaremos el software de comercio
+electr&oacute;nico Tomatocart en una &uacute;nica
+m&aacute;quina virtual, que albergar&aacute;, pues, el servidor
+web Apache, la l&oacute;gica de negocio PHP de Tomatocart, y la
+base de datos MySQL. Una vez instalado el software procederemos
+tambi&eacute;n a usar su interfaz administrativo para configurar la
+tienda virtual ofrecida.<br>
+
+<br>
+
+Durante la instalaci&oacute;n se crear&aacute;n
+tambi&eacute;n varias instant&aacute;neas; en particular, estas
+instant&aacute;neas nos permitir&aacute;n, en el Ejercicio 3,
+reducir el tiempo necesario para montar una nueva m&aacute;quina
+virtual que albergue el servidor MySQL, y as&iacute; simplificar la
+migraci&oacute;n de la aplicaci&oacute;n a una
+configuraci&oacute;n de dos tiers.<br>
+
+<br>
+
+En el presente Ejercicio la m&aacute;quina virtual sobre la que
+instalaremos Tomatocart usar&aacute; como sistema operativo un
+Debian 7, que contendr&aacute; los paquetes y servidores exigidos
+como requerimientos por Tomatocart (Apache2, PHP5.2, y MySQL v5.0.7 o
+superior). Un requerimiento adicional ser&aacute; que la
+m&aacute;quina virtual ocupe un volumen reducido de espacio de
+disco, por lo que no se instalar&aacute;n en el Debian 7 los
+paquetes de interfaz gr&aacute;fico de usuario, y se
+administrar&aacute; usando la consola e texto.<br>
+
+<br>
+
+Para realizar el ejercicio seguimos estos pasos:<br>
+
+<br>
+
+<span style="font-weight: bold;">1)</span>
+Usar el procedimiento descrito en los puntos 1-2 del Ejercicio 2,
+Pr&aacute;ctica 1, para crear en el directorio <span style="font-style: italic;">D: \practicas\MV\Debiantomato</span>
+una m&aacute;quina virtual llamada <span style="font-style: italic;">Debiantomato</span>, con 8
+GB de espacio de disco virtual thin.<br>
+
+<br>
+
+<span style="font-weight: bold;">2)</span> A
+continuaci&oacute;n, seguir el procedimiento descrito en los puntos
+3 a 25 de ese mismo Ejercicio para hacer la instalaci&oacute;n de
+un Debian 7, pero con los siguientes cambios:<br>
+
+<ul>
+
+  <li>El nombre de la m&aacute;quina ser&aacute; <span style="font-style: italic;">debiantomato</span>.<br>
+
+  </li>
+
+  <li>Se instalar&aacute;n s&oacute;lo los paquetes
+mostrados en la siguiente figura.&nbsp;(NOTA: Si la
+selecci&oacute;n se ha hecho correctamente, el instalador nos
+indicar&aacute; que se est&aacute;n descargando 143 paquetes).</li>
+
+</ul>
+
+<div style="text-align: center;"><img style="width: 782px; height: 383px;" alt="" src="img/paquetes_debian.png"><br>
+
+</div>
+
+<br>
+
+<br>
+
+<br>
+
+Esta m&aacute;quina virtual va a ofrecer funcionalidades
+v&iacute;a un servidor web, y se conectar&aacute;
+adem&aacute;s a una base de datos (que inicialmente ser&aacute;
+local, pero que en el Ejercicio 3 pasar&aacute; a ser remota). Es
+imprescindible, entonces, que tenga una IP est&aacute;tica, fija y
+conocida. Vamos a reconfigurar el servidor para ello:<br>
+
+<br>
+
+<span style="font-weight: bold;">3)</span> Una vez
+reiniciado el servidor Debian, hacer login como <span style="font-weight: bold;">root</span> y editar el
+fichero <span style="font-style: italic;">/etc/network/interfaces</span>
+para darle al servidor la direcci&oacute;n IP est&aacute;tica
+10.0.0.21, como muestra la figura.<br>
+
+<br>
+
+<img style="width: 638px; height: 208px;" alt="" src="img/ip_estatica.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">4)</span> Editar el
+fichero <span style="font-style: italic;">/etc/hosts</span>
+para a&ntilde;adir una l&iacute;nea con la
+resoluci&oacute;n del nombre <span style="font-style: italic;">debiantomato</span>
+a esa IP est&aacute;tica, como muestra la figura<br>
+
+<br>
+
+<img style="width: 550px; height: 147px;" alt="" src="img/hosts.png"><br>
+
+<span style="font-weight: bold;">5)</span> Ejecutar <span style="font-weight: bold;">update-rc.d exim4 disable</span>
+(para evitar el timeout del servidor de correo durante el arranque).<br>
+
+<br>
+
+<span style="font-weight: bold;">6)</span> Reiniciar
+la m&aacute;quina, ejecutando <span style="font-weight: bold;">reboot</span>.
+Hacer de nuevo login como <span style="font-weight: bold;">root</span>.<br>
+
+<br>
+
+Ahora vamos a instalar un conjunto de paquetes software adicionales
+(PHP5, MySQL, phpMyAdmin, unzip) que necesitaremos tanto para instalar
+Tomatocart como para administrar la base de datos MySQL asociada.<br>
+
+<br>
+
+Dado que no hemos instalado soporte gr&aacute;fico en el Debian, no
+podemos usar la herramienta <span style="font-style: italic;">synaptic</span>.
+Aunque la gesti&oacute;n de los paquetes Debian se puede hacer,
+desde l&iacute;nea de comando, con la aplicaci&oacute;n de bajo
+nivel <span style="font-style: italic;">apt-get</span>,
+la existencia de diversas dependencias entre los paquetes (que deben
+ser correctamente resueltas) hace m&aacute;s aconsejable usar un
+interfaz administrativo de alto nivel para ello; usaremos entonces la
+herramienta <span style="font-style: italic;">aptitude</span>,
+que tiene una funcionalidad similar a <span style="font-style: italic;">synaptic</span>, pero que
+usa un interfaz de s&oacute;lo-texto.<br>
+
+<br>
+
+<span style="font-weight: bold;">7)</span> Para
+instalar los paquetesque nos faltan necesitamos que el DVD de Debian
+est&eacute; accesible en la lectora de la m&aacute;quina
+virtual. Usando los procedimientos ya conocidos nos aseguramos de que
+la imagen ISO en el DVD virtual est&eacute; conectada, tras lo cual
+ejecutamos <span style="font-weight: bold;">mount
+/media/cdrom</span>; comprobamos el resultado ejecutando <span style="font-weight: bold;">df</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">8)</span> Ejecutar <span style="font-weight: bold;">aptitude</span>. Usar
+Ctrl-T para abrir el men&uacute; e ir a la opci&oacute;n <span style="font-weight: bold;">Buscar</span> (o pulsar
+directamente la tecla <span style="font-weight: bold;">/</span>).<br>
+
+<br>
+
+<div style="text-align: center;"><img style="width: 728px; height: 507px;" alt="" src="img/apt_buscar.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">9)</span> Buscar <span style="font-weight: bold;">mysql</span>. El listado de
+paquetes se desplazar&aacute; hasta el primer nombre que contiene
+la cadena <span style="font-style: italic;">mysql</span>.
+Seleccionar con el cursor el paquete <span style="font-weight: bold;">mysql-server</span>.<br>
+
+<br>
+
+<div style="text-align: center;"><img style="width: 727px; height: 508px;" alt="" src="img/apt_elige_mysql.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">10)</span> Pulsar <span style="font-weight: bold;">+</span>
+para a&ntilde;adir esta entrada a la lista de software pendiente de
+instalar. La entrada es un metapaquete; usando su
+informaci&oacute;n,
+aptitude determina que para conseguir esta funcionalidar
+deber&aacute;
+instalar el servidor <span style="font-style: italic;">mysql-server-5.5</span>,
+y todos los paquetes de los que depende.<br>
+
+<br>
+
+<div style="text-align: center;"><img style="width: 731px; height: 538px;" alt="" src="img/apt_mysql_elegido.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">11)</span> Buscar
+ahora <span style="font-weight: bold;">php5</span>.
+La primera entrada que aparece (libapache2-mod-php5) no nos sirve;
+pulsamos <span style="font-weight: bold;">n</span>
+para buscar la siguiente entrada, que ahora s&iacute; corresponde
+al metapaquete <span style="font-weight: bold;">php5</span>.<br>
+
+<br>
+
+<div style="text-align: center;"><img style="width: 729px; height: 539px;" alt="" src="img/apt_php5.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">12)</span>
+Seleccionar<span style="font-style: italic;"></span>
+<span style="font-weight: bold;">php5</span> y
+pulsar <span style="font-weight: bold;">+</span>
+para requerir su instalaci&oacute;n; el sistema usa la
+informaci&oacute;n del metapaquete para seleccionar los paquetes
+que
+proporcionan el n&uacute;cleo de PHP5. Adicionalmente, como se
+necesitan paquetes adicionales (en particular el soporte de acceso a
+MySQL) vamos a seleccionar (pulsando <span style="font-weight: bold;">+</span> sobre cada uno) el
+resto de los paquetes que comienzan por php5, como muestra la figura.<br>
+
+<br>
+
+<div style="text-align: center;"><img style="width: 728px; height: 328px;" alt="" src="img/apt_seleccion_php.png"><br>
+
+</div>
+
+<br>
+
+(NOTA: Nuestro servidor correr&aacute; en una red segura, por lo
+que
+esta selecci&oacute;n no requiere mayores consideraciones. Sin
+embargo,
+en un servidor en producci&oacute;n y expuesto a Internet
+necesitar&iacute;amos ser m&aacute;s cuidadosos, e instalar
+s&oacute;lo
+los paquetes estr&iacute;ctamente necesarios, para evitar dejar
+abierto
+accidentalmente alg&uacute;n agujero de seguridad a
+trav&eacute;s de
+alguna vulnerabilidad explotable que pueda existir en esos paquetes).<br>
+
+<br>
+
+<span style="font-weight: bold;">13)</span> Ahora
+instalaremos un paquete que proporciona un interfaz gr&aacute;fico
+web de administraci&oacute;n para MySQL. Para ello uamos de nuevo
+la funci&oacute;n de b&uacute;squeda de aptitude, localizamos
+el paquete <span style="font-weight: bold;">phpmyadmin</span>
+y lo seleccionamos para instalar.<br>
+
+<br>
+
+<div style="text-align: center;"><img style="width: 725px; height: 402px;" alt="" src="img/apt_phpmyadmin.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">14)</span> Por
+&uacute;ltimo, buscamos y seleccionamos para su
+instalaci&oacute;n los paquetes <span style="font-weight: bold;">unzip</span>
+y <span style="font-weight: bold;">zip</span> (que
+proporcionan soporte para descomprimir ficheros .zip).<br>
+
+<br>
+
+<span style="font-weight: bold;">15)</span> Ahora,
+debemos resolver manualmente conflictos de dependencias que aptitude no
+puede resolver por s&iacute; s&oacute;lo. El mensaje en rojo de
+la parte inferior (que se puede observar en la figura anterior) nos
+avisa de la existencia de estos conflictos; pulsamos <span style="font-weight: bold;">e</span> para examinarlos.<br>
+
+<br>
+
+<span style="font-weight: bold;">16)</span> La
+aplicaci&oacute;n ofrece diversas soluciones para resolver los
+conflictos de dependencias; pulsando la tecla "<span style="font-weight: bold;">.</span>" o la tecla "<span style="font-weight: bold;">,</span>" se puede navegar
+por
+estas soluciones. Es necesario prestar atenci&oacute;n a las
+acciones que propone la soluci&oacute;n, porque algunas de ellas
+nos dejar&aacute;n sin instalar los paquetes que necesitamos
+(acci&oacute;n <span style="font-style: italic;">[UNINST]</span>).
+En nuestro caso, pulsaremos "<span style="font-weight: bold;">.</span>"
+hasta llegar a la soluci&oacute;n mostrada en la figura.<br>
+
+<br>
+
+<div style="text-align: center;"><img style="width: 728px; height: 505px;" alt="" src="img/apt_conflictos.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">17)</span> Pulsar
+la tecla "<span style="font-weight: bold;">!</span>"
+para aplicar esta soluci&oacute;n, con lo que volvemos
+autom&aacute;ticamente a la ventana de selecci&oacute;n de
+paquetes.<br>
+
+<br>
+
+<span style="font-weight: bold;">18)</span> Ahora
+procedemos a instalar los paquetes seleccionados, pulsando la tecla "<span style="font-weight: bold;">g</span>".
+Aparecer&aacute; la ventana de previsualizaci&oacute;n de
+acciones, en la que, si queremos, podemos desplazarnos con el cursor
+por la lista de paquetes para comprobar que, efectivamente, se van a
+instalar los solicitados.<br>
+
+<br>
+
+<div style="text-align: center;"><img style="width: 728px; height: 505px;" alt="" src="img/apt_ejecuta_install.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">19)</span> Pulsando
+nuevamente "<span style="font-weight: bold;">g</span>"
+comenzar&aacute; la instalaci&oacute;n. Durante la misma se nos
+pedir&aacute; la contrase&ntilde;a del usuario root del
+servidor de base de datos MySQL; usar <span style="font-weight: bold;">deii15</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">20)</span> Durante
+la instalaci&oacute;n se nos pedir&aacute; tambi&eacute;n
+elegir el servidor web que se deber&iacute;a configurar para que
+pueda ejecutarse <span style="font-style: italic;">phpMyAdmin</span>;
+seleccionar <span style="font-weight: bold;">apache2</span>
+(usando la barra espaciadora para marcar la selecci&oacute;n).<br>
+
+<br>
+
+<div style="text-align: center;"><img style="width: 730px; height: 504px;" alt="" src="img/apt_selecciona_servidorweb.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">21)</span> Hacia el
+final de la instalaci&oacute;n aparecer&aacute; un mensaje de
+configuraci&oacute;n de <span style="font-style: italic;">phpMyAdmin</span>.
+Aceptar la opci&oacute;n ofrecida por defecto.<br>
+
+<br>
+
+<div style="text-align: center;"><img style="width: 728px; height: 504px;" alt="" src="img/apt_opcion_phpmyadmin.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">22)</span> A
+continuaci&oacute;n se nos pedir&aacute; la
+contrase&ntilde;a para el usuario administrador de la base de datos
+<span style="font-style: italic;">phpMyAdmin</span>;
+usar <span style="font-weight: bold;">deii15</span>.
+Usar tambi&eacute;n <span style="font-weight: bold;">deii15</span>
+para la contrase&ntilde;a de aplicaci&oacute;n MySQL (NOTA:
+ser&iacute;a probablemente m&aacute;s seguro dejarlo en blanco
+para que se genere una contrase&ntilde;a aleatoria).<br>
+
+<br>
+
+<span style="font-weight: bold;">23)</span> Una vez
+terminada la instalaci&oacute;n, pulsar <span style="font-weight: bold;">q</span> para salir de
+aptitude, y ejecutar <span style="font-weight: bold;">reboot</span>
+para reiniciar el servidor. Una vez reiniciado, hacer login como root.<br>
+
+<br>
+
+<span style="font-weight: bold;">24)</span>
+Comprobamos que el servidor web funciona, abriendo en el Windows 7 una
+pesta&ntilde;a del Firefox y accediendo a <span style="font-weight: bold;">http://10.0.0.21</span>.
+Debemos obtener la respuesta mostrada en la figura.<br>
+
+<br>
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 514px; height: 291px;" alt="" src="img/comprobacion_apache.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">25)</span>
+Comprobamos que tambi&eacute;n funciona la herramienta
+administrativa <span style="font-style: italic;">phpMyAdmin</span>,
+accediendo desde Firefox a <span style="font-weight: bold;">http://10.0.0.21/phpmyadmin</span>;
+deberemos obtener una respuesta como la de la figura.<br>
+
+<br>
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 731px; height: 753px;" alt="" src="img/comprobacion_phpmyadmin.png"><br>
+
+</div>
+
+<br>
+
+Ahora, antes de continuar con la configuraci&oacute;n de MySQL y la
+instalaci&oacute;n de TomatoCart, vamos a crear una
+instant&aacute;nea del estado actual del servidor Debian. Esta
+instant&aacute;nea no s&oacute;lo nos servir&aacute; para
+poder volver a ella caso de equivocarnos al instalar TomatoCart, sino
+que, en el Ejercicio 3, nos servir&aacute; para clonar
+r&aacute;pidamente la m&aacute;quina virtual que usaremos como
+servidor de base de datos en la arquitectura de 2 tiers.<br>
+
+<br>
+
+<span style="font-weight: bold;">26)</span> Apagar
+el servidor, ejecutando <span style="font-weight: bold;">telinit
+0</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">27)</span> Usando
+el gestor de instant&aacute;neas, creamos una
+instant&aacute;nea a la que llamaremos <span style="font-weight: bold;">Sin Tomatocart</span>.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 308px; height: 155px;" alt="" src="img/instantanea_sintomato.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">28)</span> Arrancar
+la m&aacute;quina virtual, y hacer login como root.<br>
+
+<br>
+
+El instalador del paquete Tomatocart es el fichero <span style="font-style: italic;">TomatoCart-1.1.8.6.1.zip</span>,
+que
+est&aacute; en el directorio <span style="font-style: italic;">D:\practicas\MV</span>.
+Vamos a usar el cliente de SSH <span style="font-style: italic;">Bitwise
+Tunnelier</span> para copiarlo al servidor Debian.<br>
+
+<br>
+
+<span style="font-weight: bold;">29)</span> En el
+Windows 7, ejecutar <span style="font-weight: bold;">Inicio
+-&gt; Bitwise SSH Client -&gt; Bitwise SSH Client</span>.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 425px; height: 491px;" alt="" src="img/bitwise_client.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">30)</span>
+Conectarse al servidor Debian, usando la configuraci&oacute;n
+mostrada en la figura.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 634px; height: 646px;" alt="" src="img/tunnelier_profile.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">31)</span> Aceptar
+la clave s&oacute;lo para esta sesi&oacute;n, pulsando <span style="font-weight: bold;">Accept for This Session</span>.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 390px; height: 314px;" alt="" src="img/accept_clave.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">32)</span> Puede
+tardar unos cuantos segundos en pedir el password; esto es normal.
+Cuando aparezca la ventana de prompt, introducir el password de root (<span style="font-weight: bold;">deii15</span>).<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 271px; height: 236px;" alt="" src="img/tunnelier_password.png"><br>
+
+<br>
+
+(NOTA: La conexi&oacute;n directa como root es un agujero de
+seguridad obvio. En un sistema en producci&oacute;n debe
+configurarse el servidor SSH para que no permita directamente accesos
+remotos como root, y trabajar con una cuenta no privilegiada - como,
+por ejemplo, la del usuario <span style="font-style: italic;">curso</span>
+que hemos creado durante la instalaci&oacute;n).<br>
+
+<br>
+
+<span style="font-weight: bold;">33)</span> Abrir
+una ventana de SFTP, pulsando <span style="font-weight: bold;">Open
+New SFTP Window</span>.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 100px; height: 152px;" alt="" src="img/open_sftp.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">34)</span>
+Transferir el fichero <span style="font-style: italic;">D:\practicas\MV\TomatoCart-1.1.8.6.1.zip</span>
+al directorio <span style="font-style: italic;">/var/www</span>
+(ra&iacute;z de los documentos del servidor HTTP Apache2).<br>
+
+<br>
+
+<span style="font-weight: bold;">35)</span> Una vez
+transferido, cerrar la ventana de SFTP y la xterminal abierta por el
+cliente SSH, y cerrar la aplicaci&oacute;n Tunnerlier.<br>
+
+<br>
+
+El usuario y grupo usados por el servidor apache son <span style="font-style: italic;">www-data</span> (como
+puede verse haciendo <span style="font-weight: bold;">more
+/etc/apache/envvars</span>). Vamos a descomprimir el instalador y
+cambiar su usuario y grupo.<br>
+
+<br>
+
+<span style="font-weight: bold;">36)</span> Hacer <span style="font-weight: bold;">cd /var/www</span>, y luego
+ejecutar <span style="font-weight: bold;">unzip
+TomatoCart-1.1.8.6.1.zip</span><br>
+
+<br>
+
+<span style="font-weight: bold;">37)</span>
+Cambiamos el nombre a la carpeta, haciendo <span style="font-weight: bold;">mv
+TomatoCart-v1-released-v1.1.8.6.1 tomatocart</span>&nbsp;<br>
+
+<br>
+
+<span style="font-weight: bold;">38)</span>
+Cambiamos el propietario y grupo de todos los ficheros del instalador,
+ejecutando <span style="font-weight: bold;">chown -R
+www-data:www-data tomatocart</span>&nbsp;<br>
+
+<br>
+
+<span style="font-weight: bold;">39)</span> Borramos
+del disco el fichero zip del instalador, haciendo <span style="font-weight: bold;">rm TomatoCart-1.1.8.6.1.zip</span>&nbsp;<br>
+
+<br>
+
+Ahora vamos a crear en el servidor MySQL la base de datos que necesita
+el instalador de TomatoCart. Para ello, usaremos el interfaz
+gr&aacute;fico de administraci&oacute;n <span style="font-style: italic;">phpMyAdmin</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">40)</span> En el
+Windows 7, abrir el navegador Firefox (o una nueva pesta&ntilde;a,
+si ya est&aacute; abierto) y acceder a la URL <span style="font-weight: bold;">http://10.0.0.21/phpmyadmin</span>
+&nbsp;.Cambiar el idioma a ingl&eacute;s, y hacer login como
+usuario <span style="font-weight: bold;">root</span>,
+como muestra la figura.<br>
+
+<br>
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 657px; height: 635px;" alt="" src="img/login_phpmyadmin.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">41)</span> Pulsar
+en el bot&oacute;n <span style="font-weight: bold;">Databases</span>
+para acceder a la p&aacute;gina de administraci&oacute;n de las
+bases de datos existentnes en el servidor MySQL.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 282px; height: 163px;" alt="" src="img/boton_databases.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">42)</span> Crear
+una nuea base de datos, con el nombre <span style="font-weight: bold;">tomatobase</span> <br>
+
+<br>
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 767px; height: 696px;" alt="" src="img/crear_base.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">43)</span>
+Necesitamos crear un usuario administrador, distinto de root, para <span style="font-style: italic;">tomatobase</span>.
+Accedemos para ello a la gesti&oacute;n de privilegios
+administrativos de esta base, pulsando <span style="font-weight: bold;">check privileges</span> <br>
+
+<br>
+
+<img style="border: 1px solid ; width: 370px; height: 123px;" alt="" src="img/check_privileges.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">44)</span> Pulsamos
+sobre <span style="font-weight: bold;">Add a new User</span>
+y rellenamos la informaci&oacute;n mostrada en la figura, con la
+que crearemos un usuario llamado <span style="font-weight: bold;">tomatouser</span>.
+Usar como password, de nuevo, <span style="font-weight: bold;">deii15</span>
+<br>
+
+<br>
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 548px; height: 553px;" alt="" src="img/info_login.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">45)</span> Pulsamos
+el bot&oacute;n <span style="font-weight: bold;">Go</span>,
+al final del formulario. Obtendremos un mensaje (y una sentencia SQL),
+indicando que la creaci&oacute;n del usuario se ha completado con
+&eacute;xito.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 539px; height: 299px;" alt="" src="img/creacion_correcta.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">46)</span> Hacemos
+logout de la herramienta <span style="font-style: italic;">phpMyAdmin</span>,
+pulsando el bot&oacute;n al efecto, y cerramos esta
+pesta&ntilde;a en el navegador.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 200px; height: 175px;" alt="" src="img/boton_logout.png"><br>
+
+<br>
+
+Ahora, instalaremos el software TomatoCart, usando para ello el
+instalador web que proporciona el mismo paquete.<br>
+
+<br>
+
+<span style="font-weight: bold;">47)</span> Abrir
+una pesta&ntilde;a en el navegador Firefox, y acceder a la URL <span style="font-weight: bold;">http://10.0.0.21/tomatocart/install</span>
+<br>
+
+<br>
+
+<span style="font-weight: bold;">48)</span> Marcar <span style="font-weight: bold;">I agree to the license</span>,
+y pulsar <span style="font-weight: bold;">Continue</span>
+<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 696px; height: 176px;" alt="" src="img/agree_license.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">49)</span> La
+comprobaci&oacute;n previa a la instalaci&oacute;n debe indicar
+que todos los settings y permisos son correctos. Pulsar <span style="font-weight: bold;">Continue</span> <br>
+
+<br>
+
+<span style="font-weight: bold;">50)</span>
+Configuramos TomatoCart para que acceda a la base <span style="font-weight: bold;">tomatobase</span> del
+servidor local MySQL, empleando el usuario <span style="font-weight: bold;">tomatouser</span>. Para
+ello, rellenar el formulario con los valores mostrados en la figura, y
+pulsar <span style="font-weight: bold;">Continue</span>
+<br>
+
+<br>
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 706px; height: 573px;" alt="" src="img/config_database.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">51)</span> Dejar
+con los valores por defecto la configuraci&oacute;n del servidor
+web. Pulsar <span style="font-weight: bold;">Continue</span>
+<br>
+
+<br>
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 705px; height: 425px;" alt="" src="img/config_webserver.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">52)</span> Vamos a
+dar valores iniciales a la tienda virtual, y a cargar los datos de
+ejemplo que proporciona el paquete para inicializar la tienda. En
+particular, en este formulario definimos un usuario administrador para
+la tienda virtual; usar el nombre <span style="font-weight: bold;">tomatoadmin</span>,
+y el password <span style="font-weight: bold;">deii15</span>,
+como se muestra en la figura. Pulsar <span style="font-weight: bold;">Continue</span> <br>
+
+<br>
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 709px; height: 618px;" alt="" src="img/settings_user_admin.png"><br>
+
+</div>
+
+<br>
+
+La p&aacute;gina final generada por el instalador nos
+proporcionar&aacute; un mensaje confirmando que la
+instalaci&oacute;n ha terminado correctamente, y dos botones que
+nos permiten ir, respectivamente, al front-end de la tienda (en la URL <span style="font-style: italic;">http://10.0.0.21/tomatocart</span>)
+y al interfaz administrativo (<span style="font-style: italic;">http://10.0.0.21/tomatocart/admin</span>).<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 700px; height: 237px;" alt="" src="img/instalacion_completa.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">53)</span> Pulsar
+sobre el tob&oacute;n <span style="font-weight: bold;">Catalog</span>
+para comprobar el funcionamiento del front-end de la tienda virtual.<br>
+
+<br>
+
+Una vez que tenemos la tienda virtual funcionando vamos a configurarla,
+y a a&ntilde;adirle algunos art&iacute;culos, usando su
+interfaz administrativo. Sin embargo, antes de empezar a cambiar cosas
+tomaremos otra instant&aacute;nea del sistema, para poder volver
+atr&aacute;s en caso de que los cambios que hagamos no sean
+satisfactorios.<br>
+
+<br>
+
+<span style="font-weight: bold;">54)</span> Apagar
+el servidor <span style="font-style: italic;">debiantomato</span>,
+ejecutando <span style="font-weight: bold;">telinit 0</span><br>
+
+<br>
+
+<span style="font-weight: bold;">55)</span> Usando
+el gestor de instant&aacute;neas crear una nueva
+instant&aacute;nea, a la que llamaremos <span style="font-weight: bold;">Con Tomatocart</span><br>
+
+<br>
+
+<img style="border: 1px solid ; width: 625px; height: 503px;" alt="" src="img/instantanea_contomato.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">56)</span> Arrancar
+de nuevo la m&aacute;quina virtual, y hacer login como root.<br>
+
+<br>
+
+<span style="font-weight: bold;">57)</span> En el
+Windows 7 abrir Firefox, y acceder a la p&aacute;gina de
+administraci&oacute;n de Tomatocart en <span style="font-weight: bold;">http://10.0.0.21/tomatocart/admin</span>
+.Hacer login como usuario <span style="font-weight: bold;">tomatoadmin</span>
+<br>
+
+<br>
+
+<span style="font-weight: bold;">58)</span> Al
+abrirse el interfaz administrativo arrancar&aacute; un Wizard de
+configuraci&oacute;n inicial de la tienda virtual. Rellenar los
+tres formularios con los valores mostrados en las figuras.<br>
+
+<br>
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+  <tbody>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 518px; height: 457px;" alt="" src="img/wizard-1.png"></td>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 518px; height: 456px;" alt="" src="img/wizard-2.png"></td>
+
+    </tr>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 516px; height: 457px;" alt="" src="img/wizard-3.png"></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<br>
+
+<span style="font-weight: bold;">59)</span> Vamos a
+necesitar poder visualizar qu&eacute; efecto tienen en el front-end
+gr&aacute;fico de la tienda virtual los cambios que realicemos a
+trav&eacute;s del interfaz administrativo. Para ello, abrimos una
+segunda pesta&ntilde;a en Firefox, y accedemos en ella a la URL <span style="font-weight: bold;">http://10.0.0.21/tomatocart</span>
+<br>
+
+<br>
+
+Examinando los datos de demo con que est&aacute; inicializada
+nuestra tienda <span style="font-style: italic;">Deii</span>,
+podemos ver que hay un error en la categor&iacute;a <span style="font-style: italic;">Printers &amp; Scanners</span>.
+Si pulsamos sobre ella, comprobamos que los cuatro productos que
+aparecen corresponden, en realidad, a la categor&iacute;a <span style="font-style: italic;">iPod &amp; Camera</span>.
+La primera modificaci&oacute;n que haremos a trav&eacute;s del
+interfaz administrativo ser&aacute;, entonces, corregir este error.<br>
+
+<br>
+
+<span style="font-weight: bold;">60)</span> En el
+interfaz de administraci&oacute;n de TomatoCart pulsar sobre <span style="font-weight: bold;">Products</span> (o,
+alternativamente, acceder a trav&eacute;s del bot&oacute;n de
+inicio de la parte inferior, a trav&eacute;s de <span style="font-weight: bold;">Start -&gt; Catalog -&gt;
+Products -&gt; Products</span>).<br>
+
+<br>
+
+<br>
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+  <tbody>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 112px; height: 195px;" alt="" src="img/products_escritorio.png"></td>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 530px; height: 364px;" alt="" src="img/products_start.png"></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<br>
+
+<span style="font-weight: bold;">61)</span> En la
+ventana de <span style="font-weight: bold;">Productos</span>,
+si pulsamos sobre la categor&iacute;a <span style="font-weight: bold;">Printers &amp; Scanners</span>
+podemos comprobar que, en efecto, en ella aparecen productos que
+deber&iacute;an estar bajo <span style="font-style: italic;">iPod
+&amp; Camera</span><br>
+
+<br>
+
+<img style="border: 1px solid ; width: 787px; height: 259px;" alt="" src="img/productos_erroneos.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">62)</span> Primero,
+moveremos la c&aacute;mara y los iPods a la categor&iacute;a
+correcta. Para ello, seleccionamos con el rat&oacute;n los cuatro
+productos (usando Shift para permitir selecciones
+m&uacute;ltiples), y los arrastramos sobre la carpeta <span style="font-weight: bold;">iPod &amp; Camera</span>
+del &aacute;rbol de categor&iacute;as. Una vez arrastrados,
+pulsamos sobre <span style="font-weight: bold;">iPod
+&amp; Camera</span> para comprobar que los productos aparecen
+ahora en esta categor&iacute;a.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 789px; height: 221px;" alt="" src="img/productos_movidos.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">63)</span> Como
+todav&iacute;a no hemos publicado los cambios, el front-end de la
+tienda todav&iacute;a no ha sido modificado (como podemos verificar
+volviendo a la pesta&ntilde;a de la tienda <span style="font-style: italic;">Deii</span>, refrescando
+con <span style="font-weight: bold;">F5</span>, y
+comprobando que siguen apareciendo 0 art&iacute;culos bajo <span style="font-style: italic;">iPod &amp; Camera</span>).<br>
+
+<br>
+
+<span style="font-weight: bold;">64)</span> Volvemos
+al interfaz administrativo, seleccionamos los cuatro productos de la
+categor&iacute;a <span style="font-weight: bold;">iPod
+&amp; Camera</span>, y pulsamos el bot&oacute;n <span style="font-weight: bold;">Publish</span>. Volvemos
+entonces a la tienda virtual, refrescamos con <span style="font-weight: bold;">F5</span>, y comprobamos
+que los productos est&aacute;n ahora en la categor&iacute;a
+correcta.<br>
+
+<br>
+
+Obviamente sigue existiendo un problema, porque los iPods y
+c&aacute;mara siguen apareciendo tambi&eacute;n bajo la
+categor&iacute;a de <span style="font-style: italic;">Printers
+&amp; Scanners</span>. Adicionalmente, deber&iacute;amos
+separar los iPods de la c&aacute;mara, usando
+subcategor&iacute;as. Vamos a realizar ambas modificaciones.<br>
+
+<br>
+
+<span style="font-weight: bold;">65)</span> En la
+ventana <span style="font-weight: bold;">Products</span>
+del interfaz administrativo pulsar sobre <span style="font-weight: bold;">Printers &amp; Scanners</span>.
+Seleccionar los cuatro productos de esta categor&iacute;a, y pulsar
+<span style="font-weight: bold;">Delete</span>. Esta
+acci&oacute;n provoca una publicaci&oacute;n
+autom&aacute;tica, como podemos comprobar refrescando la tienda
+virtual y viendo que ahora hay 0 productos bajo <span style="font-style: italic;">Printers &amp; Scanners</span>.....
+Oooooppsss......!!!!!<br>
+
+<br>
+
+...Al comprobar el front-end de la tienda, nos damos cuenta de que este
+borrado ha sido un error. Como podemos ver, &iexcl;&iexcl;ahora
+tambi&eacute;n hay 0 art&iacute;culos bajo <span style="font-style: italic;">iPod &amp; Camera</span>!!.
+Obviamente el arrastre que hicimos en el punto 62 no hab&iacute;a
+hecho una copia de los productos, sino s&oacute;lamente creado un
+enlace, a nivel de la base de datos, desde esa categor&iacute;a a
+los productos ya existentes, de forma que el borrado de los productos
+los ha eliminado simult&aacute;neamente de ambas
+categor&iacute;as.<br>
+
+<br>
+
+Justamente para resolver este tipo de problemas es para lo que hemos
+tomado la instant&aacute;nea <span style="font-style: italic;">Con
+Tomatocart</span>, que usaremos ahora para recuperar el estado
+inicial de la tienda virtual.<br>
+
+<br>
+
+<span style="font-weight: bold;">66)</span> Apagar
+el servidor <span style="font-style: italic;">debiantomato</span>
+usando <span style="font-weight: bold;">telinit 0</span>
+y, en el men&uacute; de instant&aacute;neas, revertir a la
+instant&aacute;nea <span style="font-weight: bold;">Con
+Tomatocart</span>. Volver a encender el servidor, y hacer login
+como root.<br>
+
+<br>
+
+<span style="font-weight: bold;">67)</span>
+Accediendo desde Firefox a la tienda virtual comprobamos que volvemos a
+tener su estado inicial. Sin embargo, al hacer login en el interfaz
+administrativo de la tienda vemos que tambi&eacute;n deberemos
+volver a rellenar los formularios del Wizard. Hacerlo con los mismos
+valores que ya usamos anteriormente (en el punto 58).<br>
+
+<br>
+
+Es evidente que cada vez que volvamos atr&aacute;s a la
+instant&aacute;nea <span style="font-style: italic;">Con
+Tomatocart</span> tendremos que volver a rellenar los formularios
+del Wizard. Ser&iacute;a c&oacute;modo que, en esta fase en que
+estamos configurando la tienda por "tanteo y error",
+pudi&eacute;ramos volver atr&aacute;s r&aacute;pidamente a
+un estado en el que el Wizard ya estuviera relleno y la tienda
+inicilizada, pero resulta engorroso tener que parar la
+m&aacute;quina completa para hacer una instant&aacute;nea que,
+probablemente, tendr&aacute; una vida &uacute;til muy limitada.
+Por ello, vamos a usar ahora una caracter&iacute;stica de las
+instant&aacute;neas que nos soluciona esta necesidad: la
+posibilidad de crear una instant&aacute;nea <span style="text-decoration: underline;">con la
+m&aacute;quina encendida</span>. Esta instant&aacute;nea
+no s&oacute;lo congela el estado actual del disco duro, sino que
+tambi&eacute;n guarda el contenido actual de la memoria RAM, de
+forma que al recuperarla tambi&eacute;n recuperamos el estado que
+ten&iacute;an los procesos en el instante en que se cre&oacute;
+esa instant&aacute;nea.<br>
+
+<br>
+
+<span style="font-weight: bold;">68)</span> Sin
+apagar ni suspender <span style="font-style: italic;">debiantomato</span>
+abrir en el VMware Workstation el gestor de instant&aacute;neas, y
+crear una instant&aacute;nea llamada <span style="font-weight: bold;">Tras Wizard</span>.
+Observar las flechas verdes, que indican m&aacute;quina en
+funcionamiento.<br>
+
+<br>
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 621px; height: 503px;" alt="" src="img/instantanea_traswizard.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">69)</span> Para
+probar el funcionamiento de esta instant&aacute;nea, en el interfaz
+administrativo de TomatoCart borrar los cuatro productos bajo <span style="font-weight: bold;">Printers &amp; Scanners</span>.
+Comprobar en el front-end de la tienda que ahora hay 0 productos en esa
+categor&iacute;a.<br>
+
+<br>
+
+<span style="font-weight: bold;">70)</span> Volver a
+la ventana del VMware Workstation y ejecutar <span style="font-weight: bold;">VM -&gt; Snapshot -&gt;
+Revert to Snapshot: Tras Wizard</span>. La m&aacute;quina se
+parar&aacute; y volver&aacute; a arrancar (como si saliese de
+una suspensi&oacute;n).<br>
+
+<br>
+
+<span style="font-weight: bold;">71)</span>
+Refrescar el interfaz administrativo de TomatoCart, y el front-end de
+la tienda, y comprobar que hemos vuelto a la situaci&oacute;n
+anterior al borrado (es decir, conectados al interfaz administrativo,
+con el Wizard ya relleno, y con los cuatro productos originales bajo <span style="font-style: italic;">Printers &amp; Scanners</span>).<br>
+
+<br>
+
+Ahora vamos a cambiar correctamente la filiaci&oacute;n de
+categor&iacute;a para estos cuatro productos. Adicionalmente,
+aprovecharemos para separarlos en dos subcategor&iacute;as, <span style="font-style: italic;">iPod</span> y <span style="font-style: italic;">Camera</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">72)</span>
+Seleccionar la c&aacute;mara y pulsar su bot&oacute;n <span style="font-weight: bold;">Edit</span>.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 246px; height: 97px;" alt="" src="img/boton_edit.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">73)</span> En la
+pesta&ntilde;a de <span style="font-weight: bold;">Categor&iacute;es</span>,
+activar su filiaci&oacute;n a <span style="font-weight: bold;">iPod
+&amp; Camera</span>, y desactivar la de <span style="font-weight: bold;">HP</span>. Pulsar <span style="font-weight: bold;">Submit</span>.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 814px; height: 284px;" alt="" src="img/cambio_categoria.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">74)</span>
+Refrescar el front-end de la tienda, para comprobar el resultado.<br>
+
+<br>
+
+<span style="font-weight: bold;">75)</span> Antes de
+mover los iPods crearemos las subcategor&iacute;as bajo <span style="font-weight: bold;">iPod &amp; Camera</span>.
+Usando el bot&oacute;n derecho, abrir el men&uacute; contextual
+<span style="font-weight: bold;">Add</span>, y
+a&ntilde;dir la subcategor&iacute;a <span style="font-weight: bold;">iPod</span>, como muestran
+las figuras.<br>
+
+<br>
+
+<br>
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+  <tbody>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 214px; height: 259px;" alt="" src="img/menu_add.png"></td>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 518px; height: 378px;" alt="" src="img/subcategoria_iPod.png"></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<span style="font-weight: bold;">76)</span> Repetir
+el procedimiento para crear la subcategor&iacute;a <span style="font-weight: bold;">Camera</span>. Refrescar el
+front-end de la tienda para ver el resultado.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 180px; height: 277px;" alt="" src="img/subcategorias_creadas.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">77)</span> Usando
+el procedimiento descrito en los puntos 72 y 73, mover los tres iPods a
+la subcategor&iacute;a <span style="font-weight: bold;">iPod</span>,
+y la c&aacute;mara Sony a la subcategor&iacute;a <span style="font-weight: bold;">Camera</span>. Comprobar el
+resultado en el front-end de la tienda.<br>
+
+<br>
+
+Ahora a&ntilde;adiremos a la tienda virtual un producto nuevo: una
+impresora HP Laserjet P1102w.<br>
+
+<br>
+
+<span style="font-weight: bold;">78)</span> En la
+ventana <span style="font-weight: bold;">Products</span>
+del interfaz administrativo de TomatoCart seleccionar la
+categor&iacute;a <span style="font-weight: bold;">Printers
+&amp; Scanners -&gt; HP</span>, y pulsar el
+bot&oacute;n <span style="font-weight: bold;">Add</span>.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 791px; height: 335px;" alt="" src="img/boton_addproduct.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">79)</span> Rellenar
+las pesta&ntilde;as <span style="font-weight: bold;">General</span>,
+<span style="font-weight: bold;">Meta Info</span>, <span style="font-weight: bold;">Data</span> y <span style="font-weight: bold;">Categories</span> con los
+valores que muestran las siguientes im&aacute;genes; pulsar <span style="font-weight: bold;">Save and Continue Edit</span>
+en todos los casos (NOTA: la descripci&oacute;n de la impresora se
+puede copiar directamente de la p&aacute;gina de este producto en
+el web de HP).<br>
+
+<br>
+
+<br>
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+  <tbody>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img src="img/product_general.png" alt="" style="border: 1px solid ; width: 817px; height: 470px;"></td>
+
+    </tr>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 815px; height: 473px;" alt="" src="img/product_meta.png"></td>
+
+    </tr>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 815px; height: 472px;" alt="" src="img/product_data.png"></td>
+
+    </tr>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 816px; height: 470px;" alt="" src="img/product_categories.png"></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<span style="font-weight: bold;">80)</span> Ahora
+cargaremos en el servidor <span style="font-style: italic;">debiantomato</span>
+las im&aacute;genes del producto, que tenemos en el Windows 7. En
+la pesta&ntilde;a <span style="font-weight: bold;">Images</span>
+pulsar el bot&oacute;n <span style="font-weight: bold;">Add</span>
+bajo <span style="font-weight: bold;">Remote File Upload</span>.
+Se abrir&aacute; un navegador de ficheros; buscar el directorio <span style="font-style: italic;">D:\practicas\MV\P1102</span>
+y seleccionar la imagen <span style="font-style: italic;">c01953212_390x286.jpg</span>.
+Pulsar <span style="font-weight: bold;">Upload</span>;
+la imagen es transferida al servidor, y asignada al producto. Repetir
+con el resto de las im&aacute;genes del directorio <span style="font-style: italic;">P1102</span>, y pulsar <span style="font-weight: bold;">Submit</span>.<br>
+
+<br>
+
+<br>
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+  <tbody>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 273px; height: 172px;" alt="" src="img/boton_addimage.png"></td>
+
+    </tr>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 637px; height: 511px;" alt="" src="img/primera_imagen.png"></td>
+
+    </tr>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 809px; height: 189px;" alt="" src="img/tras_upload.png"></td>
+
+    </tr>
+
+    <tr>
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 809px; height: 424px;" alt="" src="img/images_final.png"></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<br>
+
+<span style="font-weight: bold;">81)</span>
+Actualizar el front-end de la tienda, y comprobar c&oacute;mo la impresora aparece en <span style="font-weight: bold;">Printers &amp; Scanners</span>, bajo la subcategor&iacute;a <span style="font-weight: bold;">HP</span>.<br>
+<br>
+Una vez que hemos conseguido una configuraci&oacute;n satisfactoria del
+front-end de la tienda, vamos a eliminar todas las instant&aacute;neas
+intermedias (excepto la que nos servir&aacute; luego para clonar el
+servidor de base de datos), y crearemos una instant&aacute;nea que nos
+servir&aacute; de punto de partida para el siguiente Ejercicio.<br>
+<br>
+<span style="font-weight: bold;">82)</span> Apagar, usando <span style="font-weight: bold;">telinit 0</span>, el servidor <span style="font-style: italic;">debiantomato</span>, y abrir el gestor de instant&aacute;neas.<br>
+<br>
+<span style="font-weight: bold;">83)</span> Seleccionar simult&aacute;neamente las instant&aacute;neas <span style="font-weight: bold;">Con Tomatocart</span>, <span style="font-weight: bold;">Tras Wizard</span> y <span style="font-weight: bold;">Snapshot 4</span>, y borrarlas.<br>
+<br>
+<span style="font-weight: bold;">84)</span> Crear una nueva instant&aacute;nea llamada <span style="font-weight: bold;">Tomatocart final</span>, y cerrar el gestor de instant&aacute;neas.<br>
+<br>
+<img style="border: 1px solid ; width: 326px; height: 145px;" alt="" src="img/instantanea_tomatocartfinal.png"><br>
+<br>
+Con este paso terminamos el Ejercicio.<br>
+
+<br>
+
+<a href="Ejercicio2.html">Continuar al Ejercicio 2</a><br>
+
+<br>
+
+</body>
+</html>

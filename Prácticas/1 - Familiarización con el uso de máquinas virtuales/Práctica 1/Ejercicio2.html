@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+
+
+  
+  
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+
+
+  
+  
+  
+  
+  <title>Ejercicio 2 - Instalaci&oacute;n de un Debian 7</title>
+</head>
+
+
+<body>
+
+
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 2 &nbsp;-
+Instalaci&oacute;n de un Debian 7<br>
+
+
+
+
+
+      </span></b></h1>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+En este ejercicio vamos a hacer una instalaci&oacute;n de un Debian
+7.2 sobre una m&aacute;quina virtual que correr&aacute; sobre
+el hipervisor VMware Workstation del Windows 7.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+Es conveniente destacar que la instalaci&oacute;n de Debian que
+vamos a hacer tendr&aacute; caracter generalista, es decir,
+podr&aacute; usarse como base de un sistema de escritorio (que
+requiere interfaz gr&aacute;fico de usuario) o como base de un
+sistema servidor (que, para minimizar el consumo de memoria,
+deshabilita el interfaz gr&aacute;fico de usuario y todos los
+servicios no imprescindibles). Sin embargo, ese mismo caracter
+generalista implica que la instalaci&oacute;n no estar&aacute;
+optimizada para conseguir desde el principio un consumo
+m&iacute;nimo de recursos (memoria y disco).<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+Para realizar el ejercicio seguimos estos pasos:<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">1)</span> La
+instalaci&oacute;n ir&aacute; a la m&aacute;xima velocidad
+posible si el hipervisor VMware tiene disposible toda la memoria que
+pediremos para esta m&aacute;quina virtual. Como s&oacute;lo
+tenemos 2 GB disponibles para el hipervisor, nos aseguramos de que no
+haya ninguna otra m&aacute;quina virtual abierta en el hipervisor
+Workstation del Windows 7.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">2)</span> En el
+directorio&nbsp;<span style="font-style: italic;">D:\practicas\MV</span>
+crear una carpeta de nombre <span style="font-style: italic;">Debian7</span><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">3)</span> Ejecutar
+VMware Workstation, y crear una nueva m&aacute;quina virtual
+siguiendo los pasos y valores mostrados en <a href="img/preparacion_debian7.htm">esta animaci&oacute;n</a>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">4)</span> Arrancar
+la m&aacute;quina virtual con <span style="font-weight: bold;">Power
+on</span>. Como no hemos insertado el DVD con el sistema
+operativo, la m&aacute;quina virtual buscar&aacute; una
+instalaci&oacute;n PXE por red, y al no encontrarla se
+parar&aacute;.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">5)</span> La imagen
+ISO del DVD de instalaci&oacute;n del Debian 7 es el fichero <span style="font-style: italic;">debian-7.2.0-i386-DVD-1.iso</span>,
+que est&aacute; en el directorio <span style="font-style: italic;">D:\practicas\MV</span>. Insertamos
+esta imagen en la unidad virtual de DVD y luego reiniciamos la
+m&aacute;quina virtual. <a href="img/insertar_dvd_debian.htm">La
+siguiente animaci&oacute;n</a> muestra el procedimiento que
+seguiremos para la inserci&oacute;n; este procedimiento muestra una
+forma de insertar el DVD virtual alternativa (pero igualmente
+v&aacute;lida) a la que se us&oacute; en el <a href="Ejercicio1.html">Ejercicio 1</a>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">6)</span> En la
+pantalla de entrada seleccionar (usando las flechas de cursor) la
+opci&oacute;n <span style="font-weight: bold;">Gr&aacute;phical
+Install</span>, y pulsar <span style="font-weight: bold;">Enter</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="width: 647px; height: 585px;" alt="" src="img/debian_installer.png"><br>
+
+
+
+
+
+</div>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">7)</span> En la
+pantalla de elecci&oacute;n de lenguaje, elegir la
+opci&oacute;n <span style="font-weight: bold;">Spanish
+- Espa&ntilde;ol</span>, y pulsar <span style="font-weight: bold;">Continue</span>. En la
+opci&oacute;n de ubicaci&oacute;n elegir <span style="font-weight: bold;">Espa&ntilde;a</span>, y
+pulsar <span style="font-weight: bold;">Continuar</span>.
+En la opci&oacute;n de mapa de teclado elegir <span style="font-weight: bold;">Espa&ntilde;ol</span>,
+y pulsar <span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">8)</span> Una vez
+pasada la secuencia de autodetecciones de la configuraci&oacute;n
+hardware del sistema, aparece una ventana de configuraci&oacute;n
+de red, en la que pregunta si queremos configurar una ruta por defecto.
+Como esta m&aacute;quina virtual va a estar conectada a una red
+host-only, y no necesita (por el momento) enrutar tr&aacute;fico a
+m&aacute;quinas ubicadas fuera de esa red, contestaremos que <span style="font-weight: bold;">S&iacute;</span>,
+s&iacute; queremos continuar sin configurar ruta por defecto. Pulsar
+<span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="width: 805px; height: 235px;" alt="" src="img/no_ruta_defecto.png"><br>
+
+
+
+
+
+</div>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">9)</span> Por el
+momento no vamos a necesitar resoluci&oacute;n de nombres
+v&iacute;a DNS, as&iacute; que dejamos en blanco el campo de la
+direcci&oacute;n IP de los servidores de nombres, y pulsamos <span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">10)</span> Usamos <span style="font-weight: bold;">debian7</span> como nombre
+de la m&aacute;quina, y pulsamos <span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="width: 796px; height: 202px;" alt="" src="img/nombre_debian7.png"><br>
+
+
+
+
+
+</div>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">11)</span> Como no
+estamos usando DNS, por el momento no es necesario tampoco un nombre de
+dominio. Lo dejamos en blanco, y pulsamos <span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">12)</span> Como
+clave del superusuario introducimos <span style="font-weight: bold;">deii15</span>,
+y pulsamos <span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">13)</span> A
+continuaci&oacute;n el instalador nos pide crear una cuenta de
+usuario no privilegiado. Crearemos la cuenta <span style="font-weight: bold;">curso</span>, usando el
+nombre completo y nombre de usuario de las figuras, y como password <span style="font-weight: bold;">deii15</span><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 799px; height: 217px;" alt="" src="img/cuenta_curso_nombre.png"></td>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 802px; height: 170px;" alt="" src="img/cuenta_curso_username.png"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">14)</span>
+Seleccionar la zona horaria <span style="font-weight: bold;">Pen&iacute;nsula</span>,
+y pulsar <span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">15)</span> Elegir
+el m&eacute;todo de particionado <span style="font-weight: bold;">Guiado - utilizar todo el disco</span>,
+y pulsar <span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="width: 795px; height: 247px;" alt="" src="img/partic_guiado.png"><br>
+
+
+
+
+
+</div>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">16)</span> Elegir
+el &uacute;nico disco duro existente (disco <span style="font-style: italic;">sda</span>, de tipo <span style="font-style: italic;">SCSI3</span>), y pulsar <span style="font-weight: bold;">Continuar</span><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+La elecci&oacute;n de c&oacute;mo particionar el disco depende
+del tipo de uso que se le vaya a dar a la m&aacute;quina virtual, y
+de si es necesario hacer backups de sus contenidos o no. Si la
+m&aacute;quina va a requerir backups frecuentes de los datos de
+usuario es mejor separar la partici&oacute;n <span style="font-style: italic;">/home</span> de la
+partici&oacute;n de sistema (para reducir el tama&ntilde;o de
+los ficheros de backup y el tiempo que requiere hacerlos). Sin embargo,
+si la m&aacute;quina no requiere backups frecuentes, o si nunca va
+a contener muchos datos, es m&aacute;s c&oacute;modo usar
+simplemente una &uacute;nica partici&oacute;n, y hacer el
+backup de la m&aacute;quina virtual completa (esencialmente, de su
+fichero de disco .vmdk) desde el host (anfitrion) en donde corre el
+hipervisor.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">17)</span> Como la
+m&aacute;quina no va a albergar muchos ficheros en las cuentas de
+usuario, no merece la pena separar el directorio <span style="font-style: italic;">/home</span> en otra
+partici&oacute;n. Por tanto elegimos la opci&oacute;n por
+defecto,&nbsp;que pone todos los ficheros en una &uacute;nica
+partici&oacute;n, y pulsamos <span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="width: 782px; height: 191px;" alt="" src="img/particion_unica.png"><br>
+
+
+
+
+
+</div>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">18)</span> Aceptar
+el esquema de particionado propuesto, y pulsar <span style="font-weight: bold;">Continuar</span>. Aceptar
+el escribir cambios en los discos, y pulsar <span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 786px; height: 373px;" alt="" src="img/esquema_particionado.png"></td>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 793px; height: 276px;" alt="" src="img/cambios_discos.png"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">19)</span> No
+analizar ning&uacute;n otro CD/DVD. Pulsar&nbsp;<span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<img style="width: 423px; height: 104px;" alt="" src="img/no_analizar.png"><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">20)</span> No
+necesitamos versiones actualizadas de los paquetes del DVD,
+as&iacute; que no usaremos r&eacute;plica de red. Pulsar <span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="width: 784px; height: 211px;" alt="" src="img/no_replica.png"><br>
+
+
+
+
+
+</div>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">21)</span> No
+participar en la encuesta. Pulsar <span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="width: 786px; height: 108px;" alt="" src="img/no_encuesta.png"><br>
+
+
+
+
+
+</div>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">23)</span> Vamos a
+elegir un conjunto de paquetes que, aunque ocupar&aacute;n
+m&aacute;s espacio de disco, permitir&aacute;n que, con la
+configuraci&oacute;n adecuada en cada caso, podamos usar esta
+instalaci&oacute;n bien como equipo de sobremesa o bien como
+servidor de aplicaciones Web sobre pila LAPP, o bien como servidor de
+ficheros e impresi&oacute;n. Seleccionar los paquetes mostrados en
+la figura, y pulsar <span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="width: 790px; height: 365px;" alt="" src="img/paquetes_debian.png"><br>
+
+
+
+
+
+</div>
+
+
+
+
+
+<br>
+
+
+
+
+
+El programa proceder&aacute; ahora a instalar en el sistema los
+paquetes seleccionados, labor que le llevar&aacute; unos cuantos
+minutos.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">24)</span> Al
+finalizar la instalaci&oacute;n, aceptar que se instale el cargador
+<span style="font-style: italic;">GRUB</span> en el
+registro principal de arranque (<span style="font-style: italic;">Master
+Boot Record, MRB</span>), y pulsar <span style="font-weight: bold;">Continuar</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="width: 791px; height: 220px;" alt="" src="img/instalar_grub.png"><br>
+
+
+
+
+
+</div>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">25)</span> Una vez
+que aparezca el mensaje de <span style="font-style: italic;">Instalaci&oacute;n
+completada</span>, pulsar <span style="font-weight: bold;">Continuar</span>
+para reiniciar la m&aacute;quina virtual.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<img style="width: 789px; height: 90px;" alt="" src="img/instalacion_completa.png"><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+(NOTA: Aunque el instalador sugiere expulsar la media del DVD, eso no
+es realmente necesario aqu&iacute; porque en el orden de arranque
+de la m&aacute;quina virtual el disco duro va antes que la unidad
+de DVD. Adicionalmente, manteniendo configurada la m&aacute;quina
+virtual para que inserte en el arranque el DVD del instalador haremos
+m&aacute;s f&aacute;cil instalar los paquetes adicionales, cosa
+que m&aacute;s adelante veremos ser&aacute; necesaria).<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">26)</span> Una vez
+reiniciada la m&aacute;quina virtual hacemos login como usuario <span style="font-weight: bold;">curso</span> (Debian
+deshabilita por defecto el login directo como root en la pantalla
+inicial).<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+Una vez inicializado el escritorio del usuario <span style="font-style: italic;">curso</span>, comenzaremos
+comprobando cu&aacute;ntos recursos (fundamentalmente memoria)
+est&aacute; consumiendo la m&aacute;quina virtual, y
+qu&eacute; servicios y daemons est&aacute;n andando:<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">27)</span> Usando
+el men&uacute; <span style="font-weight: bold;">Aplicaciones
+-&gt; Accesorios -&gt; Terminal</span>, abrir una
+terminal para el usuario <span style="font-weight: bold;">curso</span>.
+Ejecutar el comando <span style="font-weight: bold;">free</span>
+para consultar el consumo de memoria. Como se puede observar, incluso
+con s&oacute;lo 512 MB de RAM el sistema tiene a&uacute;n
+m&aacute;s de 100 MB libres.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 613px; height: 624px;" alt="" src="img/terminal.png"></td>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 733px; height: 176px;" alt="" src="img/free.png"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">28)</span> Ahora
+comprobaremos qu&eacute; servicios est&aacute;n corriendo por
+defecto. Para ello, primero ejecutamos, en la terminal, el
+comando&nbsp;<span style="font-weight: bold;">/sbin/runlevel</span>,
+cuya salida nos indica que este Linux System V ha arrancado en runlevel
+2. Sabiendo este valor, usamos el comando&nbsp;<span style="font-weight: bold;">ls /etc/rc2.d</span> para
+listar el contenido de ese directorio, que alberga los scripts de
+inicializaci&oacute;n correspondientes al runlevel 2. La salida
+ser&aacute; como la de la figura.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<img style="border: 1px solid ; width: 578px; height: 240px;" alt="" src="img/rc2.png"><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+De los nombres de ese listado es f&aacute;cil distinguir que al
+arrancar el sistema, adem&aacute;s de los servicios
+b&aacute;sicos del mismo, se est&aacute;n arrancando
+tambi&eacute;n el servidor HTTP <span style="font-style: italic;">apache</span>
+(S02apache2), el servidor &nbsp;<span style="font-style: italic;">postgres</span>
+de la base de datos PostgreSQL (S03postgresql), el servidor de SSH
+(S03ssh), y el servidor <span style="font-style: italic;">samba</span>
+de compartici&oacute;n de ficheros v&iacute;a protocolo SMB (es
+decir, carpetas compartidas de Windows). Adicionalmente,
+tambi&eacute;n se est&aacute;n arrancando el servidor de
+impresi&oacute;n (S05cupsl) y el servidor gr&aacute;fico X
+Windows con gestor de ventanas GDM (S05gdm3).<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+Para terminar la instalaci&oacute;n b&aacute;sica de la
+m&aacute;quina Debian 7 vamos a instalarle tambi&eacute;n a
+ella los drivers especializados de VMware Tools. La
+instalaci&oacute;n tiene los siguientes puntos a tener en cuenta:<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<ul>
+
+
+
+
+
+  <li>Requiere tener privilegios de administrador, as&iacute;
+que necesitaremos adoptar la identidad de root.<br>
+
+
+
+
+
+    <br>
+
+
+
+
+
+  </li>
+
+
+
+
+
+  <li>Al igual que en la m&aacute;quina virtual Windows, el
+instalador de las Tools usa la unidad de DVD virtual para montar una
+imagen ISO que contiene los Tools; este montaje se realiza
+autom&aacute;ticamente al invocar el men&uacute; de
+instalaci&oacute;n de las Tools.<br>
+
+
+
+    <br>
+
+
+
+
+
+  </li>
+
+
+
+
+
+  <li>En una distribuci&oacute;n est&aacute;ndar Linux,
+como la de Debian, los VMware Tools necesitan compilar los
+m&oacute;dulos que luego usar&aacute; el n&uacute;cleo
+(kernel) del sistema operativo para acceder a sus funcionalidades. Por
+ello, antes de proceder a la instalaci&oacute;n de las propias
+Tools es necesario instalar en el Linux el compilador de C
+gcc,&nbsp;el programa <span style="font-style: italic;">make</span>
+para ejecutar scripts de compilaci&oacute;n (<span style="font-style: italic;">Makefiles</span>), y los
+headers (ficheros include) del kernel.</li>
+
+
+
+
+
+</ul>
+
+
+
+
+
+Realizamos, pues, los siguientes pasos:<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">29)</span> En la
+terminal adoptamos la identidad del usuario <span style="font-weight: bold;">root</span>, ejecutando <span style="font-weight: bold;">su - &nbsp; </span>.Introducir
+&nbsp;la contrase&ntilde;a de root (<span style="font-style: italic;">deii15</span>).<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">30)</span> Ya como
+root ejecutamos el comando <span style="font-weight: bold;">synaptic</span>
+para invocar un gestor gr&aacute;fico de paquetes software (existe
+tambi&eacute;n una versi&oacute;n de s&oacute;lo-texto,
+&uacute;til para trabajar sin entorno gr&aacute;fico, llamada <span style="font-style: italic;">aptitude</span>). Recordar
+que hemos mantenido en la unidad de DVD virtual el ISO del instalador
+de Debian, as&iacute; que la herramienta <span style="font-style: italic;">synaptic</span> va a usar
+ese DVD como repositorio, en el que encontrar&aacute; los paquetes
+que vamos a solicitar instalar.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">31)</span> En la
+categor&iacute;a <span style="font-weight: bold;">Desarrollo</span>
+hacer doble click sobre el paquete <span style="font-weight: bold;">gcc-4.7</span>.
+Aparecer&aacute; un aviso de dependencias adicionales; pulsar <span style="font-weight: bold;">Marcar</span> para instalar
+tambi&eacute;n esos paquetes necesarios.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 799px; height: 570px;" alt="" src="img/gcc.png"></td>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 465px; height: 368px;" alt="" src="img/marcar.png"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">32)</span>
+Tambi&eacute;n en la categor&iacute;a&nbsp;<span style="font-weight: bold;">Desarrollo</span>, hacer
+doble click sobre el paquete&nbsp;<span style="font-weight: bold;">make</span> para
+seleccionarlo.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<img style="width: 793px; height: 156px;" alt="" src="img/make.png"><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">33)</span> Ahora,
+en la categor&iacute;a <span style="font-weight: bold;">N&uacute;cleo
+y m&oacute;dulos</span> marcar para su
+instalaci&oacute;n, haciendo doble click, los paquetes <span style="font-weight: bold;">linux-headers-3.2.0-4-686-pae</span>
+y <span style="font-weight: bold;">linux-headers-686-pae</span>.
+Aceptar marcar los paquetes adicionales requeridos.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 769px; height: 141px;" alt="" src="img/headers.png"></td>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 767px; height: 151px;" alt="" src="img/headers2.png"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 462px; height: 367px;" alt="" src="img/marcar_headers.png"><br>
+
+
+
+
+
+</div>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">34)</span> Pulsar
+el bot&oacute;n&nbsp;<span style="font-weight: bold;">Aplicar</span>.
+Aparecer&aacute; una ventana informativa, pidiendo
+confirmaci&oacute;n; pulsar de nuevo&nbsp;<span style="font-weight: bold;">Aplicar</span>.
+Aparecer&aacute; una ventana solicitando la inserci&oacute;n del DVD de
+Debian 7 (que se ha desmontado al reiniciar la m&aacute;quina). Para
+reinsertarlo, basta con acceder a los settings de la m&aacute;quina
+virtual y marcar la casilla <span style="font-weight: bold;">Connect</span> (o reconectar directamente usando el men&uacute; <span style="font-weight: bold;">VM -&gt; Removable Devices -&gt; CD/DVD (IDE) -&gt; Connect</span>).<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 788px; height: 192px;" alt="" src="img/aplicar.png"></td>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 472px; height: 447px;" alt="" src="img/aplicar2.png"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<div style="text-align: center;"><img style="width: 691px; height: 302px;" alt="" src="img/reconectar_dvd.png"><br>
+
+</div>
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">35)</span> Al
+terminar la instalaci&oacute;n aparecer&aacute; una ventana
+confirmando que la instalaci&oacute;n ha finalizado sin problemas.
+Pulsar&nbsp;<span style="font-weight: bold;">Cerrar</span>,
+y despu&eacute;s cerrar tambi&eacute;n el gestor de
+paquetes&nbsp;<span style="font-style: italic;">synaptic</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+Ahora necesitamos desmontar y expulsar el DVD virtual del instalador, y
+montar el DVD de los VMware Tools. Para ello, haremos lo siguiente:<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">36)</span> Primero,
+en la terminal, ejecutamos <span style="font-weight: bold;">df</span>
+para ver los sistemas de ficheros montados, entre los que veremos <span style="font-style: italic;">/media/cdrom0</span>. Si
+ejecutamos&nbsp;<span style="font-weight: bold;">ls
+/media/cdrom0</span> comprobaremos que se trata del DVD con el
+instalador del Debian.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 731px; height: 494px;" alt="" src="img/df.png"></td>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 735px; height: 128px;" alt="" src="img/ls_dvd.png"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">37)</span>
+Expulsamos el DVD de la unidad virtual, ejecutando&nbsp;<span style="font-weight: bold;">eject cdrom &nbsp;</span>,tras lo
+que volvemos a ejecutar&nbsp;<span style="font-weight: bold;">df</span>
+para comprobar que, en efecto, la unidad de DVD virtual ha sido
+desmontada.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">38)</span> Ahora
+invocamos la instalaci&oacute;n de las Tools, usando el
+men&uacute; <span style="font-weight: bold;">VM
+-&gt; Install VMware Tools</span>. Veremos un mensaje, a
+pi&eacute; de pantalla, indicando que se ha montado <span style="font-style: italic;">cdrom0</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 242px; height: 262px;" alt="" src="img/menu_install_tools.png"></td>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 711px; height: 76px;" alt="" src="img/cdrom0.png"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">39)</span>
+Ejecutando <span style="font-weight: bold;">df</span>
+vemos que de nuevo est&aacute; montado el sistema de ficheros <span style="font-style: italic;">/media/cdrom0</span>. Si
+hacemos&nbsp;<span style="font-weight: bold;">ls
+/media/cdrom0</span> comprobamos que ahora el contenido de ese
+directorio es el DVD del instalador de las Tools, que est&aacute;
+contenido en el fichero tar comprimido VMwareTools-9.6.2-1688356.tar.gz<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<img style="border: 1px solid ; width: 699px; height: 78px;" alt="" src="img/tools_tgz.png"><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">40)</span>
+Ejecutamos <span style="font-weight: bold;">cp
+/media/cdrom0/VMwareTools-9.6.2-1688356.tar.gz &nbsp;/tmp</span>
+&nbsp; para copiar el fichero con el instalador al directorio
+temporal (NOTA: la terminal (bash) de Linux tiene un acelerador para
+evitar tener que escribir nombres de fichero largos: una vez escritos
+los suficientes caracteres iniciales del nombre como para determinar
+sin ambiguedad el fichero referenciado, una pulsaci&oacute;n del
+tabulador autocompleta el nombre).<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">41)</span> Ejecutar
+&nbsp;<span style="font-weight: bold;">cd /tmp</span>
+&nbsp; ,seguido por &nbsp; <span style="font-weight: bold;">tar
+zxvf &nbsp;</span><span style="font-weight: bold;">VMwareTools-9.6.2-1688356.tar.gz</span>
+&nbsp; para descomprimir el instalador.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">42)</span> La
+descompresi&oacute;n ha creado el subdirectorio <span style="font-style: italic;">vmware-tools-distrib</span>
+dentro del directorio <span style="font-style: italic;">/tmp</span>.
+Ejecutamos &nbsp;<span style="font-weight: bold;">cd
+vmware-tools-distrib</span> &nbsp;para ir a &eacute;l,
+tras lo que ejecutamos <span style="font-weight: bold;">ls</span>
+.El instalador propiamente dicho es el script Perl <span style="font-style: italic;">vmware-install.pl</span>.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">43)</span>
+Ejecutamos el instalador usando el comando &nbsp;<span style="font-weight: bold;">./vmware-install.pl</span>
+&nbsp;.Aceptar (pulsando Enter) las opciones por defecto que
+ir&aacute; presentando el instalador a lo largo del proceso.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 721px; height: 415px;" alt="" src="img/install_1.png"></td>
+
+
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 722px; height: 123px;" alt="" src="img/install_2.png"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">44)</span> El
+instalador prosigue ofreciendo correr el script de configuraci&oacute;n. Aceptar, pulsando Enter.<br>
+
+
+
+
+<br>
+
+
+
+
+<img style="border: 1px solid ; width: 717px; height: 133px;" alt="" src="img/install_config.png"><br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;"></span><span style="font-weight: bold;">45)</span> El instalador ahora compilar&aacute; los m&oacute;dulos. Como hemos instalado previamente <span style="font-style: italic;">gcc</span>
+el instalador encuentra sin problemas el ejecutable del compilador, por
+lo que seguimos simplemente aceptando las opciones por defecto.<br>
+
+
+
+
+<br>
+
+
+
+
+<img style="border: 1px solid ; width: 721px; height: 216px;" alt="" src="img/install_gcc.png"><br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">46)</span> An&aacute;logamente, como
+hemos instalado previamente los headers correctos para la
+versi&oacute;n del kernel que estamos corriendo en la m&aacute;quina
+virtual, el instalador encuentra una ruta correcta a dichos headers, y
+aceptamos la opci&oacute;n por defecto de no cambiarla.<br>
+
+
+
+
+<br>
+
+
+
+
+<img style="border: 1px solid ; width: 720px; height: 100px;" alt="" src="img/install_headers_found.png"><br>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">47)</span> Una vez termine la
+compilaci&oacute;n de los m&oacute;dulos, el instalador ofrece
+habilitar la funcionalidad de carpetas compartidas. Al igual que en
+Windows, esta funcionalidad es prescindible porque hay formas de
+implementar una compartici&oacute;n de carpetas usando s&oacute;lo
+funcionalidades est&aacute;ndar del sistema. Por tanto, diremos que <span style="font-weight: bold;">no</span> a esta opci&oacute;n.<br>
+
+
+
+
+<br>
+
+
+
+
+<img style="border: 1px solid ; width: 732px; height: 214px;" alt="" src="img/no_shared_folders.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">48)</span> Aceptar la opci&oacute;n de que permita copiar o arrastrar ficheros entre host y guest.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 724px; height: 63px;" alt="" src="img/tools_arrastre.png"><br>
+
+
+
+
+<span style="font-weight: bold;"></span><br>
+
+
+
+
+<span style="font-weight: bold;">49)</span> No activar la opci&oacute;n
+de compilar autom&aacute;ticamente m&oacute;dulos del kernel, aceptando
+la opci&oacute;n por defecto.<br>
+
+
+
+
+<br>
+
+
+
+
+<img style="border: 1px solid ; width: 719px; height: 131px;" alt="" src="img/no_automodules.png"><br>
+
+
+
+
+<br>
+
+<span style="font-weight: bold;">50)</span> No activar la opci&oacute;n de Thinprint<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 719px; height: 44px;" alt="" src="img/tools_nothinprint.png"><br>
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">51)</span> La instalaci&oacute;n
+termina, y nos indica que para acceder a las funcionalidades de las
+Tools que se pueden lanzar a petici&oacute;n del usuario hay que usar
+el comando&nbsp;<span style="font-style: italic;">/usr/bin/vmware-toolbox-cmd</span>(que
+trabaja en modo l&iacute;nea de comando; el interfaz gr&aacute;fico
+para acceder a las funcionalidades y configuraci&oacute;n de los VMware
+Tools desde dentro de la propia m&aacute;quina virtual que se usaba en
+la versi&oacute;n 8 y anteriores de VMware est&aacute; hoy d&iacute;a
+deprecado).<br>
+
+
+
+
+<br>
+
+
+
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 720px; height: 418px;" alt="" src="img/install_fin.png"><br>
+
+
+
+
+</div>
+
+
+
+
+<br>
+
+
+
+
+<span style="font-weight: bold;">52)</span> Reiniciamos la m&aacute;quina virtual, ejecutando <span style="font-weight: bold;">reboot</span>. Comprobamos que arranca correctamente, y la volvemos a apagar, haciendo <span style="font-weight: bold;">telinit 0</span> (o usando la opci&oacute;n al efecto en la barra de men&uacute;s, arriba a la derecha, dentro de la opci&oacute;n <span style="font-weight: bold;">Curso FP</span>).<br>
+
+
+
+
+<span style="font-weight: bold;"></span><br>
+
+
+
+
+Con esto terminamos el ejercicio.&nbsp;
+</body>
+</html>

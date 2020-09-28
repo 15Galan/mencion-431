@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Pr&aacute;ctica 3: Clonado de m&aacute;quinas virtuales</title>
+</head>
+
+
+<body>
+
+
+
+
+
+
+
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+
+
+
+
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+
+
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Pr&aacute;ctica 3: Clonado de m&aacute;quinas virtuales<br>
+
+
+
+
+
+
+
+
+
+
+      </span></b></h1>
+
+
+
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+<h2>1. Objetivo</h2>
+
+
+Como hemos visto en las Pr&aacute;cticas 1 y 2, el proceso de
+configuraci&oacute;n y afinamiento del sistema operativo en una
+m&aacute;quina virtual requiere una inversi&oacute;n de tiempo y
+esfuerzo similar a la de su instalaci&oacute;n en una m&aacute;quina
+real (aunque, para ser estrictos, la posibilidad de usar
+instant&aacute;neas en la m&aacute;quina virtual permite una mayor
+productividad cuando hay que hacer el afinamiento por tanteo y error,
+al no ser necesario volver a empezar desde el principio si elegimos una
+configuraci&oacute;n no adecuada).<br>
+
+
+<br>
+
+
+Sin embargo, es a la hora de reutilizar una instalaci&oacute;n o
+configuraci&oacute;n previa cuando las m&aacute;quinas virtuales
+permiten a un desarrollador o a un administrador de sistemas ahorros
+masivos de tiempo y trabajo. Con m&aacute;quinas reales, las
+&uacute;nicas formas pr&aacute;cticas de reutilizar instalaciones son:<br>
+
+
+<br>
+
+
+<ol>
+
+
+  <li>Clonado de particiones usando aplicaciones como Ghost o PartImage.<br>
+
+
+    <br>
+
+
+  </li>
+
+
+  <li>Usar scripts automatizados de instalaci&oacute;n y configuraci&oacute;n, generados a partir de la instalaci&oacute;n modelo.</li>
+
+
+</ol>
+
+
+Estas opciones (especialmente el clonado de particiones) son las
+&uacute;nicas v&aacute;lidas si necesitamos forz&oacute;samente poner
+en marcha un parque de ordenadores f&iacute;sicos (un laboratorio
+docente, puestos de ofim&aacute;tica en una misma oficina, etc). Sin
+embargo, presentan tambi&eacute;n problemas t&eacute;cnicos y de
+eficiencia: suelen ser complejas, funcionan bien s&oacute;lo cuando los
+equipos im&aacute;gen y clonado son del mismo modelo con
+id&eacute;ntico hardware, y habitualmente requieren configurar
+manualmente par&aacute;metros una vez finalizado el proceso de copia.<br>
+
+
+<br>
+
+
+En cambio, reutilizar instalaciones con m&aacute;quinas virtuales es
+algo casi trivial. De entrada, como el hipervisor oculta a la
+m&aacute;quina virtual el hardware real, una instalaci&oacute;n previa
+puede reutilizarse sin mayor problema (siempre que el formato o
+versi&oacute;n de m&aacute;quina virtual no sea incompatible con el
+hipervisor empleado, y si lo es existen conversores que permiten
+actualizar dicho formato). Adicionalmente, como la m&aacute;quina
+virtual no necesita de verdad tomar el control de toda una
+m&aacute;quina f&iacute;sica para ella s&oacute;la, es muy sencillo
+hacer correr simult&aacute;neamente m&uacute;ltiples copias de una
+misma instalaci&oacute;n en una &uacute;nica m&aacute;quina real (lo
+que simplifica considerablemente montar sistemas multi-servidor de
+desarrollo o producci&oacute;n para, por ejemplo, aplicaciones de
+comercio electr&oacute;nico usando pilas LAMP o LAPP).<br>
+
+
+<br>
+
+
+Como ya hemos visto, f&iacute;sicamente una m&aacute;quina virtual
+est&aacute; compuesta, esencialmente, por su fichero de
+descripci&oacute;n (.vmx, en VMware), y por el fichero con los
+contenidos de su disco duro (.vmdk); por tanto, la forma m&aacute;s
+obvia de clonar una m&aacute;quina virtual es crear una copia de esos
+ficheros. Usando esta opci&oacute;n, cada nueva copia de la
+m&aacute;quina virtual original consumir&aacute; un espacio de disco
+duro igual al usado por la m&aacute;quina original.<br>
+
+
+<br>
+
+
+En ciertas configuraciones, sin embargo, no resulta aceptable o
+pr&aacute;ctico sacrificar por cada copia un espacio de disco igual al
+de la m&aacute;quina original. Un ejemplo t&iacute;pico es la
+virtualizaci&oacute;n de puestos de escritorio (VDI = Virtual Desktop
+Infrastructure): en este tipo de sistema se usa una imagen base de un
+sistema de escritorio con todo el software instalado, que luego se
+replica decenas, o incluso centenares de veces; si el tama&ntilde;o de
+esa imagen base es, por ejemplo, de 10 GB, con tan s&oacute;lo 10
+copias de la m&aacute;quina virtual ya consumimos 100 GB de un espacio
+de disco que, probablemente, ser&aacute; caro (porque para
+hacer&nbsp;correr tantas m&aacute;quinas virtuales sobre un mismo
+almacenamiento de disco con eficiencia se requiere el uso de discos
+r&aacute;pidos).<br>
+
+
+<br>
+
+
+Afortunadamente para este tipo de configuraciones disponemos de otra
+alternativa de replicaci&oacute;n de m&aacute;quinas virtuales: el <span style="font-style: italic;">clon enlazado</span>.
+Este sistema es, escencialmente, una variante especial de una
+instant&aacute;nea: un clon enlazado usa como base un estado
+"congelado" (es decir, una instantanea) de la m&aacute;quina virtual
+original (y, en particular, de su disco duro), y sobre esa
+instant&aacute;nea aplica incrementalmente sus modificaciones.<br>
+
+
+<br>
+
+
+Usando la t&eacute;cnica de clones enlazados, cada nueva copia de la
+m&aacute;quina virtual origininal ocupar&aacute; tan s&oacute;lo el
+&nbsp;espacio requerido por el fichero de "deltas" (modificaciones
+incrementales) con respecto a la m&aacute;quina original; como todos
+los paquetes de software ya estaban instalados en la m&aacute;quina
+original, estos ficheros incrementales van a ser muy peque&ntilde;os, y
+por tanto se pueden gestionar centenares de copias con consumos muy
+reducidos de disco.<br>
+
+
+<br>
+
+
+En los siguientes dos ejercicios se demostraran estas dos alternativas,
+usando como base&nbsp;instalaci&oacute;nes preexistentes de Debian:<br>
+
+<br>
+
+
+
+
+
+
+
+
+
+
+<a href="Ejercicio1.html">
+Ejercicio 1 - Clonado de m&aacute;quinas virtuales usando copias f&iacute;sicas.</a><br>
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+<a href="Ejercicio2.html">
+Ejercicio 2 - Clonado de m&aacute;quinas virtuales usando clones enlazados</a><br>
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

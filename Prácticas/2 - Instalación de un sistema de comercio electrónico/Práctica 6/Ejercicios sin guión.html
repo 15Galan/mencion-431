@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+  
+  
+  <title>Ejercicios sin gui&oacute;n</title>
+</head>
+
+
+<body>
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+      </td>
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicios sin gui&oacute;n<br>
+
+
+
+      </span></b></h1>
+
+
+
+      </td>
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+<h2>Ejercicio 1</h2>
+
+
+
+La prueba de carga Jmeter <span style="font-style: italic;">test_esfuerzo_tomatocart.jmx</span>,
+que hemos salvado en el punto 41 del Ejercicio 4, es adecuada para
+estresar al servidor Tomatocart y ver su comportamiento ante una
+situaci&oacute;n extrema. Sin embargo, este test no es
+representativo del patr&oacute;n de accesos generados por seres
+humanos, porque los accesos entre p&aacute;ginas se suceden de
+forma instant&aacute;nea, mientras que una persona necesita al
+menos unos segundos para identificar el contenido de la
+p&aacute;gina, y un tiempo a&uacute;n mayor si llega a leer
+(total o parcialmente) su contenido.<br>
+
+
+
+<br>
+
+
+
+En este Ejercicio se requiere del alumno que modifique el test <span style="font-style: italic;">test_esfuerzo_tomatocart.jmx</span>
+para que simule la situaci&oacute;n generada por un gran
+n&uacute;mero de consultas al cat&aacute;logo, pero procedente
+de seres humanos. Para ello se deber&aacute;n introducir los
+siguientes cambios:<br>
+
+
+
+<br>
+
+
+
+<ul>
+
+
+
+  <li>Utilizar Timers aleatorios de Jmeter (Uniform o Gaussian)
+para generar retardos aleatorios tras el acceso a cada
+p&aacute;gina. Usar valores de entre 1 y 30 segundos, y configurar
+los temporizadores para que haya al menos una p&aacute;gina de
+retardos breves, y al menos una p&aacute;gina de retardos largos.<br>
+
+
+
+    <br>
+
+
+
+  </li>
+
+
+
+  <li>Para compensar la menor frecuencia de los accesos, aumentar
+el n&uacute;mero de usuarios a 50.</li>
+
+
+
+</ul>
+
+
+
+<br>
+
+
+
+Salvar el nuevo test con el nombre <span style="font-style: italic;">test_esfuerzo_humano_tomatocart.jmx</span>.
+Ejecutarlo y comprobar su efecto sobre el servidor con las mismas
+herramientas (top, vmstat, y los diversos Listeners Jmeter) vistos en
+el Ejercicio 4.<br>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+<h2>Ejercicio 2</h2>
+
+
+
+Limpiar totalmente el sistema Tomatocart (llevando al servidor <span style="font-style: italic;">debiantomato</span> al
+estado de la instant&aacute;nea <span style="font-weight: bold;">Tomatocart
+final</span>, y modificar el test Jmeter <span style="font-style: italic;">bucle_creacion_cuentas.jmx</span>
+(creado en el punto 31 del Ejercicio 5) para que genere, en ese sistema
+Tomatocart limpio, un total de 50 cuentas de usuario. Cada cuenta
+pertenecer&aacute; al usuario&nbsp;<span style="font-weight: bold;">Prueba<big><big><span style="font-style: italic;">n</span></big></big></span>,
+con direcci&oacute;n de e-mail&nbsp;<span style="font-weight: bold;">prueba<big><big><span style="font-style: italic;">n</span></big></big>@deii.org</span>,
+y password&nbsp;<span style="font-weight: bold;">deii15prueba<big><big><span style="font-style: italic;">n</span></big></big></span>,
+con&nbsp;<big><big><span style="font-weight: bold; font-style: italic;">n</span></big></big>
+tomando valores entre 1 y 50.<br>
+
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+
+<h2>Ejercicio 3</h2>
+
+
+
+Aprovechando las cuentas de usuario creadas, y empleando los mecanismos
+del proxy Jmeter descritos en los Ejercicios 4 y 5, preparar un test
+Jmeter que reproduzca la siguiente secuencia:<br>
+
+
+
+<ul>
+
+
+
+  <li>Login de un usuario en el sistema Tomatocart.<br>
+
+
+
+    <br>
+
+
+
+  </li>
+
+
+
+  <li>Navegaci&oacute;n por al menos 3 p&aacute;ginas,
+con retardos aleatorios.<br>
+
+
+
+    <br>
+
+
+
+  </li>
+
+
+
+  <li>Logout</li>
+
+
+
+</ul>
+
+
+
+Tras comprobar que el test funcione correctamente para un
+s&oacute;lo usuario, automatizarlo para convertirlo en un test
+capaz de reproducir los accesos de m&uacute;ltiples usiarios
+simult&aacute;neos. Usar variables de usuario, variables
+aleatorias, y los diversos controladores l&oacute;gicos de Jmeter
+para controlar el n&uacute;mero m&aacute;ximo de usuarios que
+puedan hacer login simult&aacute;neamente, y para conseguir que las
+operaciones de login usen el total de las 50 cuentas de usuario creadas
+en el Ejercicio 2.<br>
+
+
+
+<br>
+
+
+
+Una vez obtenido el test Jmeter deseado, utilizarlo para comprobar la
+carga del servidor si se permite el acceso a 10, 30 o 50 usuarios
+simult&aacute;neos.<br>
+
+
+
+<br>
+
+
+<br>
+
+
+<br>
+
+
+
+<h2>Ejercicio 4</h2>
+
+
+Finalmente, vamos a comparar el comportamiento de Tomatocart en un
+s&oacute;lo servidor con la configuraci&oacute;n en dos servidores (<span style="font-style: italic;">debiantomato </span>&nbsp;+ <span style="font-style: italic;">debiansql</span>). Para ello, deberemos:<br>
+
+
+<ul>
+
+
+  <li>Llevar el servidor <span style="font-style: italic;">debiantomato</span> al estado de la instant&aacute;nea <span style="font-weight: bold;">Separado en dos servidores<br>
+
+    <br>
+
+
+    </span></li>
+
+
+  <li>Abrir el servidor <span style="font-style: italic;">debiansql</span> y, sin arrancarlo, crearle una instant&aacute;nea llamada <span style="font-weight: bold;">Separado en dos servidores</span>.<br>
+
+    <br>
+
+
+  </li>
+
+
+  <li>Arrancar ambos servidores.<br>
+
+
+    <br>
+
+
+  </li>
+
+
+  <li>Usar los tests Jmeter elaborados en los Ejercicios sin
+gui&oacute;n 1 a 3, y ejecutarlos contra el sistema Tomatocart en la
+configuraci&oacute;n de dos servidores.<br>
+
+
+    <br>
+
+
+  </li>
+
+
+  <li>Monitorizar (con top, vmstat y los Listeners Jmeter) el rendimiento de ambos servidores.<br>
+
+    <br>
+
+
+  </li>
+
+
+  <li>Comparar los resultados obtenidos con los de la
+configuraci&oacute;n de un s&oacute;lo servidor, y sacar conclusiones
+acerca de cual de las dos configuraciones ha ofrecido un mejor
+rendimiento.</li>
+
+
+</ul>
+
+
+<br>
+
+
+
+</body>
+</html>

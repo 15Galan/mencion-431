@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Pr&aacute;ctica 5: Diferencias entre redes host-only, NAT y bridged</title>
+</head>
+
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Pr&aacute;ctica 5: Diferencias entre redes host-only, NAT y bridged<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </span></b></h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>1. Objetivo</h2>
+
+
+
+A la hora de crear las conexiones de red virtuales, todos los
+hipervisores nos van a permtir una de tres opciones para la
+conectividad de la tarjeta de red virtual:<br>
+
+
+
+<br>
+
+
+
+<div style="text-align: center;"><img style="width: 590px; height: 523px;" alt="" src="img/network_editor.png"><br>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+<ol>
+
+
+
+  <li><span style="text-decoration: underline; font-weight: bold;">Host-only</span>: El NIC (<span style="font-style: italic;">Network Interface Controller</span>) virtual
+est&aacute; conectado a un conmutador virtual (VMnet1) que
+s&oacute;lamente permite intecambiar tr&aacute;fico de red con el mismo hipervisor, o con otras
+m&aacute;quinas virtuales, dentro de ese hipervisor, que
+est&eacute;n conectadas a esa misma red host-only.<br>
+
+
+
+    <br>
+
+
+
+  </li>
+
+
+
+  <li><span style="text-decoration: underline; font-weight: bold;">NAT</span>: El NIC virtual
+est&aacute; conectado a un conmutador virtual (VMnet8) a trav&eacute;s
+del cual la m&aacute;quina virtual puede acceder, usando la tarjeta de
+red f&iacute;sica del ordenador, a la misma red real a la que tiene
+acceso el host. La m&aacute;quina virtual tendr&aacute; su propia
+direcci&oacute;n IP, distinta de la del host (y habitualmente
+proporcionada por DHCP por el propio hipervisor), pero a la hora de
+acceder al exterior el hipervisor usa NAT (<span style="font-style: italic;">Network Address Translation,</span> aunque para ser m&aacute;s exactos la t&eacute;cnica usada es <span style="font-style: italic;">PAT = Port Address Translation</span>)
+para modificar las cabeceras de los paquetes de red, de forma que la
+direcci&oacute;n IP con la que la m&aacute;quina virtual es vista desde
+la red externa es la misma que la usada por el host. Por supuesto, la
+m&aacute;quina virtual se puede comunicar nativamente (sin necesidad de
+hacer NAT) con cualquier otra m&aacute;quina virtual que tenga un NIC
+virtual conectado a la red NAT, VMnet8.<br>
+
+
+
+    <br>
+
+
+
+  </li>
+
+
+
+  <li><span style="text-decoration: underline; font-weight: bold;">Bridged</span>: En este modo el NIC virtual est&aacute; conectado a un comnutador virtual (VMnet0) a trav&eacute;s del cual tiene
+acceso directo e indiscriminado a la tarjeta de red del host, de forma
+que la m&aacute;quina virtual podr&aacute; acceder a la red real a la
+que tiene acceso el host, pero usando directamente sus propias direcciones
+IP y&nbsp;MAC, que ser&aacute;n distintas de la del host. Obviamente, en este modo
+la m&aacute;quina virtual deber&aacute; tener asignada una
+direcci&oacute;n IP v&aacute;lida, que no entre en conflicto con el
+direccionamiento y las asignaciones IP ya existentes en la red real.
+Adicionalmente, la m&aacute;quina virtual estar&aacute; totalmente
+expuesta a accesos desde la red real, sin protecci&oacute;n ninguna del
+host, por lo que es mandatorio que tenga configurados mecanismos de
+seguridad, especialmente un cortafuegos.</li>
+
+
+
+</ol>
+
+
+
+En esta pr&aacute;ctica usaremos una m&aacute;quina XP, creada con un
+clon enlazado, e iremos modificando la configuraci&oacute;n de su NIC
+virtual para comprobar las diferencias en el comportamiento de las
+distintas opciones de red virtual.<br>
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a href="Ejercicio1.html">
+Ejercicio 1 - Comparaci&oacute;n de red host-only, NAT y bridged</a><br>
+<br>
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

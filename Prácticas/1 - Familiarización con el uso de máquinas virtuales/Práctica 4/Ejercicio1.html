@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+  
+  
+  <title>Ejercicio 1 - Visualizaci&oacute;n remota usando RDP o VNC</title>
+</head>
+
+
+<body>
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+      </td>
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 1 &nbsp;-
+Visualizaci&oacute;n remota usando RDP o VNC<br>
+
+
+
+      </span></b></h1>
+
+
+
+      </td>
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+En este Ejercicio vamos a practicar c&oacute;mo configurar una
+m&aacute;quina virtual Windows XP para poder acceder remotamente a
+su escritorio desde el cliente RDP de un Windows 7. De igual forma,
+practicaremos c&oacute;mo configurar una m&aacute;quina virtual
+Debian 7 para poder acceder remotamente a su escritorio desde un
+cliente de visualizaci&oacute;n VNC (que, en este caso,
+tambi&eacute;n estar&aacute; en nuestro Windows 7).<br>
+
+
+
+<br>
+
+
+
+Sin embargo, antes de comenzar el ejercicio, y para evitar
+desorientarnos con el montaje espec&iacute;fico de esta
+pr&aacute;ctica, es necesario hacer un comentario previo acerca del
+escenario planteado: conforme vayamos realizando el ejercicio va a
+resultar evidente que, tal como est&aacute; planteado en el
+gui&oacute;n, el acceso que se propone al escritorio remoto es
+redundante, porque la m&aacute;quina virtual accedida
+est&aacute; corriendo en el Workstation del propio Windows 7 en el
+que estamos trabajando, y por tanto podr&iacute;amos acceder
+directamente al escritorio del Windows XP (o del Debian 7) sin
+necesidad de complicarnos la vida con accesos por red.<br>
+
+
+
+<br>
+
+
+
+La raz&oacute;n de plantear de esta forma el ejercicio es que
+estamos usando una &uacute;nica m&aacute;quina
+f&iacute;sica (nuestro Windows 7) para reproducir un escenario que,
+en la vida real, involucrar&iacute;a a dos m&aacute;quinas
+f&iacute;sicas distintas:<br>
+
+
+
+<ol>
+
+
+
+  <li>Un servidor de virtualizaci&oacute;n
+(t&iacute;picamente un hipervisor ESX), en el que corre la
+m&aacute;quina virtual que ofrece el escritorio remoto.<br>
+
+
+
+  </li>
+
+
+
+  <li>El puesto de trabajo f&iacute;sico del usuario, en el
+que se ejecutar&aacute; la aplicaci&oacute;n cliente de
+visualizaci&oacute;n.</li>
+
+
+
+</ol>
+
+
+
+En nuestro caso, para simplificar el montaje de la pr&aacute;ctica,
+y permitir que cada alumno tenga un puesto de trabajo
+aut&oacute;nomo, simularemos este escenario en nuestro Windows 7 de
+la siguiente forma:<br>
+
+
+
+<br>
+
+
+
+<ol>
+
+
+
+  <li>La m&aacute;quina virtual Windows XP (o Debian 7) que
+correr&aacute; en el VMware Workstation representar&aacute; la
+m&aacute;quina virtual que (en la realidad) estar&iacute;a
+corriendo en un servidor de virtualizaci&oacute;n
+f&iacute;sicamente independiente.<br>
+
+
+
+    <br>
+
+
+
+  </li>
+
+
+
+  <li>El propio Windows 7, y la aplicaci&oacute;n de
+visualizaci&oacute;n RDP o VNC que en &eacute;l ejecutaremos,
+representa el puesto de trabajo de un usuario que, desde su ordenador
+local, necesita para trabajar conectarse al escritorio remoto de una
+m&aacute;quina virtual.</li>
+
+
+
+</ol>
+
+
+
+Una vez hechos estos comentarios podemos comenzar con el ejercicio;
+para realizarlo, seguimos estos pasos:<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">1)</span>
+Comenzaremos creando un clon enlazado de la m&aacute;quina <span style="font-style: italic;">XP Curso FP</span>, usando
+como base su instant&aacute;nea <span style="font-style: italic;">Inicial</span>. Para ello,
+usar el men&uacute; <span style="font-weight: bold;">VM
+-&gt; Manage -&gt; Clone</span>, y seguir el
+procedimiento de creaci&oacute;n de un clon enlazado que ya vimos
+en el Ejercicio 2 de la Pr&aacute;ctica 3; usar como nombre de
+m&aacute;quina <span style="font-style: italic;">XP_RDP</span>,
+y crearla en el directorio <span style="font-style: italic;">D:\practicas\MV\XP_RDP</span>.<br>
+
+
+
+<br>
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 436px; height: 377px;" alt="" src="img/instantanea.png"></td>
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 436px; height: 376px;" alt="" src="img/directorio.png"></td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">2)</span> En VMware
+Workstation, cerrar el Tab de la m&aacute;quina virtual <span style="font-style: italic;">XP Curso FP</span>, y
+arrancar la m&aacute;quina <span style="font-style: italic;">XP_RDP</span>.<br>
+
+
+
+<br>
+
+
+
+Por razones obvias de seguridad, el acceso remoto al escritorio del XP
+requiere autentificarse con un nombre de usuario y una
+contrase&ntilde;a. La m&aacute;quina XP que estamos empleando
+como base tiene creado un usuario (<span style="font-style: italic;">pablo</span>,
+Administrador de equipo) pero, por comodidad, hasta ahora
+carec&iacute;a de contrase&ntilde;a (<span style="font-style: italic;">Nota: obviamente en todas estas
+pr&aacute;cticas hemos supuesto que trabajamos en una red segura,
+interna y no expuesta a Internet, por lo que no hemos hecho
+&eacute;nfasis en el uso de configuraciones seguras</span>).
+Lo primero que necesitaremos hacer, para poder configurar el acceso al
+escritorio remoto, es crear una contrase&ntilde;a para este usuario.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">3)</span> Abrir <span style="font-weight: bold;">Inicio -&gt; Panel de control
+-&gt; Cuentas de Usuario</span>. Seleccionar el usuario <span style="font-weight: bold;">pablo</span> y pulsar <span style="font-weight: bold;">Crear una contrase&ntilde;a</span>.
+Usar como contrase&ntilde;a la ya habitual (<span style="font-style: italic;">deii15</span>). Pulsar <span style="font-weight: bold;">No</span> a la pregunta de
+si desea que sus archivos o carpetas sean privados.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">4)</span> Ahora,
+habilitamos el acceso al escritorio remoto. Cerrar el <span style="font-weight: bold;">Panel de Control</span>,
+pusar con el bot&oacute;n derecho sobre <span style="font-weight: bold;">Mi PC</span>, y abrir el
+men&uacute; <span style="font-weight: bold;">Propiedades</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">5)</span> Pulsar
+sobre la pesta&ntilde;a <span style="font-weight: bold;">Remoto</span>,
+y marcar la opci&oacute;n <span style="font-weight: bold;">Permitir
+que los usuarios se conecten de manera remota a este equipo</span>.
+Como el usuario <span style="font-style: italic;">pablo</span>
+pertenece al grupo <span style="font-style: italic;">Administradores</span>,
+ya tiene acceso por defecto, por lo que no es necesario
+a&ntilde;adirlo expl&iacute;citamente a la lista de usuarios
+remotos; sin embargo, podemos comprobar &eacute;sto pulsando sobre
+el bot&oacute;n <span style="font-weight: bold;">Seleccionar
+usuarios remotos</span>, como se muestra en la figura, tras lo
+cual pulsamos <span style="font-weight: bold;">Aceptar</span>
+hasta cerrar todas las ventanas.<br>
+
+
+
+<br>
+
+
+
+<table style="width: 100%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 420px; height: 499px;" alt="" src="img/habilita_acceso.png"></td>
+
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="width: 379px; height: 308px;" alt="" src="img/usuarios_remotos.png"></td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+<br>
+
+
+
+Con la configuraci&oacute;n actual, la m&aacute;quina <span style="font-style: italic;">XP_RDP</span>
+recibe su direcci&oacute;n IP por DHCP. Sin embargo esta
+m&aacute;quina
+est&aacute; ofreciendo por la red un servicio (el acceso a su
+escritorio remoto), por lo que, en un entorno de producci&oacute;n,
+podr&iacute;amos tener problemas si su direcci&oacute;n IP
+cambia de un
+arranque al siguiente. Por ello, usaremos una configuraci&oacute;n
+m&aacute;s estable asign&aacute;ndole una direcci&oacute;n
+IP
+est&aacute;tica.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">6)</span> Usando <span style="font-weight: bold;">Configuraci&oacute;n
+-&gt; Conexiones de red</span>, abrir las propiedades de <span style="font-weight: bold;">Conexi&oacute;n de
+&aacute;rea local 2</span> y asignarle la
+direcci&oacute;n IP est&aacute;tica <span style="font-weight: bold;">10.0.0.25/255.255.255.0</span>,
+como muestra la figura. Aplicar, y comprobar con <span style="font-weight: bold;">ipconfig</span>, que la
+m&aacute;quina haya tomado la nueva direcci&oacute;n.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 400px; height: 442px;" alt="" src="img/IP_estatica.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">7)</span> Dejamos
+andando la m&aacute;quina <span style="font-style: italic;">XP_RDP</span>,
+pero minimizamos su ventana para volver al escritorio del Windows 7.
+Vamos a invocar la ejecuci&oacute;n del cliente de
+visualizaci&oacute;n
+RDP (llamado <span style="font-style: italic;">Microsoft
+Terminal Services Client</span>). Para ello, en el
+men&uacute; <span style="font-weight: bold;">Inicio</span>
+ejecutamos el comando <span style="font-weight: bold;">mstsc.exe</span><br>
+
+
+
+<br>
+
+
+
+<div style="text-align: left;"><img style="border: 1px solid ; width: 402px; height: 500px;" alt="" src="img/mstsc.png"><br>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">8)</span>
+Aparecer&aacute; una
+ventana, en la que podemos introducir la direcci&oacute;n IP (o
+nombre
+DNS) de la m&aacute;quina que ofrece el escritorio remoto (en este
+caso, 10.0.0.25). Sin embargo, podemos ver tambi&eacute;n que, como
+todav&iacute;a no nos hemos conectado nunca a esa
+m&aacute;quina, no
+hay ning&uacute;n usuario especificado.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 408px; height: 242px;" alt="" src="img/no_user.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">9)</span> Esto no
+supone ning&uacute;n problema, ya que al establecer la
+conexi&oacute;n se nos presentar&aacute; una ventana de prompt
+requiriendo la introducci&oacute;n de nombre de usuario y password.
+Sin embargo, si queremos tener un mayor control de las opciones de
+conexi&oacute;n antes de establecerla, podemos pulsar el
+bot&oacute;n <span style="font-weight: bold;">Mostrar
+opciones</span>. En la primera pesta&ntilde;a, <span style="font-weight: bold;">General</span>, podemos
+especificar que se utilice directamente <br>
+
+
+
+el usuaro <span style="font-style: italic;">pablo</span>
+ya en el intento inicial de conexi&oacute;n.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 408px; height: 464px;" alt="" src="img/usuario.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">10)</span> Las
+opciones de la pesta&ntilde;a <span style="font-weight: bold;">Pantalla</span>
+nos permiten cambiar el tama&ntilde;o del escritorio remoto, y el
+n&uacute;mero de bits de color por cada pixel de escritorio remoto.
+Si tuvi&eacute;ramos que conectarnos, por ejemplo, a
+trav&eacute;s de un enlace ADSL de baja velocidad,
+podr&iacute;amos tener que usar estas opciones para conseguir una
+respuesta suficientemente r&aacute;pida del escritorio remoto, a
+costa de perder calidad. Sin embargo, en general el protocolo RDP es
+bastante eficiente, y en nuestro caso particular (con una
+conexi&oacute;n totalmente local) no habr&aacute; problemas de
+rendimiento, as&iacute; que dejamos la pesta&ntilde;a sin tocar.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 408px; height: 462px;" alt="" src="img/opcion_pantalla.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">11)</span>
+An&aacute;logamente, una vez que hemos elegido tama&ntilde;o de
+pantalla y calidad del color, la pesta&ntilde;a <span style="font-weight: bold;">Rendimiento</span> nos
+permite activar o desactivar diversos efectos de
+visualizaci&oacute;n para mejorar la respuesta del escritorio
+remoto cuando nos conectamos a trav&eacute;s de l&iacute;neas
+de baja velocidad. Si queremos tener control total sobre estas opciones
+podemos especificar manualmente la velocidad de la l&iacute;nea, y
+elegir manualmente las opciones activas. Sin embargo, en la
+mayor&iacute;a de los casos la detecci&oacute;n
+autom&aacute;tica de la calidad de conexi&oacute;n funciona
+suficientemente bien, por lo que dejaremos sin tocar esta
+pesta&ntilde;a.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 407px; height: 462px;" alt="" src="img/opcion_rendimiento.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">12)</span>
+Finalmente la pesta&ntilde;a <span style="font-weight: bold;">Recursos
+locales</span> es la que nos permite (adem&aacute;s de
+habilitar el uso del audio local para reproducir el audio remoto)
+habilitar el que una unidad de disco de nuestro ordenador local pueda
+ser usada como unidad local tambi&eacute;n por el ordenador remoto.
+Esto se consigue pulsando el bot&oacute;n <span style="font-weight: bold;">M&aacute;s</span> en <span style="font-weight: bold;">Dispositivos y recursos locales</span>;
+si hacemos click sobre el <span style="font-weight: bold;">+</span>
+de <span style="font-weight: bold;">Unidades</span>,
+vemos que podemos compartir con la m&aacute;quina remota el disco
+C, la unidad de DVD o, por ejemplo, un disco USB que tengamos conectado
+al ordenador local. En nuestro caso no queremos compartir nada con la
+m&aacute;quina remota, as&iacute; que no marcamos ninguna
+opci&oacute;n, y pulsamos <span style="font-weight: bold;">Cancelar</span>.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 411px; height: 369px;" alt="" src="img/opcion_unidades.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">13)</span> En la
+opci&oacute;n <span style="font-weight: bold;">Dispositivos
+y recursos locales</span> vemos que, por defecto, est&aacute;
+marcada la opci&oacute;n <span style="font-weight: bold;">Portapapeles</span>.
+Esto significa que la aplicaci&oacute;n de escritorio remoto nos
+permitir&aacute; copiar y pegar ficheros entre m&aacute;quina
+local y m&aacute;quina remota, y la transferencia de los ficheros
+se har&aacute; autom&aacute;ticamente a trav&eacute;s de la
+conexi&oacute;n de red (NOTA: esta opci&oacute;n
+s&oacute;lo funciona si la m&aacute;quina remota es Windows 7 o
+superior). Dejamos la opci&oacute;n marcada, sin hacer ninguna
+acci&oacute;n m&aacute;s.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 381px; height: 119px;" alt="" src="img/recursos_locales.png"><br>
+
+
+
+<br>
+
+
+
+(<span style="text-decoration: underline;">NOTA IMPORTANTE</span>:
+El exportar unidades de disco a una m&aacute;quina remota, o el
+permitir la copia de ficheros v&iacute;a Portapapeles, son agujeros
+de seguridad importantes y obvios. Adicionalmente, la
+aplicaci&oacute;n de Terminal Services recordar&aacute; de una
+ejecuci&oacute;n a la siguiente las opciones de
+compartici&oacute;n, por lo que es f&aacute;cil exportar una
+unidad de disco, olvidarse de desconectar la opci&oacute;n, y
+exportarla accidentalmente en una conexi&oacute;n posterior. Por
+ello, debe siempre considerarse cuidad&oacute;samente la necesidad
+o no de realizar este tipo de comparticiones de recursos).<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">14)</span> Una vez
+elegidas las opciones de conexi&oacute;n adecuadas, pulsamos <span style="font-weight: bold;">Conectar</span>. Como nos
+estamos conectando a un equipo XP (que tiene mecanismos de
+autentificaci&oacute;n m&aacute;s antiguos que los de Windows
+7) aparecer&aacute; un mensaje de advertencia. Marcar que no vuelva
+a notificar, y pulsar <span style="font-weight: bold;">S&iacute;</span>.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 391px; height: 234px;" alt="" src="img/aviso_conexion.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">15)</span>
+Aparecer&aacute; un prompt, pidiendo la contrase&ntilde;a del
+usuario <span style="font-style: italic;">pablo</span>.
+Usar la contrase&ntilde;a que le dimos antes en el XP (<span style="font-style: italic;">deii15</span>).<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">16)</span> Una vez
+completa la conexi&oacute;n se abrir&aacute; en pantalla la
+visualizaci&oacute;n del escritorio remoto del XP. Podemos darnos
+cuenta de que estamos accediendo al escritorio remotamente gracias a
+dos detalles:<br>
+
+
+
+<br>
+
+
+
+<ol>
+
+
+
+  <li>La barra superior, que nos muestra la direcci&oacute;n
+IP de la m&aacute;quina remota.<br>
+
+
+
+    <br>
+
+
+
+  </li>
+
+
+
+  <li>Los bordes serrados del &iacute;cono <span style="font-style: italic;">Mi PC</span> y de la
+papelera de reciclaje, que nos indican que la conexi&oacute;n
+remota disminuye la calidad de los gr&aacute;ficos para mantener
+&aacute;gil la respuesta del escritorio remoto.</li>
+
+
+
+</ol>
+
+
+
+<img style="border: 1px solid ; width: 79px; height: 93px;" alt="" src="img/bordes_serrados.png"><br>
+
+
+
+<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">17)</span> Pulsamos
+<span style="font-weight: bold;">Mi PC</span> para
+abrir un explorador de Windows; vemos que, aparentemente, podemos usar
+la m&aacute;quina remota exactamente igual que si fuera la real.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">18)</span> Sin
+embargo, si pulsamos en el bot&oacute;n <span style="font-weight: bold;">Inicio</span> observaremos
+una diferencia: en lugar de la opci&oacute;n <span style="font-weight: bold;">Apagar</span>, tan
+s&oacute;lo nos aparece una opci&oacute;n <span style="font-weight: bold;">Desconectar</span>; de esta
+forma se evita que accidentalmente apaguemos por error la
+m&aacute;quina remota.<br>
+
+
+<br>
+
+
+<img style="width: 214px; height: 268px;" alt="" src="img/desconectar.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">19)</span> Podemos
+observar tambi&eacute;n el efecto que el abrir esta
+conexi&oacute;n ha tenido en la terminal de la m&aacute;quina
+"real" (en este caso, la m&aacute;quina virtual en el Workstation).
+Para ello, minimizamos (<span style="text-decoration: underline;">NO</span>
+cerramos) la aplicaci&oacute;n de escritorio remoto y, en el
+Windows 7, pulsamos sobre la instancia de VMware Workstation en la que
+est&aacute; corriendo la m&aacute;quina <span style="font-style: italic;">XP_RDP</span>.<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 281px; height: 83px;" alt="" src="img/instancia_XP_RDP.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">20)</span> Como
+vemos, se nos pide la contrase&ntilde;a del usuario <span style="font-style: italic;">pablo</span> para entrar;
+&eacute;sto nos indica que hay otro usuario ocupando la terminal de
+la m&aacute;quina (la terminal gr&aacute;fica de un Windows XP
+no puede soportar m&aacute;s que a un &uacute;nico usuario
+simult&aacute;neo). Hacemos login, introduciendo la
+contrase&ntilde;a del usuario.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">21)</span> Si ahora
+minimizamos el Workstation y volvemos a la aplicaci&oacute;n de
+Escritorio Remoto, recibimos un mensaje avis&aacute;ndonos de que
+se ha cerrado la conexi&oacute;n que ten&iacute;amos activa. La
+raz&oacute;n, obviamente, es que al haber hecho login en la
+terminal de la m&aacute;quina "real" (en el Workstation) la
+terminal usada por el escritorio remoto debe necesariamente cerrarse,
+ya que s&oacute;lo puede haber una abierta en cada momento.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 560px; height: 145px;" alt="" src="img/aviso_cierre_terminal.png"><br>
+
+
+
+<br>
+
+
+
+Vamos a ver, finalmente, c&oacute;mo podemos apagar la
+m&aacute;quina remota, caso de que realmente queramos apagar la
+m&aacute;quina virtual, y no simplemente dejarla corriendo en el
+hipervisor.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">22)</span> Primero
+nos volvemos a conectar v&iacute;a escritorio remoto, usando el
+usuario <span style="font-style: italic;">pablo</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">23)</span> Una vez
+completado el login, pulsamos <span style="font-weight: bold;">Alt
++ F4</span>. Aparecer&aacute; la ventana con las
+t&iacute;picas opciones para apagar o reiniciar la
+m&aacute;quina. Pulsamos <span style="font-weight: bold;">Apagar</span>,
+y confirmamos la acci&oacute;n en el aviso subsiguiente.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 643px; height: 124px;" alt="" src="img/aviso_apagado.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">24)</span> La
+conexi&oacute;n de Escritorio Remoto se cerrar&aacute;; si nos
+vamos entonces al VMware Workstation comprobaremos que, en efecto, la
+m&aacute;quina virtual <span style="font-style: italic;">XP_RDP</span>
+se ha apagado.<br>
+
+
+<br>
+
+
+<br>
+
+
+
+Una vez visto el acceso a un Windows XP remoto usando el cliente de
+Terminal Services, vamos ahora a ver c&oacute;mo podemos hacer algo
+similar para acceder a un escritorio remoto Linux, usando el protocolo
+VNC.<br>
+
+
+
+<br>
+
+
+
+Para ello vamos a aprovechar la m&aacute;quina virtual <span style="font-style: italic;">Debian7-1</span> que
+creamos, usando un clon enlazado, en el Ejercicio 2 de la
+Pr&aacute;ctica 3; habilitamos en esta m&aacute;quina el
+protocolo VNC:<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">25)</span> Ir al
+directorio <span style="font-style: italic;">C:\MV\Debian7-1</span>,
+y hacer doble click sobre <span style="font-style: italic;">Debian7-1.vmx</span>
+para abrir la m&aacute;quina en el Workstation.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">26)</span> Arrancar
+<span style="font-style: italic;">Debian7-1</span>,
+y hacer login como usuario <span style="font-style: italic;">Curso
+FP</span>.<br>
+
+
+
+<br>
+
+
+
+Esta m&aacute;quina va a estar ofreciendo un servicio de escritorio
+remoto a una m&aacute;quina remota, que necesitar&aacute;
+conocer su direcci&oacute;n IP. Por tanto, al igual que hicimos con
+el XP_RDP, vamos a cambiar su configuraci&oacute;n de red para
+asignarle una IP est&aacute;tica.<br>
+
+
+
+<br>
+
+
+
+La versi&oacute;n 7 de Debian introduce un nuevo mecanismo de
+gesti&oacute;n de la activaci&oacute;n y
+configuraci&oacute;n de los interfaces de red, llamado <span style="font-style: italic;">Network Manager</span>.
+Como suele ser habitual, este cambio ha modificado tambi&eacute;n
+todos los ficheros de configuraci&oacute;n, de forma que ahora la
+configuraci&oacute;n del interfaz <span style="font-style: italic;">eth0</span>
+est&aacute; en <span style="font-style: italic;">/etc/NetworkManager/system-connections/Wired
+connection 1</span>.<br>
+
+
+
+<br>
+
+
+
+Dado que ahora s&iacute; tenemos un interfaz gr&aacute;fico con
+el que trabajar, vamos a usar la herramienta gr&aacute;fica del
+sistema para cambiar la direcci&oacute;n IP, en lugar de modificar
+manualmente los ficheros de configuraci&oacute;n.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">27)</span> Abrir <span style="font-weight: bold;">Aplicaciones -&gt;
+Herramientas del sistema -&gt; Administraci&oacute;n -&gt;
+Herramientas de red</span>.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">28)</span>
+Seleccionar <span style="font-weight: bold;">eth0</span>
+como <span style="font-weight: bold;">Dispositivo de red</span>
+y pulsar <span style="font-weight: bold;">Configurar</span>.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 660px; height: 342px;" alt="" src="img/configurar_eth0.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">29)</span>
+Seleccionar <span style="font-weight: bold;">Wired
+connection 1</span>, y pulsar <span style="font-weight: bold;">Editar</span>.<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 530px; height: 339px;" alt="" src="img/edit_wired1.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">30)</span> En los
+ajustes de <span style="font-weight: bold;">IPv4</span>,
+introducir los valores de la figura<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 486px; height: 495px;" alt="" src="img/ipv4_wired1.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">31)</span>
+Reiniciar la m&aacute;quina, hacer login como usuario <span style="font-style: italic;">Curso FP</span> y abrir
+una terminal, ejecutar <span style="font-weight: bold;">/sbin/ifconfig</span>,
+y comprobar que la m&aacute;quina ha tomado la nueva
+direcci&oacute;n IP, pese a que el usuario <span style="font-style: italic;">Curso FP</span> no tiene
+privilegios de root (!!!!).<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 730px; height: 493px;" alt="" src="img/ifconfig.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">32)</span> Ahora,
+habilitamos el acceso al escritorio remoto. Para ello, usamos el
+men&uacute; <span style="font-weight: bold;">Aplicaciones
+-&gt; Herramientas del sistema -&gt; Preferencias -&gt;
+Compartici&oacute;n del escritorio</span>. Seleccionar <span style="font-weight: bold;">Permitir a otros usuarios ver mi
+escritorio</span>. Como estamos suponiendo un sistema con
+seguridad relajada, al que s&oacute;lo nosotros tendremos acceso
+(por estar en una red host-only), no marcaremos la opci&oacute;n de
+pedir contrase&ntilde;a (pero &eacute;sto, obviamente,
+ser&iacute;a un agujero de seguridad importante en un sistema de
+producci&oacute;n real).<br>
+
+
+
+<br>
+
+
+
+<img style="border: 1px solid ; width: 596px; height: 485px;" alt="" src="img/comparte_escritorio.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">33)</span> Pulsamos
+<span style="font-weight: bold;">Cerrar</span>, y
+minimizamos el VMware Workstation.<br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">34)</span> Ahora,
+en el Windows 7, ejecutamos la aplicaci&oacute;n VNC-Viewer-5.2.1,
+que encontraremos en el escritorio<span style="font-weight: bold;">.<br>
+
+
+
+<br>
+
+
+
+<img style="width: 121px; height: 85px;" alt="" src="img/VNC_viewer.png"><br>
+
+
+
+<br>
+
+
+
+<span style="font-weight: bold;">35)</span></span>
+En la ventana de conexi&oacute;n especificamos la direcci&oacute;n <span style="font-weight: bold;">10.0.0.26</span> del servidor Debian, y dejamos autom&aacute;tica la elecci&oacute;n del cifrado. Pulsar <span style="font-weight: bold;">Conectarse</span>.<br>
+
+
+<br>
+
+
+<img style="border: 1px solid ; width: 406px; height: 193px;" alt="" src="img/prompt_conexion.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">36)</span> Aparecer&aacute; un aviso indicando que la conexi&oacute;n VNC no est&aacute; cifrada. Pulsar <span style="font-weight: bold;">Continuar</span>.<br>
+
+
+<br>
+
+
+<img style="border: 1px solid ; width: 417px; height: 254px;" alt="" src="img/no_cifrado.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">37)</span> Ir ahora al servidor <span style="font-style: italic;">Debian7-1</span>. Veremos que aparece un aviso, pidiendo confirmaci&oacute;n a la conexi&oacute;n. Pulsar <span style="font-weight: bold;">Permitir</span>.<br>
+
+
+<br>
+
+
+<img style="border: 1px solid ; width: 641px; height: 216px;" alt="" src="img/confirmacion_conexion.png"><br>
+
+
+<br>
+
+
+Al completarse la conexi&oacute;n vemos que, en la ventana del
+visualizador VNC, nos aparece una visualizaci&oacute;n del escritorio
+del Debian 7. Tambi&eacute;n podemos observar que el cursor tiene una
+forma distinta, que nos permite distinguir que estamos en una terminal
+VNC y no en el escritorio real. Adicionalmente, si llevamos el cursor
+al margen superior de la ventana veremos aparecer un men&uacute; de
+opciones, que nos permite poner la aplicaci&oacute;n en pantalla
+completa, mandar un <span style="font-style: italic;">Ctrl-Alt-Del</span> a la m&aacute;quina remota, o configurar opciones de conexi&oacute;n.<br>
+
+
+<br>
+
+
+<div style="text-align: left;"><img style="width: 322px; height: 58px;" alt="" src="img/menu_opciones.png"></div>
+
+
+<br>
+
+
+<span style="font-weight: bold;">38)</span> Ahora, desde la ventana VNC, usar en el Debian 7 el men&uacute; <span style="font-weight: bold;">Curso FP -&gt; Apagar</span>
+para apagar el servidor. Como vemos, en este caso no existe ninguna
+protecci&oacute;n que impida realizar esta acci&oacute;n por accidente
+(lo que implica, obviamente, que se debe estar m&aacute;s atento a lo
+que se hace que en el caso de la conexi&oacute;n RDP a un escritorio
+Windows).<br>
+
+
+
+<br>
+
+
+
+<a href="Ejercicio2.html">
+Continuar al Ejercicio 2</a><br>
+
+
+
+<br>
+
+
+
+</body>
+</html>

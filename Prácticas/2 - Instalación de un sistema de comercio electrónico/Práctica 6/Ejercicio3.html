@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+  
+  <title>Ejercicio 3 - Reorganizaci&oacute;n del sistema en dos tiers</title>
+</head>
+
+
+<body>
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+      </td>
+
+
+      <td style="width: 1164.97px;">
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 3 &nbsp;-
+Reorganizaci&oacute;n del sistema en dos tiers<br>
+
+
+      </span></b></h1>
+
+
+      </td>
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<br>
+
+
+El escenario que plantea este Ejercicio es el siguiente: una vez
+instalado el servidor de osCommerce en el sistema de desarrollo, las
+pruebas preliminares realizadas en &eacute;l han mostrado que
+cargar sobre un &uacute;nico servidor las dos tiendas virtuales y
+sus bases de datos asociadas est&aacute; proporcionando un
+rendimiento sub&oacute;ptimo; adicionalmente, el tener el motor de
+base de datos en un servidor expuesto directamente a Internet complica
+su configuraci&oacute;n y gesti&oacute;n, por los riesgos de
+seguridad asociados.<br>
+
+
+<br>
+
+
+Por ello se va a proceder a desacoplar en dos tiers (es decir, en dos
+servidores f&iacute;sicos) las aplicaciones, dejando en el servidor
+<span style="font-style: italic;">debiantomato</span>
+los servidores Apache con los front-ends HTTP y l&oacute;gicas de
+negocio PHP de las tiendas virtuales, y pasando a un segundo servidor
+Debian (que llamaremos <span style="font-style: italic;">debiansql</span>)
+el motor de MySQL y las bases de datos de TomatoCart y de osCommerce.<br>
+
+
+<br>
+
+
+Para realizar esta reconfiguraci&oacute;n del sistema, deberemos
+seguir estos pasos:<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">1)</span> En el
+directorio <span style="font-style: italic;">D:\practicas\MV</span>,
+crear un subdirectorio que llamaremos <span style="font-style: italic;">debiansql</span><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">2)</span> Abrir en
+VMware Workstation la m&aacute;quina virtual <span style="font-style: italic;">debiantomato</span> (sin
+arrancarla). Usando el men&uacute; <span style="font-weight: bold;">Manage -&gt; Clone</span>,
+y utilizando el procedimiento de clonado completo visto en la primera
+parte del Ejercicio 1, Pr&aacute;ctica 3, crear una
+m&aacute;quina virtual llamada <span style="font-weight: bold;">debiansql</span>,
+alojada en el directorio <span style="font-style: italic;">D:\practicas\MV\debiansql</span>,
+y que ser&aacute; un full-clone de la instant&aacute;nea <span style="font-weight: bold;">Sin Tomatocart</span> de la
+m&aacute;quina <span style="font-weight: bold;">debiantomato</span>.<br>
+
+
+<br>
+
+
+<br>
+
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 438px; height: 377px;" alt="" src="img/debiansql_clon_instantanea.png"></td>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 439px; height: 377px;" alt="" src="img/debiansql_clon_nombre.png"></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<br>
+
+
+Esta instant&aacute;nea lleva ya instalado MySQL, PHP5 y
+phpMyAdmin, por lo que ahora s&oacute;lo necesitaremos cambiar su
+identidad y su direcci&oacute;n IP.<br>
+
+
+<br>
+
+
+<span style="text-decoration: underline;">IMPORTANTE</span>:
+Es imprescindible, para los pasos siguientes, asegurarse de que <span style="font-style: italic;">debiantomato</span>
+est&eacute; apagada. Al ser <span style="font-style: italic;">debiansql</span>
+un clon de <span style="font-style: italic;">debiantomato</span>
+replica tambi&eacute;n su configuraci&oacute;n de red, por lo
+que <span style="font-style: italic;">debiansql</span>
+adoptar&aacute;, al arrancar, la identidad de <span style="font-style: italic;">debiantomato</span> (su
+misma direcci&oacute;n IP y hostname), lo que provocar&iacute;a
+un conflicto si <span style="font-style: italic;">debiantomato</span>
+estuviera tambi&eacute;n funcionando en ese momento.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">3)</span> Arrancar <span style="font-style: italic;">debiansql</span> y hacer
+en ella login como <span style="font-weight: bold;">root</span>.
+Ir al directorio <span style="font-style: italic;">/etc/network</span>,
+y editar el fichero <span style="font-style: italic;">interfaces</span>
+para configurarlo con la IP est&aacute;tica <span style="font-weight: bold;">10.0.0.22</span>.
+Igualmente, editar <span style="font-style: italic;">/etc/hostaname</span>
+para cambiar su nombre de host a <span style="font-weight: bold;">debiansql</span>.<br>
+
+
+<br>
+
+
+<img style="width: 652px; height: 212px;" alt="" src="img/debiansql_interfaces.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">4)</span> Editar el
+fichero <span style="font-style: italic;">/etc/hosts</span>
+para a&ntilde;adir una l&iacute;nea que resuelva la
+direcci&oacute;n
+IP para el nombre <span style="font-weight: bold;">debiansql</span>.
+Observar que mantenemos la l&iacute;nea que resuelve <span style="font-style: italic;">debiantomato</span>, para
+permitir que puea ser accedida por red usando su nombre.<br>
+
+
+<br>
+
+
+<img style="width: 551px; height: 173px;" alt="" src="img/debiansql_hosts.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">5)</span> Reiniciar
+la m&aacute;quina, ejecutando <span style="font-weight: bold;">reboot</span>.
+Una vez reiniciada hacer login como root, comprobando que la
+m&aacute;quina adopte el hostname de <span style="font-style: italic;">debiansql</span>.
+Comprobar con <span style="font-weight: bold;">ifconfig</span>
+que su direcci&oacute;n IP es, en efecto, 10.0.0.22.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">6)</span> Arrancar
+ahora <span style="font-style: italic;">debiantomato</span>.
+Hacer login como root, y editar su fichero <span style="font-style: italic;">/etc/hosts</span> para
+a&ntilde;adir una l&iacute;nea que resuelva la
+direcci&oacute;n IP de <span style="font-style: italic;">debiansql</span>.<br>
+
+
+<br>
+
+
+<img style="width: 548px; height: 167px;" alt="" src="img/debiantomato_hosts.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">7)</span>
+Comprobamos que ambos servidores se vean correctament por la red: en <span style="font-style: italic;">debiantomato</span>,
+ejecutar <span style="font-weight: bold;">ping debiansql</span>;
+en <span style="font-style: italic;">debiansql</span>,
+ejecutar <span style="font-weight: bold;">ping
+debiantomato</span>. En ambos casos deberemos obtener respuesta
+al ping.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">8)</span>
+Comprobamos ahora que funcionan el servidor MySQL y Apache de <span style="font-style: italic;">debiansql</span>, y su
+herramienta phpMyAdmin. Desde el Firefox del Windows 7 accedemos a <span style="font-weight: bold;">http://10.0.0.22/phpmyadmin</span>
+,y, usando Ingl&eacute;s como idioma, hacer login como usuario <span style="font-weight: bold;">root</span>. Una vez
+comprobado que se accede correctamente, hacer logoug de phpMyAdmin.<br>
+
+
+<br>
+
+
+Para poder desacoplar el sistema de comercio virtual ya montado en <span style="font-style: italic;">debiantomato</span>
+debemos copiar al motor MySQL de <span style="font-style: italic;">debiansql</span>
+las bases de datos <span style="font-style: italic;">tomatobase</span>
+y <span style="font-style: italic;">oscommercebase</span>.
+Vamos a hacerlo usando las funciones para importaci&oacute;n y
+exportaci&oacute;n de bases de datos de phpMyAdmin.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">9)</span> En el
+Firefox de Windows 7 acceder a <span style="font-weight: bold;">http://10.0.0.21/phpmyadmin</span>,
+y hacer login como <span style="font-weight: bold;">root</span>.
+Pulsar sobre <span style="font-weight: bold;">tomatobase</span>
+(en la barra de la izquierda o a trav&eacute;s de la
+p&aacute;gina de <span style="font-weight: bold;">Databases</span>).<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">10)</span> Una vez
+abierta la p&aacute;gina con la estructura de <span style="font-style: italic;">tomatobase</span>, pulsar
+sobre el bot&oacute;n <span style="font-weight: bold;">Export</span>
+<br>
+
+
+<br>
+
+
+<img style="border: 1px solid ; width: 567px; height: 160px;" alt="" src="img/tomatobase-boton-export.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">11)</span> Dejar
+seleccionada la opci&oacute;n <span style="font-weight: bold;">Quick</span>
+y pulsar <span style="font-weight: bold;">Go</span>.<br>
+
+
+<br>
+
+
+<img style="border: 1px solid ; width: 551px; height: 308px;" alt="" src="img/tomatobase_quick.png"><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">12)</span> Se
+abrir&aacute; una ventana <span style="font-weight: bold;">Abriendo
+tomatobase.sql</span>. Pulsar <span style="font-weight: bold;">Aceptar</span>.
+Esto nos permitir&aacute; elegir el directorio de destino del
+fichero. Guardarlo como <span style="font-style: italic;">D:\practicas\MV\tomatobase.sql</span><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">13)</span> Repetir
+el proceso con <span style="font-weight: bold;">oscommercebase</span>.
+Guardar el fichero de exportaci&oacute;n como <span style="font-style: italic;">D:\practicas\MV\oscommercebase.sql</span><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">14)</span> Hacer
+logout de phpMyAdmin.<br>
+
+
+<br>
+
+
+(NOTA: Obviamente, en servidores en producci&oacute;n este
+procedimiento de exportaci&oacute;n debe hacerse con el sistema de
+comercio detenido, para evitar actividad posterior a la
+exportaci&oacute;n del fichero sql, lo que crear&iacute;a una
+incoherencia entre el estado real del sistema y el estado exportado).<br>
+
+
+<br>
+
+
+Si miramos con Notepad++ (sin modificarlo) el contenido de estos
+ficheros .sql veremos que contienen tanto el c&oacute;digo SQL como
+los datos necesarios para replicar el contenido de las respectivas
+bases de datos.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">15)</span> Ahora
+hacemos login en el phpMyAdmin de <span style="font-style: italic;">debiansql</span>,
+accediendo a <span style="font-weight: bold;">http://10.0.0.22/phpmyadmin</span>,
+y haciendo login como usuario <span style="font-weight: bold;">root</span>
+<br>
+
+
+<br>
+
+
+Antes de poder importarlas, necesitamos crear las bases de datos y sus
+usuarios. Emplearemos para ello el procedimiento descrito en los puntos
+41 a 45 del Ejercicio 1, y en el punto 6 del Ejercicio 2, pero <span style="text-decoration: underline;">con una diferencia
+importante</span>: debemos ahora permitir que los usuarios <span style="font-style: italic;">tomatouser</span> y <span style="font-style: italic;">oscommerceuser</span>
+puedan conectarse no s&oacute;lo desde localhost, sino
+tambi&eacute;n desde el servidor remoto 10.0.0.21 (<span style="font-style: italic;">debiantomato</span>).<br>
+
+
+<br>
+
+
+Para ello, necesitaremos en la administraci&oacute;n de MySQL
+crear, para cada una de las dos bases de datos, dos usuarios distintos:<br>
+
+
+<br>
+
+
+<ul>
+
+
+  <li><span style="font-style: italic;">usuario@localhost</span>
+para permitir conexiones desde el propio servidor <span style="font-style: italic;">debiansql</span>.<br>
+
+
+  </li>
+
+
+  <li><span style="font-style: italic;">usuario@10.0.0.21</span>
+para permitir acceos remotos a la base de datos desde el servidor <span style="font-style: italic;">debiantomato</span></li>
+
+
+</ul>
+
+
+<br>
+
+
+<span style="font-weight: bold;">16)</span> En la
+p&aacute;gina de <span style="font-weight: bold;">Databases
+</span>de phpMyAdmin crear las bases de datos <span style="font-weight: bold;">tomatobase</span> y <span style="font-weight: bold;">oscommercebase</span>. No
+crear todav&iacute;a ning&uacute;n usuario, en ninguna de las
+dos.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">17)</span> Usando
+el procedimiento de los puntos 41 a 45, Ejercicio 1, crear <span style="text-decoration: underline;">dos</span>
+usuarios <span style="font-weight: bold;">tomatouser</span>
+asociados a la base <span style="font-weight: bold;">tomatobase</span>,
+empleand para ellos, respectivamente, las configuraciones mostradas en
+las figuras.<br>
+
+
+<br>
+
+
+<br>
+
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 564px; height: 525px;" alt="" src="img/debsql_tomatouser_localhost.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 550px; height: 527px;" alt="" src="img/debsql_tomatouser_remoto.png"></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">18)</span> Repetir
+el procedimiento para el usuario <span style="font-weight: bold;">oscommerceuser</span>
+de la base <span style="font-weight: bold;">oscommercebase</span>.<br>
+
+
+<br>
+
+
+<br>
+
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 584px; height: 524px;" alt="" src="img/debsql_osuser_localhost.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 568px; height: 531px;" alt="" src="img/debsql_osuser_remoto.png"></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+Ahora importaremos las dos bases de datos, usando para ello los
+ficheros .sql que exportamos previamente desde <span style="font-style: italic;">debiantomato</span> al
+disco del Windows 7.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">19</span>)
+Seleccionar la base <span style="font-weight: bold;">tomatobase</span>.
+En la ventana que muestra su estructura aparecer&aacute; un
+mensaje, diciendo que no existe. Pulsar el bot&oacute;n <span style="font-weight: bold;">Import</span>, y luego el
+bot&oacute;n <span style="font-weight: bold;">Examinar</span>.
+Seleccionar el fichero <span style="font-style: italic;">D:\practicas\MV\tomatobase.sql</span>,
+y pulsar <span style="font-weight: bold;">Go</span>.
+obtendremos un mensaje de importaci&oacute;n con &eacute;xito.<br>
+
+
+<br>
+
+
+<br>
+
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 896px; height: 230px;" alt="" src="img/tomatobase_import.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 656px; height: 237px;" alt="" src="img/tomatobase_import_examinar.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 560px; height: 132px;" alt="" src="img/tomatobase_import_ok.png"></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<span style="font-weight: bold;">20)</span> Repetir la operaci&oacute;n, siguiendo el mismo procedimiento, para la base <span style="font-weight: bold;">oscommercebase</span>, usando el fichero <span style="font-style: italic;">D:\practicas\MV\oscommercebase.sql</span><br>
+
+<br>
+
+<span style="font-weight: bold;">21)</span> Hacer logout de phpMyAdmin.<br>
+
+<br>
+
+Al final de esta &uacute;ltima importaci&oacute;n tenemos en <span style="font-style: italic;">debiansql</span> una r&eacute;plica de las bases <span style="font-style: italic;">tomatobase</span> y <span style="font-style: italic;">oscommercebase</span>, cada una de las cuales puede ser accedida y administrada por su respectivo usuario (<span style="font-style: italic;">tomatouser</span> o <span style="font-style: italic;">oscommerceuser</span>), con permisos para conectarse desde el propio <span style="font-style: italic;">debiansql</span> (localhost) o desde <span style="font-style: italic;">debiantomato</span> (10.0.0.21).<br>
+
+<br>
+
+<div style="text-align: center;"><img style="border: 1px solid ; width: 696px; height: 488px;" alt="" src="img/user_overview.png"><br>
+
+</div>
+
+<br>
+
+Sin embargo, antes de poder acceder desde <span style="font-style: italic;">debiantomato</span>
+debemos activar en el motor MySQL la posibilidad de conexiones remotas,
+ya que por defecto (para mayor seguridad) la configuraci&oacute;n
+inicial de MySQL s&oacute;lo permite conexiones procedentes de
+localhost (127.0.0.1).<br>
+
+<br>
+
+<span style="font-weight: bold;">22)</span> Podemos comprobar que <span style="font-style: italic;">debiansql</span>, por defecto, s&oacute;lo permite conexiones a MySQL desde localhost. Para ello, ejecutar <span style="font-weight: bold;">netstat -anp | more</span> ;en la salida del comando comprobaremos que el proceso <span style="font-style: italic;">mysql</span> est&aacute; escuchando en el puerto 3306 (su puerto por defecto), pero s&oacute;lo en la direcci&oacute;n IP 127.0.0.1<br>
+
+<br>
+
+<img style="width: 662px; height: 321px;" alt="" src="img/netstat_mysql.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">23)</span> Para cambiar esta configuraci&oacute;n debemos editar el fichero <span style="font-style: italic;">/etc/mysql/my.cnf</span>, y modificar la l&iacute;nea <span style="font-weight: bold;">bind-address</span> para que acepte conexiones a trav&eacute;s de la direcci&oacute;n IP 10.0.0.22<br>
+
+<br>
+
+<img style="width: 634px; height: 392px;" alt="" src="img/mycnf_bindaddress.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">24)</span> Salvar y cerrar el fichero <span style="font-style: italic;">my.cnf</span>, y reiniciar el servidor MySQL ejecutando <span style="font-weight: bold;">/etc/init.d/mysql restart</span><br>
+
+<br>
+
+<span style="font-weight: bold;">25)</span> Si repetimos el comando <span style="font-weight: bold;">netstat -anp | more</span>
+,vemos que el servidor ahora s&iacute; escucha en el puerto 3306 para
+la direcci&oacute;n IP 10.0.0.22, y por tanto puede ser accedido
+remotamente.<br>
+
+<br>
+
+<img style="width: 662px; height: 325px;" alt="" src="img/netstat_permite_remoto.png"><br>
+
+<br>
+
+Ya tenemos en <span style="font-style: italic;">debiansql</span> la
+r&eacute;plica de las bases de datos listas para usar. Ahora debemos
+configurar los sistemas de comercio electr&oacute;nico en <span style="font-style: italic;">debiantomato</span> para que accedan a estas bases de datos, en lugar de a las copias locales del propio <span style="font-style: italic;">debiantomato</span>.<br>
+
+<br>
+
+<span style="font-weight: bold;">26)</span> Primero, vamos a parar y desactivar el servidor MySQL en <span style="font-style: italic;">debiantomato</span>. Para ello hacemos login como usuario <span style="font-weight: bold;">root</span> en <span style="font-style: italic;">debiantomato</span> y&nbsp;ejecutamos <span style="font-weight: bold;">/etc/init.d/mysql stop</span> (para detener el motor MySQL), y luego <span style="font-weight: bold;">update-rc.d mysql disable</span> (para que ya no vuelva a arrancar en posteriores reinicios de la m&aacute;quina virtual).<br>
+
+<br>
+
+<span style="font-weight: bold;">27)</span> Comprobamos que las bases
+de datos de las tiendas virtuales est&aacute;n ahora mismo
+inalcanzables, accediendo desde el Firefox de Windows 7 a <span style="font-weight: bold;">http://10.0.0.21/tomatocart</span> y a <span style="font-weight: bold;">http://10.0.0.21/oscommerce/catalog</span> ;en ambos casos obtendremos mensajes de error.<br>
+
+<br>
+
+<div style="text-align: center;"><img style="width: 762px; height: 307px;" alt="" src="img/error_nodatabase_tomato.png"><br>
+
+</div>
+
+<br>
+
+<span style="font-weight: bold;">28)</span> La configuraci&oacute;n del servidor de base de datos a usar por TomatoCart se encuentra en el fichero <span style="font-weight: bold;">/var/www/tomatocart/includes/configure.php</span>. Editarlo y modificar la l&iacute;nea que contiene el par&aacute;metro <span style="font-weight: bold;">DB_SERVER</span> para que apunte a <span style="font-weight: bold;">debiansql</span>. Salvar y cerrar el fichero.<br>
+
+<br>
+
+<img style="width: 479px; height: 321px;" alt="" src="img/tomatocart_config_DB.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">29)</span> En el caso del servidor osCommerce hay que modificar tambi&eacute;n la l&iacute;nea del par&aacute;metro <span style="font-weight: bold;">DB_SERVER</span>, pero ahora en los ficheros <span style="font-weight: bold;">/var/www/oscommerce/catalog/deiiadmin/includes/configure.php</span> y <span style="font-weight: bold;">/var/www/oscommerce/catalog/includes/configure.php</span> <br>
+
+<br>
+
+<img style="width: 723px; height: 398px;" alt="" src="img/oscommerce_config_DB.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">30)</span> Una vez salvados los
+ficheros de configuraci&oacute;n, comprobamos que ahora las tiendas
+virtuales vuelven a estar accesibles, conect&aacute;ndonos desde el
+Firefox del Wiondows 7 a las mismas URLs accedidas en el punto 27 (o
+refrescando las pesta&ntilde;as, si siguen todav&iacute;a abiertas).<br>
+
+<br>
+
+(NOTA: en el front-end de TomatoCart puede ser que los recuadros
+desplegables de Categor&iacute;as y de Fabricantes no muestren
+correctamente sus valores; para solucionar &eacute;sto basta con entrar
+en el interfaz de administraci&oacute;n de TomatoCart y provocar una
+actualizaci&oacute;n de los contenidos de estos recuadros - por
+ejemplo, deseleccionando y volviendo a seleccionar cualquiera de sus
+valores).<br>
+
+<br>
+
+Como vemos, desde el punto de vista del usuario las dos tiendas
+virtuales siguen teniendo el mismo aspecto y funcionalidad que cuando
+estaban en un s&oacute;lo servidor, pero desde el punto de vista de
+gesti&oacute;n y mantenimiento la configuraci&oacute;n es ahora mucho
+m&aacute;s adecuada para manejar el posible crecimiento y
+expansi&oacute;n de ambas webs de comercio electr&oacute;nico.<br>
+
+<br>
+Con esto, termina este Ejercicio. En el siguiente Ejercicio,
+aprenderemos a usar Jmeter para generar test de carga sencillos sobre
+el servidor <span style="font-style: italic;">debiantomato</span>.<br>
+<br>
+<a href="Ejercicio4.html">Ir al Ejercicio 4</a><br>
+<br>
+
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+  
+  <title>Ejercicio 2 - Instalaci&oacute;n de osCommerce 2 sobre el mismo servidor</title>
+</head>
+
+
+<body>
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+      </td>
+
+
+      <td style="width: 1164.97px;">
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Ejercicio 2 &nbsp;-
+Instalaci&oacute;n de osCommerce 2 sobre el mismo servidor<br>
+
+
+      </span></b></h1>
+
+
+      </td>
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<br>
+
+
+El escenario que planteamos como motivaci&oacute;n para este
+Ejercicio
+es el siguiente: usando un &uacute;nico servidor f&iacute;sico
+estamos
+proporcionando servicios de hosting a dos clientes distintos, uno de
+los cuales usa TomatoCart mientras el otro usa osCommerce, y
+necesitamos un sistema de desarrollo donde probar sin riesgo los
+cambios en configuraci&oacute;n y front-ends de las respectivas
+tiendas. La soluci&oacute;n que usaremos ser&aacute; emplear
+VMware
+Workstation para, empleando un servidor virtual Debian 7, poder probar
+la configuraci&oacute;n en el PC con Windows del desarrollador
+responsable del sistema.<br>
+
+
+<br>
+
+
+En este Ejercicio vamos a partir de la m&aacute;quina Debian 7 con
+TomatoCart que hemos obtenido en el Ejercicio 1, sobre la que
+instalaremos el sistema de comercio electr&oacute;nico osCommerce
+2.3.4, compartiendo con TomatoCart el mismo motor de base de datos
+MySQL, pero usando una base de datos totalmente distinta.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">1)</span> Arrancar
+la m&aacute;quina virtual <span style="font-style: italic;">debiantomato</span>,
+y hacer login como root.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">2)</span> Usando el
+cliente SSH <span style="font-style: italic;">Bitwise
+Tunnelier</span> y el procedimiento descrito en los puntos 29 a
+35 del Ejercicio 1, transferir al directorio <span style="font-style: italic;">/var/www</span> del
+servidor el fichero <span style="font-style: italic;">oscommerce-2.3.4.zip</span>,
+que estar&aacute; en el directorio <span style="font-style: italic;">D:\practicas\MV</span><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">3)</span> En el
+servidor, hacer <span style="font-weight: bold;">cd
+/var/www</span>, y descomprimir el fichero zip ejecutando <span style="font-weight: bold;">unzip oscommerce-2.3.4.zip</span>
+.Borrar el fichero zip, y renombrar el directorio <span style="font-style: italic;">oscommerce-2.3.4</span>
+ejecutando <span style="font-weight: bold;">mv
+oscommerce-2.3.4 oscommerce</span><br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">4)</span> Cambiar
+el propietario y grupo de la distribuci&oacute;n completa de
+osCommerce, ejecutando <span style="font-weight: bold;">chown
+-R www-data:www-data oscommerce</span> <br>
+
+
+<br>
+
+
+Ahora crearemos la base de datos necesaria para osCommerce, y el
+usuario que emplearemos para conectarnos a ella.<br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">5)</span> En el
+Windows 7 abrir Firefox (o una pesta&ntilde;a nueva, si ya
+est&aacute; abierto) y acceder a <span style="font-weight: bold;">http:/10.0.0.21/phpmyadmin</span>
+.Usando ingl&eacute;s como idioma, hacer login como usuario <span style="font-weight: bold;">root</span> <br>
+
+
+<br>
+
+
+<span style="font-weight: bold;">6)</span> Usando el
+procedimiento ya descrito en los puntos 41 a 45 del Ejercicio 1, crear
+una base de datos llamada <span style="font-weight: bold;">oscommercebase</span>,
+con un usuario administrador para ella llamado <span style="font-weight: bold;">oscommerceuser</span>, y
+password <span style="font-weight: bold;">deii15</span>,
+con permiso para conectar desde <span style="font-weight: bold;">localhost</span>.<br>
+
+
+<br>
+
+
+<br>
+
+
+<table style="width: 800px; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 542px; height: 415px;" alt="" src="img/oscommercebase-1.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 597px; height: 522px;" alt="" src="img/oscommercebase-2.png"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: middle;"><img style="border: 1px solid ; width: 1063px; height: 243px;" alt="" src="img/oscommercebase-3.png"></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<span style="font-weight: bold;">7)</span> Hacer logout de <span style="font-style: italic;">phpMyAdmin</span> <br>
+
+<br>
+
+<span style="font-weight: bold;">8)</span> Para instalar osCommerce, accedemos a la URL <span style="font-weight: bold;">http://10.0.0.21/oscommerce/catalog</span>
+.El propio software de osCommerce detecta que a&uacute;n no se ha
+realizado la instalaci&oacute;n, y arranca la p&aacute;gina que inicia
+el procedimiento. Esta p&aacute;gina realiza autom&aacute;ticamente la
+comprobaci&oacute;n de requerimientos previos, que terminar&aacute; con
+&eacute;xito, por lo que seguimos adelante pulsando <span style="font-weight: bold;">Start</span> <br>
+
+<br>
+
+<span style="font-weight: bold;">9)</span> Configuramos el servidor de base de datos, introduciendo en el formulario los valores mostrados en la figura, y pulsamos <span style="font-weight: bold;">Continue</span> <br>
+
+<br>
+
+<img style="border: 1px solid ; width: 965px; height: 308px;" alt="" src="img/oscommerce-database-config.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">10)</span> Dejar con los valores por defecto los directorios del servidor web. Pulsar <span style="font-weight: bold;">Continue</span> <br>
+
+<br>
+
+<img style="border: 1px solid ; width: 824px; height: 203px;" alt="" src="img/oscommerce-webserver-dir.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">11)</span> Configurar los par&aacute;metros de la tienda online con los valores mostrados en la figura.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 968px; height: 444px;" alt="" src="img/oscommerce-initial-settings.png"><br>
+
+<br>
+
+La instalaci&oacute;n terminar&aacute; con &eacute;xito, y obtendremos
+una lista de recomendaciones de seguridad que, si el servidor estuviera
+expuesto a acceso p&uacute;blico, DEBEMOS llevar a cabo. En nuestro
+caso, sin embargo, sabemos que el servidor (que est&aacute; corriendo
+en una red host-only) s&oacute;lo puede ser accedido desde nuestro
+ordenador, por lo que, de momento, dejaremos para otro momento el
+asegurar totalmente el servidor.<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 966px; height: 342px;" alt="" src="img/oscommerce-recommend-seguridad.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">12)</span> Pulsando sobre el bot&oacute;n&nbsp; <span style="font-weight: bold;">Online Store</span>
+se abrir&aacute; en una nueva pesta&ntilde;a el front-end
+gr&aacute;fico de la tienda, con los datos por defecto con los que el
+instalador la precarga. Por su parte, pulsando sobre el bot&oacute;n <span style="font-weight: bold;">Administration Tool</span>
+abriremos la p&aacute;gina de la herramienta gr&aacute;fica de
+administraci&oacute;n, en la que haremos login empleando el usuario <span style="font-weight: bold;">oscommerceadmin</span> y el password <span style="font-weight: bold;">deii15</span>.
+(NOTA: El login inicial puede tardar casi un minuto en completarse,
+mientras se inicializan valores en la base de datos y l&oacute;gica
+PHP).<br>
+
+<br>
+
+Al arrancar la herramienta administrativa veremos mensajes
+record&aacute;ndonos los agujeros de seguridad que seguimos teniendo.
+Siendo conscientes de que, en un sistema en producci&oacute;n,
+deber&iacute;amos cerrarlos inmediatamente, vamos a modificar el
+cat&aacute;logo de la tienda a&ntilde;adi&eacute;ndole la misma
+impresora HP que hemos inclu&iacute;do en la tienda TomatoCart.<br>
+
+<br>
+
+<span style="font-weight: bold;">13)</span> Pulsar el bot&oacute;n <span style="font-weight: bold;">Catalog</span>. Navegar el &aacute;rbol de categor&iacute;as siguiendo la secuencia <span style="font-weight: bold;">Categories/Products -&gt; Hardware -&gt; Printers</span> .Veremos que ya existe una impresora HP en el cat&aacute;logo; a&ntilde;adimos una segunda pulsando el bot&oacute;n <span style="font-weight: bold;">New Product</span><br>
+
+<br>
+
+<img style="border: 1px solid ; width: 809px; height: 502px;" alt="" src="img/oscomerce-new-printer.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">14)</span> Rellenar el formulario con los valores mostrados en la figura. <span style="text-decoration: underline;">NO</span> pulsar todav&iacute;a <span style="font-weight: bold;">Save</span> <br>
+
+<br>
+
+<img style="border: 1px solid ; width: 818px; height: 841px;" alt="" src="img/oscommerce-valores-p1102.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">15)</span> Usando el bot&oacute;n <span style="font-weight: bold;">Examinar</span> a&ntilde;adir la imagen <span style="font-style: italic;">p1102_100x80.png</span> del directorio <span style="font-style: italic;">D:\practicas\MV\P1102-oscommerce</span> .Pulsando sobre <span style="font-weight: bold;">Large Image</span>, a&ntilde;adir la imagen <span style="font-style: italic;">c01953212_390x286.jpg</span> del directorio D:\practicas\MV\P1102<br>
+
+<br>
+
+<img style="border: 1px solid ; width: 814px; height: 217px;" alt="" src="img/oscommerce-images.png"><br>
+
+<br>
+
+<span style="font-weight: bold;">16)</span> Pulsar <span style="font-weight: bold;">Save</span>. Refrescar el front-end gr&aacute;fico de la tienda, y comprobar el resultado.<br>
+
+<br>
+Siendo conscientes de que no hemos dejado asegurado el servidor (lo que
+es aceptable s&oacute;lo porque estamos en una red host-only), vamos a
+dejar aqu&iacute; la configuraci&oacute;n y a sacar una
+instant&aacute;nea del estado actual de la m&aacute;quina virtual.<br>
+<br>
+<span style="font-weight: bold;">17)</span> Hacer <span style="font-weight: bold;">Logoff</span>
+en la herramienta de administraci&oacute;n de osCommerce, y cerrar
+todas las pesta&ntilde;as de Firefox que est&eacute;n accediendo a la
+tienda virtual o a su instalador.<br>
+<br>
+<span style="font-weight: bold;">18)</span> Apagar la m&aacute;quina virtual haciendo <span style="font-weight: bold;">telinit 0</span> <br>
+<br>
+<span style="font-weight: bold;">19)</span> Finalmente, abrir el gestor de instant&aacute;neas y crear una instant&aacute;nea llamada <span style="font-weight: bold;">Con Tomatocart y osCommerce</span>.<br>
+<br>
+<img style="border: 1px solid ; width: 345px; height: 341px;" alt="" src="img/instantanea-contodo.png"><br>
+<br>
+Con ello finalizamos este Ejercicio.<br>
+<br>
+<a href="Ejercicio3.html">Ir al Ejercicio 3</a>,<br>
+
+
+<br>
+
+
+</body>
+</html>

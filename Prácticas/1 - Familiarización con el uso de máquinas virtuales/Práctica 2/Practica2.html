@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <title>Pr&aacute;ctica 2: Uso de instant&aacute;neas</title>
+</head>
+
+
+<body>
+
+
+
+
+
+
+
+<h1 style="text-align: center;"> <b style=""><span style="font-size: 18pt;"></span></b></h1>
+
+
+
+
+
+
+
+<table style="width: 1098px; height: 155px;" border="0">
+
+
+
+
+
+
+
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      <td style="width: 21.25px;"><img style="width: 99px; height: 93px;" alt="" src="img/uma.png"><br>
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+      <td style="width: 1164.97px;">
+      
+      
+      
+      
+      
+      
+      <h1 style="text-align: center;"><b style=""><span style="font-size: 18pt;">Pr&aacute;ctica 2:
+Uso de instant&aacute;neas<br>
+
+
+
+
+
+
+
+      </span></b></h1>
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+      <td style="width: 21.25px;"> <img style="width: 99px; height: 93px;" title="dac" src="img/dac.png"> </td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+<h2>1. Objetivo</h2>
+
+
+Se llama <span style="font-style: italic;">instant&aacute;nea</span> de
+una m&aacute;quina virtual a guardar, en un conjunto de ficheros de
+disco, un estado "congelado" de la m&aacute;quina virtual, al cual se
+puede volver desde un estado posterior a la instant&aacute;nea para
+deshacer todos los cambios ocurridos en la m&aacute;quina virtual desde
+el momento en que se tom&oacute; la instant&aacute;nea.<br>
+
+
+<br>
+
+
+Cuando se toma una instant&aacute;nea de una m&aacute;quina virtual el
+hipervisor siempre congela el estado de su fichero de disco duro
+virtual, y crea un nuevo fichero en el que ir&aacute; escribiendo,
+incrementalmente, los cambios que vayan aconteciendo en el disco duro
+virtual con respecto al estado congelado. Es poible tambi&eacute;n
+(aunque menos habitual) tomar la instant&aacute;nea con la
+m&aacute;quina virtual encendida; en ese caso el hipervisor,
+adem&aacute;s de congelar el estado del disco virtual, guarda
+tambi&eacute;n, en ficheros adicionales, el estado de la memoria y
+dispositivos de la m&aacute;quina virtual, de forma que se pueda volver
+ipso-facto a exactamente ese estado, con la m&aacute;quina encendida y
+corriendo.<br>
+
+
+<br>
+
+
+Cuando se usan m&aacute;quinas virtuales para el desarrollo de nuevo
+software, el uso de instant&aacute;neas es una herramienta
+especialmente &uacute;til para montar sistemas de test, pues permite
+experimentar con la instalaci&oacute;n y configuraci&oacute;n del
+software en la m&aacute;quina de pruebas, y volver hacia atr&aacute;s
+si el resultado no es positivo (o es directamente negativo), con la
+seguridad de que la m&aacute;quina virtual estar&aacute; libre de
+cualquier efecto de esas pruebas.<br>
+
+
+<br>
+
+
+En los siguientes&nbsp;ejercicios partiremos de las m&aacute;quinas
+virtuales XP y Linux que hemos instalado en la Pr&aacute;ctica 1. Para
+cada m&aacute;quina queremos ajustar una configuraci&oacute;n que nos
+permita minimizar el consumo de recursos (especialmente memoria) tras
+el arranque. Como este ajuste requerir&aacute; una buena dosis de
+tanteo y error, usaremos instant&aacute;neas para poder deshacer los
+cambios en la configuraci&oacute;n si encontramos que dichos cambios
+han empeorado, en lugar de mejorar, el estado o rendimiento del sistema.<br>
+
+
+<br>
+
+
+Adicionalmente, en ambos ejercicios veremos los mecanismos que ofrece
+el hipervisor VMware Workstation para, en m&aacute;quinas virtuales con
+discos "thin", recuperar el espacio de disco ocupado por ficheros ya
+borrados, y de esa forma reducir el tama&ntilde;o del fichero que
+implementa el disco virtual.<br>
+
+
+<br>
+
+
+La pr&aacute;ctica consta
+de los siguientes dos ejercicios:<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<a href="Ejercicio1.html">
+Ejercicio 1 - Uso de instant&aacute;neas durante la configuraci&oacute;n de un Windows XP.</a><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<a href="Ejercicio2.html">
+Ejercicio 2 - Uso de ramales de instant&aacute;neas durante la configuraci&oacute;n de un Debian 7</a><br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+</body>
+</html>
